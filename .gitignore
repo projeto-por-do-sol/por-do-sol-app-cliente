@@ -1,0 +1,22 @@
+# Build
+build/
+.gradle/
+
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+
+# Android
+*.apk
+*.aab
+local.properties
+captures/
+
+# IDE
+.idea/
+.vscode/
+
+# Logs
+*.log
