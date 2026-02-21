@@ -1,3 +1,27 @@
+<<<<<<< HEAD
+# Build
+build/
+.gradle/
+
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+
+# Android
+*.apk
+*.aab
+local.properties
+captures/
+
+# IDE
+.idea/
+.vscode/
+
+# Logs
+*.log
+=======
 # Miscellaneous
 *.class
 *.log
@@ -43,3 +67,4 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+>>>>>>> dc75d4e3b892e2c59baf7ade21b4900c05eae07c
