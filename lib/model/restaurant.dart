@@ -1,4 +1,4 @@
-import 'package:app_por_sol/model/itens.dart';
+import 'package:app_por_sol/model/item.dart';
 
 class Restaurant {
   final String id;
@@ -6,7 +6,7 @@ class Restaurant {
   final String descricao;
   final double distancia;
   // final List<String> categorias;
-  final List<Itens> pratos;
+  final List<Item> pratos;
   //final String logo;
 
   Restaurant({

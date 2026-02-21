@@ -1,5 +1,5 @@
 import 'package:app_por_sol/model/restaurant.dart';
-import 'package:app_por_sol/model/itens.dart';
+import 'package:app_por_sol/model/item.dart';
 
 final List<Restaurant> datasRestaurants = [
   Restaurant(
@@ -9,7 +9,7 @@ final List<Restaurant> datasRestaurants = [
     distancia: 1.2,
     pratos: List.generate(
       10,
-      (index) => Itens(
+      (index) => Item(
         id: 'r1p$index',
         tituloPrato: 'Prato ${index + 1} - Sol & Mar',
         descricaoPrato: 'Delicioso prato da casa',
@@ -26,7 +26,7 @@ final List<Restaurant> datasRestaurants = [
     distancia: 2.4,
     pratos: List.generate(
       10,
-      (index) => Itens(
+      (index) => Item(
         id: 'r2p$index',
         tituloPrato: 'Prato ${index + 1} - Tropical',
         descricaoPrato: 'Receita especial brasileira',
@@ -43,7 +43,7 @@ final List<Restaurant> datasRestaurants = [
     distancia: 3.1,
     pratos: List.generate(
       10,
-      (index) => Itens(
+      (index) => Item(
         id: 'r3p$index',
         tituloPrato: 'Massa ${index + 1}',
         descricaoPrato: 'Massa artesanal italiana',
@@ -60,7 +60,7 @@ final List<Restaurant> datasRestaurants = [
     distancia: 1.8,
     pratos: List.generate(
       10,
-      (index) => Itens(
+      (index) => Item(
         id: 'r4p$index',
         tituloPrato: 'Combo Sushi ${index + 1}',
         descricaoPrato: 'Sushi fresco preparado na hora',
@@ -77,7 +77,7 @@ final List<Restaurant> datasRestaurants = [
     distancia: 2.0,
     pratos: List.generate(
       10,
-      (index) => Itens(
+      (index) => Item(
         id: 'r5p$index',
         tituloPrato: 'Churrasco ${index + 1}',
         descricaoPrato: 'Carne selecionada na brasa',
@@ -94,7 +94,7 @@ final List<Restaurant> datasRestaurants = [
     distancia: 1.5,
     pratos: List.generate(
       10,
-      (index) => Itens(
+      (index) => Item(
         id: 'r6p$index',
         tituloPrato: 'Veggie ${index + 1}',
         descricaoPrato: 'Opção saudável e nutritiva',
@@ -103,7 +103,6 @@ final List<Restaurant> datasRestaurants = [
       ),
     ),
   ),
-
   Restaurant(
     id: 'r7',
     nome: 'Burger House',
@@ -111,7 +110,7 @@ final List<Restaurant> datasRestaurants = [
     distancia: 2.7,
     pratos: List.generate(
       10,
-      (index) => Itens(
+      (index) => Item(
         id: 'r7p$index',
         tituloPrato: 'Burger ${index + 1}',
         descricaoPrato: 'Hambúrguer artesanal especial',
@@ -128,7 +127,7 @@ final List<Restaurant> datasRestaurants = [
     distancia: 0.9,
     pratos: List.generate(
       10,
-      (index) => Itens(
+      (index) => Item(
         id: 'r8p$index',
         tituloPrato: 'Lanche ${index + 1}',
         descricaoPrato: 'Lanche especial da casa',
@@ -145,7 +144,7 @@ final List<Restaurant> datasRestaurants = [
     distancia: 1.3,
     pratos: List.generate(
       10,
-      (index) => Itens(
+      (index) => Item(
         id: 'r9p$index',
         tituloPrato: 'Doce ${index + 1}',
         descricaoPrato: 'Sobremesa artesanal',
@@ -162,7 +161,7 @@ final List<Restaurant> datasRestaurants = [
     distancia: 2.9,
     pratos: List.generate(
       10,
-      (index) => Itens(
+      (index) => Item(
         id: 'r10p$index',
         tituloPrato: 'Taco ${index + 1}',
         descricaoPrato: 'Taco tradicional mexicano',
