@@ -1,20 +1,28 @@
 import 'package:app_por_sol/model/item.dart';
+import 'package:app_por_sol/model/pedido.dart';
+import 'package:app_por_sol/screens/prato.dart';
 import 'package:flutter/material.dart';
 
 class ItemItem extends StatelessWidget {
   final Item item;
   const ItemItem({required this.item});
 
+  void _itemSelecionado(BuildContext context) {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (ctx) => Prato(pratoSelecionado: item)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.fromLTRB(0, 25, 0, 0),
       child: Card(
         margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
         elevation: 3,
         color: Colors.amber[200],
         child: InkWell(
-          // onTap: () => _itemSelecionado(context),
+          onTap: () => _itemSelecionado(context),
           child: ListTile(
             //Puxar Nome do quiosque API
             title: Text(
