@@ -4,6 +4,7 @@ import 'package:app_por_sol/components/components_cardapio/item_item.dart';
 // import 'package:app_por_sol/components/components_cardapio/lista_pratos.dart';
 import 'package:app_por_sol/components/components_cardapio/logo_quiosque.dart';
 import 'package:app_por_sol/components/components_utils/separadores.dart';
+import 'package:app_por_sol/model/enuns/tipo_item.dart';
 import 'package:app_por_sol/model/item.dart';
 import 'package:app_por_sol/model/restaurant.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,12 @@ class Cardapio extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Item> list_item = restaurant.pratos;
+    final solidos = restaurant.pratos
+        .where((item) => item.tipo == TipoItem.SOLIDO)
+        .toList();
+    final bebidas = restaurant.pratos
+        .where((item) => item.tipo == TipoItem.BEBIDA)
+        .toList();
     return Scaffold(
       // appBar: AppBarGeneric(tex: "Cardápio"),
       body: CustomScrollView(
@@ -78,49 +84,29 @@ class Cardapio extends StatelessWidget {
 
           /// LISTA DE PRATOS
           SliverList(
-            delegate: SliverChildListDelegate(
-              restaurant.pratos.map((item) => ItemItem(item: item)).toList(),
-            ),
+            delegate: SliverChildListDelegate([
+              const SizedBox(height: 25),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Sólidos",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+                ),
+              ),
+              ...solidos.map((item) => ItemItem(item: item)),
+
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Bebidas",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+                ),
+              ),
+              ...bebidas.map((item) => ItemItem(item: item)),
+            ]),
           ),
         ],
       ),
     );
-    // return Scaffold(
-    //   appBar: AppBarGeneric(tex: "Cardapio"),
-    //   //Componentizar
-    //   body: Column(
-    //     children: [
-    //       Stack(
-    //         key: stackTamnho,
-    //         clipBehavior: Clip.none,
-    //         children: [
-    //           LogoQuiosque(),
-    //           //Colocar Banner do restaurante no construtor
-    //           BannerQuiosque(),
-
-    //           CardQuiosque(
-    //             restaurant: restaurant,
-    //             altura: (stackTamnho.currentContext != null)
-    //                 ? (stackTamnho.currentContext!.findRenderObject()
-    //                           as RenderBox)
-    //                       .size
-    //                       .height
-    //                 : null,
-    //             largura: (stackTamnho.currentContext != null)
-    //                 ? (stackTamnho.currentContext!.findRenderObject()
-    //                           as RenderBox)
-    //                       .size
-    //                       .width
-    //                 : null,
-    //           ),
-
-    //           //Colocar Logo do restaurante no construtor
-    //           Positioned(top: 120, right: 1, left: 1, child: LogoQuiosque()),
-    //         ],
-    //       ),
-    //       Expanded(child: ListaPratos(list_item: list_item)),
-    //     ],
-    //   ),
-    // );
   }
 }

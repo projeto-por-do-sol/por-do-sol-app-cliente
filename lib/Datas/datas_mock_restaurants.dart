@@ -1,5 +1,6 @@
-import 'package:app_por_sol/model/restaurant.dart';
+import 'package:app_por_sol/model/enuns/tipo_item.dart';
 import 'package:app_por_sol/model/item.dart';
+import 'package:app_por_sol/model/restaurant.dart';
 
 final List<Restaurant> datasRestaurants = [
   Restaurant(
@@ -15,6 +16,7 @@ final List<Restaurant> datasRestaurants = [
         descricaoPrato: 'Delicioso prato da casa',
         ingredientes: 'Peixe, arroz, salada',
         precos: 29.90 + index,
+        tipo: TipoItem.SOLIDO,
       ),
     ),
   ),
@@ -28,10 +30,13 @@ final List<Restaurant> datasRestaurants = [
       10,
       (index) => Item(
         id: 'r2p$index',
-        tituloPrato: 'Prato ${index + 1} - Tropical',
-        descricaoPrato: 'Receita especial brasileira',
-        ingredientes: 'Carne, feijão, arroz',
+        tituloPrato: index < 3
+            ? 'Suco Tropical ${index + 1}'
+            : 'Prato ${index + 1} - Tropical',
+        descricaoPrato: 'Especial da casa',
+        ingredientes: 'Ingredientes variados',
         precos: 25.90 + index,
+        tipo: index < 3 ? TipoItem.BEBIDA : TipoItem.SOLIDO,
       ),
     ),
   ),
@@ -49,6 +54,7 @@ final List<Restaurant> datasRestaurants = [
         descricaoPrato: 'Massa artesanal italiana',
         ingredientes: 'Massa fresca, molho tomate',
         precos: 32.50 + index,
+        tipo: TipoItem.SOLIDO,
       ),
     ),
   ),
@@ -66,6 +72,7 @@ final List<Restaurant> datasRestaurants = [
         descricaoPrato: 'Sushi fresco preparado na hora',
         ingredientes: 'Salmão, arroz japonês',
         precos: 39.90 + index,
+        tipo: TipoItem.SOLIDO,
       ),
     ),
   ),
@@ -83,6 +90,7 @@ final List<Restaurant> datasRestaurants = [
         descricaoPrato: 'Carne selecionada na brasa',
         ingredientes: 'Picanha, farofa, vinagrete',
         precos: 45.90 + index,
+        tipo: TipoItem.SOLIDO,
       ),
     ),
   ),
@@ -96,13 +104,17 @@ final List<Restaurant> datasRestaurants = [
       10,
       (index) => Item(
         id: 'r6p$index',
-        tituloPrato: 'Veggie ${index + 1}',
+        tituloPrato: index < 2
+            ? 'Suco Detox ${index + 1}'
+            : 'Veggie ${index + 1}',
         descricaoPrato: 'Opção saudável e nutritiva',
         ingredientes: 'Legumes, quinoa',
         precos: 22.90 + index,
+        tipo: index < 2 ? TipoItem.BEBIDA : TipoItem.SOLIDO,
       ),
     ),
   ),
+
   Restaurant(
     id: 'r7',
     nome: 'Burger House',
@@ -112,10 +124,13 @@ final List<Restaurant> datasRestaurants = [
       10,
       (index) => Item(
         id: 'r7p$index',
-        tituloPrato: 'Burger ${index + 1}',
-        descricaoPrato: 'Hambúrguer artesanal especial',
-        ingredientes: 'Carne, queijo, pão brioche',
+        tituloPrato: index < 3
+            ? 'Refrigerante ${index + 1}'
+            : 'Burger ${index + 1}',
+        descricaoPrato: 'Especial da casa',
+        ingredientes: 'Ingredientes variados',
         precos: 28.90 + index,
+        tipo: index < 3 ? TipoItem.BEBIDA : TipoItem.SOLIDO,
       ),
     ),
   ),
@@ -129,10 +144,13 @@ final List<Restaurant> datasRestaurants = [
       10,
       (index) => Item(
         id: 'r8p$index',
-        tituloPrato: 'Lanche ${index + 1}',
-        descricaoPrato: 'Lanche especial da casa',
-        ingredientes: 'Pão, queijo, presunto',
+        tituloPrato: index.isEven
+            ? 'Café Especial ${index + 1}'
+            : 'Lanche ${index + 1}',
+        descricaoPrato: 'Especial da casa',
+        ingredientes: 'Ingredientes variados',
         precos: 15.90 + index,
+        tipo: index.isEven ? TipoItem.BEBIDA : TipoItem.SOLIDO,
       ),
     ),
   ),
@@ -150,6 +168,7 @@ final List<Restaurant> datasRestaurants = [
         descricaoPrato: 'Sobremesa artesanal',
         ingredientes: 'Chocolate, creme',
         precos: 18.90 + index,
+        tipo: TipoItem.SOLIDO,
       ),
     ),
   ),
@@ -163,10 +182,11 @@ final List<Restaurant> datasRestaurants = [
       10,
       (index) => Item(
         id: 'r10p$index',
-        tituloPrato: 'Taco ${index + 1}',
-        descricaoPrato: 'Taco tradicional mexicano',
-        ingredientes: 'Carne, tortilla, molho picante',
+        tituloPrato: index < 2 ? 'Margarita ${index + 1}' : 'Taco ${index + 1}',
+        descricaoPrato: 'Especial mexicano',
+        ingredientes: 'Ingredientes variados',
         precos: 26.90 + index,
+        tipo: index < 2 ? TipoItem.BEBIDA : TipoItem.SOLIDO,
       ),
     ),
   ),

@@ -16,7 +16,7 @@ class ItemItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 25, 0, 0),
+      padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
       child: Card(
         margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
         elevation: 3,
