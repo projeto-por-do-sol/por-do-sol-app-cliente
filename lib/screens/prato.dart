@@ -1,10 +1,14 @@
+import 'dart:async';
+
 import 'package:app_por_sol/components/components_utils/app_bar_generic.dart';
 import 'package:app_por_sol/model/item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class Prato extends StatefulWidget {
-  final Item pratoSelecionado;
-  const Prato({super.key, required this.pratoSelecionado});
+  Item pratoSelecionado;
+  Prato({required this.pratoSelecionado});
 
   @override
   State<Prato> createState() => PratotState();
@@ -13,6 +17,54 @@ class Prato extends StatefulWidget {
 class PratotState extends State<Prato> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBarGeneric(tex: "hwhhwhwhwhwh"));
+    return SafeArea(
+      child: Scaffold(
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              expandedHeight: 193,
+              pinned: false,
+              floating: false,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              flexibleSpace: LayoutBuilder(
+                builder: (context, constraints) {
+                  final double alturaAtual = constraints.maxHeight;
+                  final double percentual =
+                      (alturaAtual - kToolbarHeight) / (250 - kToolbarHeight);
+
+                  return Stack(
+                    fit: StackFit.expand,
+                    clipBehavior: Clip.none,
+                    children: [
+                      Image.network(
+                        height: double.infinity,
+                        width: double.infinity,
+                        'https://www.estadao.com.br/resizer/v2/5776BB3SUJBFFNFYYDEB673PQQ.jpeg?quality=80&auth=e3574cbc8e7fd6f81aa563d250bf079da0935d5fd4d543a72743c3f54461ceee&width=1075&height=527&smart=true',
+                      ),
+
+                      Positioned(
+                        bottom: 0,
+                        left: 1,
+                        right: 1,
+                        child: Transform.translate(
+                          offset: Offset(0, 30),
+                          child: Card(
+                            child: Text(
+                              widget.pratoSelecionado.descricaoPrato +
+                                  'asdhahsbdhabshdbahsbdhbahsbdhabshdbahsbdhbahsbdhabshdbahsbdhasbdhabshdbahbsdbhabhsdbhabshdbhasbdhabhsbdhabsdhbahsbdhasbdhbahsbd',
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

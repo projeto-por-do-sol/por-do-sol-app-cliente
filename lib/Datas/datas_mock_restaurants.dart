@@ -1,3 +1,4 @@
+import 'package:app_por_sol/Datas/datas_mock_acompanhamentos.dart';
 import 'package:app_por_sol/model/enuns/tipo_item.dart';
 import 'package:app_por_sol/model/item.dart';
 import 'package:app_por_sol/model/restaurant.dart';
@@ -17,6 +18,7 @@ final List<Restaurant> datasRestaurants = [
         ingredientes: 'Peixe, arroz, salada',
         precos: 29.90 + index,
         tipo: TipoItem.SOLIDO,
+        list_acompanhamentos: acompanhamentosPadrao,
       ),
     ),
   ),
@@ -37,6 +39,7 @@ final List<Restaurant> datasRestaurants = [
         ingredientes: 'Ingredientes variados',
         precos: 25.90 + index,
         tipo: index < 3 ? TipoItem.BEBIDA : TipoItem.SOLIDO,
+        list_acompanhamentos: index < 3 ? [] : acompanhamentosPadrao,
       ),
     ),
   ),
@@ -55,6 +58,7 @@ final List<Restaurant> datasRestaurants = [
         ingredientes: 'Massa fresca, molho tomate',
         precos: 32.50 + index,
         tipo: TipoItem.SOLIDO,
+        list_acompanhamentos: acompanhamentosPadrao,
       ),
     ),
   ),
@@ -73,6 +77,7 @@ final List<Restaurant> datasRestaurants = [
         ingredientes: 'Salmão, arroz japonês',
         precos: 39.90 + index,
         tipo: TipoItem.SOLIDO,
+        list_acompanhamentos: acompanhamentosPadrao,
       ),
     ),
   ),
@@ -91,102 +96,7 @@ final List<Restaurant> datasRestaurants = [
         ingredientes: 'Picanha, farofa, vinagrete',
         precos: 45.90 + index,
         tipo: TipoItem.SOLIDO,
-      ),
-    ),
-  ),
-
-  Restaurant(
-    id: 'r6',
-    nome: 'Veg & Vida',
-    descricao: 'Comida saudável e vegetariana',
-    distancia: 1.5,
-    pratos: List.generate(
-      10,
-      (index) => Item(
-        id: 'r6p$index',
-        tituloPrato: index < 2
-            ? 'Suco Detox ${index + 1}'
-            : 'Veggie ${index + 1}',
-        descricaoPrato: 'Opção saudável e nutritiva',
-        ingredientes: 'Legumes, quinoa',
-        precos: 22.90 + index,
-        tipo: index < 2 ? TipoItem.BEBIDA : TipoItem.SOLIDO,
-      ),
-    ),
-  ),
-
-  Restaurant(
-    id: 'r7',
-    nome: 'Burger House',
-    descricao: 'Hambúrguer artesanal',
-    distancia: 2.7,
-    pratos: List.generate(
-      10,
-      (index) => Item(
-        id: 'r7p$index',
-        tituloPrato: index < 3
-            ? 'Refrigerante ${index + 1}'
-            : 'Burger ${index + 1}',
-        descricaoPrato: 'Especial da casa',
-        ingredientes: 'Ingredientes variados',
-        precos: 28.90 + index,
-        tipo: index < 3 ? TipoItem.BEBIDA : TipoItem.SOLIDO,
-      ),
-    ),
-  ),
-
-  Restaurant(
-    id: 'r8',
-    nome: 'Café do Porto',
-    descricao: 'Café e lanches rápidos',
-    distancia: 0.9,
-    pratos: List.generate(
-      10,
-      (index) => Item(
-        id: 'r8p$index',
-        tituloPrato: index.isEven
-            ? 'Café Especial ${index + 1}'
-            : 'Lanche ${index + 1}',
-        descricaoPrato: 'Especial da casa',
-        ingredientes: 'Ingredientes variados',
-        precos: 15.90 + index,
-        tipo: index.isEven ? TipoItem.BEBIDA : TipoItem.SOLIDO,
-      ),
-    ),
-  ),
-
-  Restaurant(
-    id: 'r9',
-    nome: 'Doce Encanto',
-    descricao: 'Sobremesas e confeitaria',
-    distancia: 1.3,
-    pratos: List.generate(
-      10,
-      (index) => Item(
-        id: 'r9p$index',
-        tituloPrato: 'Doce ${index + 1}',
-        descricaoPrato: 'Sobremesa artesanal',
-        ingredientes: 'Chocolate, creme',
-        precos: 18.90 + index,
-        tipo: TipoItem.SOLIDO,
-      ),
-    ),
-  ),
-
-  Restaurant(
-    id: 'r10',
-    nome: 'Mexicano Loco',
-    descricao: 'Comida mexicana tradicional',
-    distancia: 2.9,
-    pratos: List.generate(
-      10,
-      (index) => Item(
-        id: 'r10p$index',
-        tituloPrato: index < 2 ? 'Margarita ${index + 1}' : 'Taco ${index + 1}',
-        descricaoPrato: 'Especial mexicano',
-        ingredientes: 'Ingredientes variados',
-        precos: 26.90 + index,
-        tipo: index < 2 ? TipoItem.BEBIDA : TipoItem.SOLIDO,
+        list_acompanhamentos: acompanhamentosPadrao,
       ),
     ),
   ),

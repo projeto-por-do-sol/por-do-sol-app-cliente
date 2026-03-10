@@ -1,3 +1,4 @@
+import 'package:app_por_sol/model/acompanhamento.dart';
 import 'package:app_por_sol/model/enuns/tipo_item.dart';
 
 class Item {
@@ -7,6 +8,7 @@ class Item {
   final String ingredientes;
   final double precos;
   final TipoItem tipo;
+  final List<Acompanhamento> list_acompanhamentos;
 
   Item({
     required this.id,
@@ -15,5 +17,6 @@ class Item {
     required this.ingredientes,
     required this.precos,
     required this.tipo,
+    required this.list_acompanhamentos,
   });
 }
