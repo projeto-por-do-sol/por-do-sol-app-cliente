@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:app_por_sol/components/components_prato/acomapanhamento_item.dart';
 import 'package:app_por_sol/components/components_utils/app_bar_generic.dart';
+import 'package:app_por_sol/model/acompanhamento.dart';
 import 'package:app_por_sol/model/item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
@@ -61,6 +63,19 @@ class PratotState extends State<Prato> {
                   );
                 },
               ),
+            ),
+
+            SliverList(
+              delegate: SliverChildListDelegate([
+                SizedBox(height: 60),
+                Text(
+                  "Molhos",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+                ),
+                ...widget.pratoSelecionado.list_acompanhamentos.map(
+                  (acomp) => AcomapanhamentoItem(acompanhamento: acomp),
+                ),
+              ]),
             ),
           ],
         ),
