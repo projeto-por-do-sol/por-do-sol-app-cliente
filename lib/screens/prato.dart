@@ -79,6 +79,15 @@ class PratotState extends State<Prato> {
             ),
           ],
         ),
+        bottomNavigationBar: Container(
+          child: Row(
+            children: [
+              Text("${widget.pratoSelecionado.precos}"),
+              Spacer(),
+              ElevatedButton(onPressed: () {}, child: Text("ADICIONAR")),
+            ],
+          ),
+        ),
       ),
     );
   }

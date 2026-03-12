@@ -8,8 +8,37 @@ class Contador extends StatefulWidget {
 }
 
 class ContadortState extends State<Contador> {
+  int cont = 0;
+
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          onPressed: () => setState(() {
+            cont++;
+          }),
+          icon: Icon(Icons.add),
+        ),
+
+        SizedBox(width: 10),
+
+        Text("$cont"),
+
+        SizedBox(width: 10),
+
+        IconButton(
+          onPressed: () {
+            if (cont > 0) {
+              setState(() {
+                cont--;
+              });
+            }
+          },
+          icon: Icon(Icons.remove),
+        ),
+      ],
+    );
   }
 }
