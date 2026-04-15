@@ -1,3 +1,4 @@
+import 'package:client_app/src/modules/login/pages/login.dart';
 import 'package:client_app/src/modules/login/pages/login_email.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,6 +14,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       // debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        // fontFamily: GoogleFonts.poppins().fontFamily,
+
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFFFFF5DD),
@@ -22,7 +25,7 @@ class MyApp extends StatelessWidget {
         ),
         scaffoldBackgroundColor: const Color(0xFFFFF5DD),
 
-        textTheme: GoogleFonts.cairoTextTheme().copyWith(
+        textTheme: GoogleFonts.poppinsTextTheme().copyWith(
           headlineLarge: GoogleFonts.poppins(
             fontSize: 36,
             fontWeight: FontWeight.w600,
@@ -51,7 +54,7 @@ class MyApp extends StatelessWidget {
           foregroundColor: textColor,
         ),
       ),
-      home: const LoginEmail(),
+      home: const Login(),
     );
   }
 }

@@ -2,15 +2,16 @@ import 'package:client_app/src/shared/widget/button.dart';
 import 'package:client_app/src/shared/widget/input.dart';
 import 'package:flutter/material.dart';
 
-class LoginEmail extends StatefulWidget {
-  const LoginEmail({super.key});
+class Login extends StatefulWidget {
+  const Login({super.key});
 
   @override
-  State<LoginEmail> createState() => _LoginEmailState();
+  State<Login> createState() => _LoginState();
 }
 
-class _LoginEmailState extends State<LoginEmail> {
+class _LoginState extends State<Login> {
   TextEditingController loginController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -25,19 +26,28 @@ class _LoginEmailState extends State<LoginEmail> {
 
                 Container(
                   alignment: Alignment.center,
-                  margin: const EdgeInsets.all(50),
+                  margin: const EdgeInsets.fromLTRB(0, 50, 0, 30),
                   child: Text("ENTRAR", style: Theme.of(context).textTheme.headlineLarge),
                 ),
 
                 Image.asset('assets/images/logo.png', width: 200),
 
-                const SizedBox(height: 60),
+                const SizedBox(height: 30),
 
                 CustomInput(
                   label: "E-mail / Telefone:",
                   controller: loginController,
                   isRequired: true,
                   isPhoneOrEmail: true,
+                ),
+
+                const SizedBox(height: 30),
+
+                CustomInput(
+                  label: "Senha:",
+                  controller: passwordController,
+                  isRequired: true,
+                  isPassword: true,
                 ),
 
                 const SizedBox(height: 10),
@@ -50,6 +60,7 @@ class _LoginEmailState extends State<LoginEmail> {
                       if (_formKey.currentState!.validate()) {
                         debugPrint("Formulário válido!");
                         debugPrint("E-mail: ${loginController.text}");
+                        debugPrint("Senha: ${passwordController.text}");
                       } else {
                         debugPrint("Formulário inválido.");
                       }
