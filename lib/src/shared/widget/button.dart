@@ -30,7 +30,7 @@ class CustomButton extends StatelessWidget {
             shadowColor: Theme.of(context).colorScheme.outline,
             textStyle: Theme.of(context).textTheme.titleMedium,
           ),
-          child: Text(label),
+          child: Text(label.toUpperCase()),
         ),
 
       ),

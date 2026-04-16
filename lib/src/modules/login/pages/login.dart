@@ -1,5 +1,7 @@
+import 'package:client_app/src/modules/cadastro/pages/cadastro.dart';
 import 'package:client_app/src/shared/widget/button.dart';
 import 'package:client_app/src/shared/widget/input.dart';
+import 'package:client_app/src/shared/widget/title.dart';
 import 'package:flutter/material.dart';
 
 class Login extends StatefulWidget {
@@ -16,8 +18,7 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
+    return Scaffold(
         body: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -26,11 +27,11 @@ class _LoginState extends State<Login> {
 
                 Container(
                   alignment: Alignment.center,
-                  margin: const EdgeInsets.fromLTRB(0, 50, 0, 30),
-                  child: Text("ENTRAR", style: Theme.of(context).textTheme.headlineLarge),
+                  margin: const EdgeInsets.fromLTRB(0, 70, 0, 30),
+                  child: CustomTitle(label: "entrar")
                 ),
 
-                Image.asset('assets/images/logo.png', width: 200),
+                Image.asset('assets/images/logo.png', width: 180),
 
                 const SizedBox(height: 30),
 
@@ -50,6 +51,13 @@ class _LoginState extends State<Login> {
                   isPassword: true,
                 ),
 
+                Container(
+                  child: TextButton(onPressed: (){
+                    // Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => Cadastro()));
+                  }, child: Text("Cadastrar-se", style: TextStyle(fontSize: 16),)),
+                ),
+
                 const SizedBox(height: 10),
 
                 Container(
@@ -61,6 +69,9 @@ class _LoginState extends State<Login> {
                         debugPrint("Formulário válido!");
                         debugPrint("E-mail: ${loginController.text}");
                         debugPrint("Senha: ${passwordController.text}");
+                        // if (loginController == "teste@gmail.com" && passwordController == "123"){
+                        //
+                        // }
                       } else {
                         debugPrint("Formulário inválido.");
                       }
@@ -71,7 +82,6 @@ class _LoginState extends State<Login> {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 }

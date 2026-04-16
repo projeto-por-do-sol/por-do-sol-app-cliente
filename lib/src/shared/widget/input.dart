@@ -1,3 +1,4 @@
+import 'package:client_app/src/shared/utils/validator.dart';
 import 'package:flutter/material.dart';
 
 class CustomInput extends StatefulWidget {
@@ -8,6 +9,7 @@ class CustomInput extends StatefulWidget {
   final bool isPhone;
   final bool isPhoneOrEmail;
   final bool isRequired;
+  final bool isCPF;
 
   CustomInput({
     super.key,
@@ -18,6 +20,7 @@ class CustomInput extends StatefulWidget {
     this.isPhone = false,
     this.isPhoneOrEmail = false,
     this.isRequired = true,
+    this.isCPF = false,
   });
 
   @override
@@ -69,30 +72,21 @@ class _CustomInputState extends State<CustomInput> {
 
               final valorLimpo = value.trim();
 
-              if (widget.isPhone) {
-                final phoneNumbers = valorLimpo.replaceAll(RegExp(r'[^0-9]'), '');
-
-                if (phoneNumbers.length != 11) {
-                  return 'Telefone inválido (use DDD + número)';
-                }
-                return null;
+              if (widget.isCPF && !cpfValidator.isValidCpf(valorLimpo)) {
+                return 'CPF inválido';
               }
 
-              final bool emailValid = RegExp(
-                  r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                  .hasMatch(valorLimpo);
+              if (widget.isPhone && !phoneValidator.phoneValidate(valorLimpo)) {
+                return 'Telefone inválido (use DDD + número)';
+              }
 
-              if (widget.isEmail && !emailValid) {
+              if (widget.isEmail && !emailValidator.emailValidate(valorLimpo)) {
                 return 'Insira um e-mail válido';
               }
 
-              if (widget.isPhoneOrEmail) {
-                final phoneNumbers = valorLimpo.replaceAll(RegExp(r'[^0-9]'), '');
-                final bool phoneValid = phoneNumbers.length == 11;
-
-                if (!emailValid && !phoneValid) {
+              if (widget.isPhoneOrEmail &&
+                  !phoneEmailValidator.phoneEmailValidate(valorLimpo)) {
                   return 'Insira um e-mail ou telefone válido';
-                }
               }
 
               return null;
