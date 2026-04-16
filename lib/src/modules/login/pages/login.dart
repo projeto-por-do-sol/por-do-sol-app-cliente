@@ -1,4 +1,5 @@
 import 'package:client_app/src/modules/cadastro/pages/cadastro.dart';
+import 'package:client_app/src/modules/home/pages/home.dart';
 import 'package:client_app/src/shared/widget/button.dart';
 import 'package:client_app/src/shared/widget/input.dart';
 import 'package:client_app/src/shared/widget/title.dart';
@@ -12,8 +13,8 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  TextEditingController loginController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  TextEditingController loginController = TextEditingController(text: "teste@gmail.com");
+  TextEditingController passwordController = TextEditingController(text: "123");
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -69,9 +70,10 @@ class _LoginState extends State<Login> {
                         debugPrint("Formulário válido!");
                         debugPrint("E-mail: ${loginController.text}");
                         debugPrint("Senha: ${passwordController.text}");
-                        // if (loginController == "teste@gmail.com" && passwordController == "123"){
-                        //
-                        // }
+                        if (loginController.text.trim() == "teste@gmail.com" && passwordController.text.trim() == "123"){
+                          Navigator.pop(context);
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+                        }
                       } else {
                         debugPrint("Formulário inválido.");
                       }

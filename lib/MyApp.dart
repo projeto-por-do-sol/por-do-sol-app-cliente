@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget {
           outline: const Color(0xFF3A2E2E),
           surface: const Color(0xFFFFFCF5),
           primary: const Color(0xFFBD6100),
+          secondary: const Color(0xFFEFEFEF),
         ),
         scaffoldBackgroundColor: const Color(0xFFFFF5DD),
 
@@ -41,6 +42,12 @@ class MyApp extends StatelessWidget {
           titleMedium: GoogleFonts.poppins(
             fontSize: 20,
             fontWeight: FontWeight.w600,
+            color: textColor,
+          ),
+
+          titleSmall: GoogleFonts.poppins(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
             color: textColor,
           ),
 

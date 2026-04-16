@@ -10,6 +10,7 @@ class CustomInput extends StatefulWidget {
   final bool isPhoneOrEmail;
   final bool isRequired;
   final bool isCPF;
+  final TextCapitalization typeText;
 
   CustomInput({
     super.key,
@@ -21,6 +22,7 @@ class CustomInput extends StatefulWidget {
     this.isPhoneOrEmail = false,
     this.isRequired = true,
     this.isCPF = false,
+    this.typeText = TextCapitalization.none,
   });
 
   @override
@@ -63,6 +65,8 @@ class _CustomInputState extends State<CustomInput> {
             keyboardType: widget.isEmail || widget.isPhoneOrEmail ? TextInputType.emailAddress : TextInputType.text,
             controller: widget.controller,
             obscureText: _obscureText && widget.isPassword,
+            autocorrect: false,
+            textCapitalization: widget.typeText,
             validator: (value) {
               if (widget.isRequired && (value == null || value.isEmpty)) {
                 return 'Este campo é obrigatório';

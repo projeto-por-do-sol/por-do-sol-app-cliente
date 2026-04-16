@@ -37,6 +37,7 @@ class _CadastroState extends State<Cadastro> {
                 label: "Nome Completo:",
                 controller: nameController,
                 isRequired: true,
+                typeText: TextCapitalization.words,
               ),
 
               const SizedBox(height: 15),
