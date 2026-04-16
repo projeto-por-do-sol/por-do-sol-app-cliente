@@ -69,7 +69,7 @@ class emailValidator {
 
 class phoneEmailValidator {
   static bool phoneEmailValidate(String value){
-    return phoneValidator.phoneValidate(value) &&
+    return phoneValidator.phoneValidate(value) ||
         emailValidator.emailValidate(value);
   }
 }
