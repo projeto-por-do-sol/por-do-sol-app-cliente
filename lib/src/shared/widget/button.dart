@@ -26,8 +26,8 @@ class CustomButton extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-            elevation: 2,
-            shadowColor: Theme.of(context).colorScheme.outline,
+            elevation: 5,
+            shadowColor: Theme.of(context).colorScheme.outline.withValues(alpha: 0.1),
             textStyle: Theme.of(context).textTheme.titleMedium,
           ),
           child: Text(label.toUpperCase()),

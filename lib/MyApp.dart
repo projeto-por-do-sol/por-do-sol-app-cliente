@@ -3,6 +3,9 @@ import 'package:client_app/src/modules/login/pages/login_email.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'src/modules/home/pages/home.dart';
+import 'src/modules/quiosquePage/pages/quiosquePage.dart';
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -12,6 +15,11 @@ class MyApp extends StatelessWidget {
     // const borderColor = Color(0xFF1D3557);
 
     return MaterialApp(
+      title: "Pôr-do-Sol",
+      initialRoute: '/',
+      routes: {
+        '/quiosquePage': (context) => QuiosquePage(),
+      },
       // debugShowCheckedModeBanner: false,
       theme: ThemeData(
         // fontFamily: GoogleFonts.poppins().fontFamily,
@@ -46,7 +54,7 @@ class MyApp extends StatelessWidget {
           ),
 
           titleSmall: GoogleFonts.poppins(
-            fontSize: 14,
+            fontSize: 16,
             fontWeight: FontWeight.w500,
             color: textColor,
           ),
