@@ -1,6 +1,7 @@
-import 'package:client_app/src/modules/home/widget/card-quiosque.dart';
+import 'package:client_app/src/modules/home/widget/card_quiosque.dart';
 import 'package:client_app/src/modules/home/widget/SearchContainer.dart';
 import 'package:client_app/src/modules/login/pages/login.dart';
+import 'package:client_app/src/shared/models/quiosque_model.dart';
 import 'package:client_app/src/shared/widget/button.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +13,24 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  QuiosqueModel quiosque1 = QuiosqueModel(
+    nomeQuiosque: "Quiosque 1",
+    imgPerfilQuiosque: "logo.png",
+    imgBannerQuiosque: "logo.png",
+    avalicaoQuiosque: "4,5",
+    distanciaQuiosque: "60",
+  );
+
+  QuiosqueModel quiosque2 = QuiosqueModel(
+    nomeQuiosque: "Quiosque 2",
+    imgPerfilQuiosque: "logo.png",
+    imgBannerQuiosque: "logo.png",
+    avalicaoQuiosque: "2,1",
+    distanciaQuiosque: "84",
+  );
+
+  late List<QuiosqueModel> listaQuiosques = [quiosque1, quiosque2];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,15 +39,41 @@ class _HomePageState extends State<HomePage> {
 
           const SizedBox(height: 20),
 
-          SearchContainer(),
+          SearchContainer(
+            onFilterChanged: (filtro, ordenacao) {
+              setState(() {
+                if (filtro == "distancia"){
+                  if (ordenacao == "menor"){
+                    listaQuiosques.sort((a, b) => double.parse(a.distanciaQuiosque!).compareTo(double.parse(b.distanciaQuiosque!)));
+                  } else {
+                    listaQuiosques.sort((a, b) => double.parse(b.distanciaQuiosque!).compareTo(double.parse(a.distanciaQuiosque!)));
+                  }
+                } else {
+                  if (ordenacao == "menor"){
+                    listaQuiosques.sort((a, b) => double.parse(a.avalicaoQuiosque!.replaceAll(',', '.')).compareTo(double.parse(b.avalicaoQuiosque!.replaceAll(',', '.'))));
+                  } else {
+                    listaQuiosques.sort((a, b) => double.parse(b.avalicaoQuiosque!.replaceAll(',', '.')).compareTo(double.parse(a.avalicaoQuiosque!.replaceAll(',', '.'))));
+                  }
+                }
+              });
+            }),
+          
+          ...listaQuiosques.map((quiosque) {
+            return CardQuiosque(
+              nomeQuiosque: quiosque.nomeQuiosque.toString(),
+              imgPerfilQuiosque: quiosque.imgPerfilQuiosque.toString(),
+              avalicaoQuiosque: quiosque.avalicaoQuiosque.toString(),
+              distanciaQuiosque: quiosque.distanciaQuiosque.toString(),
+            );
+          }),
 
-          CardQuiosque(),
+          // CardQuiosque(),
+          //
+          // const SizedBox(height: 10),
+          //
+          // CardQuiosque(),
 
           const SizedBox(height: 10),
-
-          CardQuiosque(),
-
-          const SizedBox(height: 20),
 
         CustomButton(
             label: "voltar login",

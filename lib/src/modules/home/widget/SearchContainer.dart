@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 
 class SearchContainer extends StatefulWidget {
-  const SearchContainer({super.key});
+  final Function(String filtro, String ordenacao) onFilterChanged;
+
+  const SearchContainer({
+    super.key,
+    required this.onFilterChanged,
+  });
 
   @override
   State<SearchContainer> createState() => _SearchContainerState();
@@ -9,8 +14,12 @@ class SearchContainer extends StatefulWidget {
 
 class _SearchContainerState extends State<SearchContainer> {
   TextEditingController pesquisaController = TextEditingController();
-  String? filtroSelecionado = 'distancia';
-  String? ordencaoSelecionado = 'menor';
+  String filtroSelecionado = 'distancia';
+  String ordencaoSelecionado = 'menor';
+
+  void _notificarMudanca(){
+    widget.onFilterChanged(filtroSelecionado, ordencaoSelecionado);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +96,7 @@ class _SearchContainerState extends State<SearchContainer> {
                       'avaliacao' :
                       'distancia';
                     });
+                    _notificarMudanca();
                   },
                   child: Text(filtroSelecionado.toString() == 'distancia' ?
                   'Distância' :
@@ -100,6 +110,7 @@ class _SearchContainerState extends State<SearchContainer> {
                     setState(() {
                       ordencaoSelecionado = ordencaoSelecionado.toString() == 'menor' ? 'maior' : 'menor';
                     });
+                    _notificarMudanca();
                   },
                   icon: ordencaoSelecionado.toString() == 'menor' ?
                   Icon(Icons.keyboard_arrow_down) : Icon(Icons.keyboard_arrow_up),
