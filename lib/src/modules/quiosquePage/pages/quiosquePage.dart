@@ -1,10 +1,12 @@
+import 'package:client_app/src/shared/models/quiosque_model.dart';
 import 'package:flutter/material.dart';
 
 class QuiosquePage extends StatefulWidget {
-  // Para receber os dados do CardQuiosque (formato de objeto)
-  // final quiosque = ModalRoute.of(context)!.settings.arguments as CardQuiosque;
+  final QuiosqueModel quiosque;
+
   QuiosquePage({
     super.key,
+    required this.quiosque,
   });
 
   @override
@@ -15,20 +17,31 @@ class _QuiosquePageState extends State<QuiosquePage> {
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final quiosque = widget.quiosque;
 
-    final String nomeQuiosque = args['nome'] ?? "Nome não encontrado";
-    final String? imagemQuiosque = args['imagem'];
-    final String? avalicaoQuiosque = args['avaliacao'];
-    final String? distanciaQuiosque = args['distancia'];
+    final String nomeQuiosque = quiosque.nomeQuiosque;
+    final String? imgBannerQuiosque = quiosque.imgBannerQuiosque;
+    final String? imgPerfilQuiosque = quiosque.imgPerfilQuiosque;
+    final String? avalicaoQuiosque = quiosque.avalicaoQuiosque;
+    final String? distanciaQuiosque = quiosque.distanciaQuiosque;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(nomeQuiosque),
         centerTitle: true,
       ),
-      body: Container(
-        child: Text(nomeQuiosque),
+      body: SingleChildScrollView(
+        child: SizedBox(
+          child: Column(
+            children: [
+              Image.asset("assets/images/${imgBannerQuiosque}"),
+              Image.asset("assets/images/${imgPerfilQuiosque}"),
+              Text(nomeQuiosque),
+              Text(avalicaoQuiosque.toString()),
+              Text(distanciaQuiosque.toString()),
+            ],
+          ),
+        ),
       ),
     );
   }

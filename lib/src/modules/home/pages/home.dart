@@ -1,8 +1,6 @@
 import 'package:client_app/src/modules/home/widget/card_quiosque.dart';
 import 'package:client_app/src/modules/home/widget/SearchContainer.dart';
-import 'package:client_app/src/modules/login/pages/login.dart';
 import 'package:client_app/src/shared/models/quiosque_model.dart';
-import 'package:client_app/src/shared/widget/button.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,7 +14,7 @@ class _HomePageState extends State<HomePage> {
   QuiosqueModel quiosque1 = QuiosqueModel(
     nomeQuiosque: "Quiosque 1",
     imgPerfilQuiosque: "logo.png",
-    imgBannerQuiosque: "logo.png",
+    imgBannerQuiosque: "bannerTeste.png",
     avalicaoQuiosque: "4,5",
     distanciaQuiosque: "60",
   );
@@ -33,55 +31,43 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        body: Column(
+          children: [
 
-          const SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-          SearchContainer(
-            onFilterChanged: (filtro, ordenacao) {
-              setState(() {
-                if (filtro == "distancia"){
-                  if (ordenacao == "menor"){
-                    listaQuiosques.sort((a, b) => double.parse(a.distanciaQuiosque!).compareTo(double.parse(b.distanciaQuiosque!)));
+            SearchContainer(
+              onFilterChanged: (filtro, ordenacao) {
+                setState(() {
+                  if (filtro == "distancia"){
+                    if (ordenacao == "menor"){
+                      listaQuiosques.sort((a, b) => double.parse(a.distanciaQuiosque!).compareTo(double.parse(b.distanciaQuiosque!)));
+                    } else {
+                      listaQuiosques.sort((a, b) => double.parse(b.distanciaQuiosque!).compareTo(double.parse(a.distanciaQuiosque!)));
+                    }
                   } else {
-                    listaQuiosques.sort((a, b) => double.parse(b.distanciaQuiosque!).compareTo(double.parse(a.distanciaQuiosque!)));
+                    if (ordenacao == "menor"){
+                      listaQuiosques.sort((a, b) => double.parse(a.avalicaoQuiosque!.replaceAll(',', '.')).compareTo(double.parse(b.avalicaoQuiosque!.replaceAll(',', '.'))));
+                    } else {
+                      listaQuiosques.sort((a, b) => double.parse(b.avalicaoQuiosque!.replaceAll(',', '.')).compareTo(double.parse(a.avalicaoQuiosque!.replaceAll(',', '.'))));
+                    }
                   }
-                } else {
-                  if (ordenacao == "menor"){
-                    listaQuiosques.sort((a, b) => double.parse(a.avalicaoQuiosque!.replaceAll(',', '.')).compareTo(double.parse(b.avalicaoQuiosque!.replaceAll(',', '.'))));
-                  } else {
-                    listaQuiosques.sort((a, b) => double.parse(b.avalicaoQuiosque!.replaceAll(',', '.')).compareTo(double.parse(a.avalicaoQuiosque!.replaceAll(',', '.'))));
-                  }
-                }
-              });
-            }),
-          
-          ...listaQuiosques.map((quiosque) {
-            return CardQuiosque(
-              nomeQuiosque: quiosque.nomeQuiosque.toString(),
-              imgPerfilQuiosque: quiosque.imgPerfilQuiosque.toString(),
-              avalicaoQuiosque: quiosque.avalicaoQuiosque.toString(),
-              distanciaQuiosque: quiosque.distanciaQuiosque.toString(),
-            );
-          }),
+                });
+              }),
 
-          // CardQuiosque(),
-          //
-          // const SizedBox(height: 10),
-          //
-          // CardQuiosque(),
-
-          const SizedBox(height: 10),
-
-        CustomButton(
-            label: "voltar login",
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
+            ...listaQuiosques.map((quiosque) {
+              return CardQuiosque(
+                quiosque: quiosque,
+              );
             }),
 
-        ],
+            const SizedBox(height: 10),
+
+          ],
+        ),
       ),
     );
   }

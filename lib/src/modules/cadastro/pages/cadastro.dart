@@ -1,6 +1,7 @@
 import 'package:client_app/src/shared/widget/button.dart';
 import 'package:client_app/src/shared/widget/input.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class Cadastro extends StatefulWidget {
   const Cadastro({super.key});
@@ -98,13 +99,14 @@ class _CadastroState extends State<Cadastro> {
                       // if (loginController == "teste@gmail.com" && passwordController == "123"){
                       //
                       // }
+                      context.go('/inicio');
                     } else {
                       debugPrint("Formulário inválido.");
                     }
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text("Senhas diferentes".toUpperCase(), textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.w600),),
+                          content: Text("As senhas não coincidem!".toUpperCase(), textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.w600),),
                           backgroundColor: Theme.of(context).colorScheme.primary,
                           duration: Duration(seconds: 3),
                         )

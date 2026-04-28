@@ -91,6 +91,7 @@ class _SearchContainerState extends State<SearchContainer> {
                     padding: EdgeInsets.zero,
                   ),
                   onPressed: () {
+                    FocusScope.of(context).unfocus();
                     setState(() {
                       filtroSelecionado = filtroSelecionado.toString() == 'distancia' ?
                       'avaliacao' :
@@ -107,6 +108,7 @@ class _SearchContainerState extends State<SearchContainer> {
 
                 IconButton(
                   onPressed: () {
+                    FocusScope.of(context).unfocus();
                     setState(() {
                       ordencaoSelecionado = ordencaoSelecionado.toString() == 'menor' ? 'maior' : 'menor';
                     });

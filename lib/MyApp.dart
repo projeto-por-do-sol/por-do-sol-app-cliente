@@ -1,10 +1,65 @@
+import 'package:client_app/src/modules/cadastro/pages/cadastro.dart';
+import 'package:client_app/src/modules/home/pages/home.dart';
 import 'package:client_app/src/modules/login/pages/login.dart';
-import 'package:client_app/src/modules/login/pages/login_email.dart';
+import 'package:client_app/src/shared/widget/CustomNavBar.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'src/modules/home/pages/home.dart';
+import 'src/modules/perfil/pages/perfilPage.dart';
 import 'src/modules/quiosquePage/pages/quiosquePage.dart';
+import 'src/shared/models/quiosque_model.dart';
+
+final GoRouter _router = GoRouter(
+  initialLocation: '/inicio',
+  routes: <RouteBase>[
+    //Colocar as páginas que não terão navBar
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => const Login(),
+    ),
+
+    GoRoute(
+      path: '/cadastro',
+      builder: (context, state) => Cadastro(),
+    ),
+
+    GoRoute(
+      path: '/quiosquePage',
+      builder: (context, state) {
+        final quiosque = state.extra as QuiosqueModel;
+        return QuiosquePage(quiosque: quiosque);
+      },
+    ),
+
+    //Links do navBar
+    StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell){
+          return CustomNavBar(navigationShell: navigationShell);
+        },
+        branches:[
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/inicio',
+                builder: (context, state) => HomePage(),
+              ),
+            ],
+          ),
+
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/perfil',
+                builder: (context, state) => PerfilPage(),
+              ),
+            ],
+          ),
+
+        ]
+    ),
+  ]
+);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -14,12 +69,14 @@ class MyApp extends StatelessWidget {
     const textColor = Color(0xFF3A2E2E);
     // const borderColor = Color(0xFF1D3557);
 
-    return MaterialApp(
+    return MaterialApp.router(
+      routerConfig: _router,
       title: "Pôr-do-Sol",
-      initialRoute: '/',
-      routes: {
-        '/quiosquePage': (context) => QuiosquePage(),
-      },
+      // initialRoute: '/',
+      // routes: {
+      //   '/quiosquePage': (context) => QuiosquePage(),
+      //   '/perfil' : (context) => PerfilPage(),
+      // },
       // debugShowCheckedModeBanner: false,
       theme: ThemeData(
         // fontFamily: GoogleFonts.poppins().fontFamily,
@@ -69,7 +126,7 @@ class MyApp extends StatelessWidget {
           foregroundColor: textColor,
         ),
       ),
-      home: const Login(),
+      // home: const HomePage(),
     );
   }
 }

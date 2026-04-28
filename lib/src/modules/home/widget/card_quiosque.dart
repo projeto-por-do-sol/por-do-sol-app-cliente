@@ -1,17 +1,13 @@
+import 'package:client_app/src/shared/models/quiosque_model.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class CardQuiosque extends StatefulWidget {
-  final String nomeQuiosque;
-  final String? imgPerfilQuiosque;
-  final String avalicaoQuiosque;
-  final String distanciaQuiosque;
+  final QuiosqueModel quiosque;
 
   const CardQuiosque({
     super.key,
-    required this.nomeQuiosque,
-    this.imgPerfilQuiosque,
-    required this.avalicaoQuiosque,
-    required this.distanciaQuiosque,
+    required this.quiosque,
   });
 
   @override
@@ -27,14 +23,8 @@ class _CardQuiosqueState extends State<CardQuiosque> {
       children: [
         GestureDetector(
             onTap: () {
-              Navigator.pushNamed(context, '/quiosquePage',
-                arguments: {
-                  'nome': widget.nomeQuiosque,
-                  'imagem': widget.imgPerfilQuiosque,
-                  'avaliacao': widget.avalicaoQuiosque,
-                  'distancia': widget.distanciaQuiosque,
-                  },
-                );
+              FocusScope.of(context).unfocus();
+              context.push('/quiosquePage', extra: widget.quiosque);
               },
 
             child: Container(
@@ -59,9 +49,9 @@ class _CardQuiosqueState extends State<CardQuiosque> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(100),
-                    child: widget.imgPerfilQuiosque != null
+                    child: widget.quiosque.imgPerfilQuiosque != null
                         ? Image.asset(
-                      "assets/images/${widget.imgPerfilQuiosque}",
+                      "assets/images/${widget.quiosque.imgPerfilQuiosque}",
                       height: tamanhoImagem,
                       width: tamanhoImagem,
                       fit: BoxFit.cover,
@@ -92,19 +82,19 @@ class _CardQuiosqueState extends State<CardQuiosque> {
                       spacing: 2,
                       children: [
                         Text(
-                          widget.nomeQuiosque,
+                          widget.quiosque.nomeQuiosque,
                           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                         ),
                         Row(
                           children: [
-                            Container(
+                            SizedBox(
                               width: 60,
                               child: Row(
                                 children: [
                                   Icon(Icons.star, color: Theme.of(context).colorScheme.outline, size: 20),
                                   const SizedBox(width: 3,),
                                   Text(
-                                    widget.avalicaoQuiosque,
+                                    widget.quiosque.avalicaoQuiosque.toString(),
                                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                                   ),
                                 ],
@@ -115,7 +105,7 @@ class _CardQuiosqueState extends State<CardQuiosque> {
 
                             Icon(Icons.directions, color: Theme.of(context).colorScheme.outline, size: 20),
                             const SizedBox(width: 3),
-                            Text("${widget.distanciaQuiosque}m",
+                            Text("${widget.quiosque.distanciaQuiosque}m",
                               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                             ),
                           ],
