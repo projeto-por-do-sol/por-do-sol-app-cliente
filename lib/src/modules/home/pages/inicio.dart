@@ -1,5 +1,5 @@
 import 'package:client_app/src/modules/home/widget/card_quiosque.dart';
-import 'package:client_app/src/modules/home/widget/SearchContainer.dart';
+import 'package:client_app/src/modules/home/widget/Container_busca.dart';
 import 'package:client_app/src/shared/models/quiosque_model.dart';
 import 'package:flutter/material.dart';
 
@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 20),
 
             SearchContainer(
-              onFilterChanged: (filtro, ordenacao) {
+                trocaFiltro: (filtro, ordenacao) {
                 setState(() {
                   if (filtro == "distancia"){
                     if (ordenacao == "menor"){

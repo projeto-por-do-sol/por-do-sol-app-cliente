@@ -12,7 +12,7 @@ class CustomInput extends StatefulWidget {
   final bool isCPF;
   final TextCapitalization typeText;
 
-  CustomInput({
+  const CustomInput({
     super.key,
     required this.label,
     this.isPassword = false,
@@ -55,9 +55,21 @@ class _CustomInputState extends State<CustomInput> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            widget.label,
-            style: Theme.of(context).textTheme.titleMedium,
+          Row(
+            children: [
+              Text(
+                widget.label,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              Expanded(child: Container()),
+              Text(
+                widget.isRequired ? '*' : '',
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 2),
           TextFormField(

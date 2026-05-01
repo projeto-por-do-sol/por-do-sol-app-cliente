@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class SearchContainer extends StatefulWidget {
-  final Function(String filtro, String ordenacao) onFilterChanged;
+  final Function(String filtro, String ordenacao) trocaFiltro;
 
   const SearchContainer({
     super.key,
-    required this.onFilterChanged,
+    required this.trocaFiltro,
   });
 
   @override
@@ -18,7 +18,7 @@ class _SearchContainerState extends State<SearchContainer> {
   String ordencaoSelecionado = 'menor';
 
   void _notificarMudanca(){
-    widget.onFilterChanged(filtroSelecionado, ordencaoSelecionado);
+    widget.trocaFiltro(filtroSelecionado, ordencaoSelecionado);
   }
 
   @override

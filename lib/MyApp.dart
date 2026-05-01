@@ -1,6 +1,8 @@
 import 'package:client_app/src/modules/cadastro/pages/cadastro.dart';
-import 'package:client_app/src/modules/home/pages/home.dart';
+import 'package:client_app/src/modules/carrinho/pages/carrinho.dart';
+import 'package:client_app/src/modules/home/pages/inicio.dart';
 import 'package:client_app/src/modules/login/pages/login.dart';
+import 'package:client_app/src/modules/pedidos/pages/pedidos.dart';
 import 'package:client_app/src/shared/widget/CustomNavBar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -13,7 +15,7 @@ import 'src/shared/models/quiosque_model.dart';
 final GoRouter _router = GoRouter(
   initialLocation: '/inicio',
   routes: <RouteBase>[
-    //Colocar as páginas que não terão navBar
+    //Colocar as páginas que não terão na navBar
     GoRoute(
       path: '/login',
       builder: (context, state) => const Login(),
@@ -43,6 +45,24 @@ final GoRouter _router = GoRouter(
               GoRoute(
                 path: '/inicio',
                 builder: (context, state) => HomePage(),
+              ),
+            ],
+          ),
+
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/carrinho',
+                builder: (context, state) => CarrinhoPage(),
+              ),
+            ],
+          ),
+
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/pedidos',
+                builder: (context, state) => PedidosPage(),
               ),
             ],
           ),
@@ -89,8 +109,8 @@ class MyApp extends StatelessWidget {
           primary: const Color(0xFFBD6100),
           secondary: const Color(0xFFEFEFEF),
         ),
-        scaffoldBackgroundColor: const Color(0xFFFFF5DD),
-
+        // scaffoldBackgroundColor: const Color(0xFFFFF5DD),
+        scaffoldBackgroundColor: const Color(0xffFDE8DA),
         textTheme: GoogleFonts.poppinsTextTheme().copyWith(
           headlineLarge: GoogleFonts.poppins(
             fontSize: 36,

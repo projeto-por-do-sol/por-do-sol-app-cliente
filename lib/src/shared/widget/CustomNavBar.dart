@@ -12,7 +12,8 @@ class CustomNavBar extends StatelessWidget {
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: BottomNavigationBar(
-        // selectedItemColor: Theme.of(context).colorScheme.primary,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Theme.of(context).colorScheme.primary,
         backgroundColor: Theme.of(context).colorScheme.surface,
         unselectedItemColor: Theme.of(context).colorScheme.outline,
 
@@ -33,8 +34,26 @@ class CustomNavBar extends StatelessWidget {
 
           BottomNavigationBarItem(icon:
           Icon(
-            Symbols.person,
+            Symbols.shopping_cart_rounded,
             fill: currentIndex == 1 ? 1 : 0,
+            weight: 700,
+          ),
+              label: "Carrinho"
+          ),
+
+          BottomNavigationBarItem(icon:
+          Icon(
+            Symbols.receipt_rounded,
+            fill: currentIndex == 2 ? 1 : 0,
+            weight: 700,
+          ),
+              label: "Pedidos"
+          ),
+
+          BottomNavigationBarItem(icon:
+          Icon(
+            Symbols.person,
+            fill: currentIndex == 3 ? 1 : 0,
             weight: 700,
           ),
               label: "Perfil"
