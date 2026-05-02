@@ -4,13 +4,16 @@ class QuiosqueModel {
   final String? imgBannerQuiosque;
   final String? avalicaoQuiosque;
   final String? distanciaQuiosque;
+  final bool disponivelEntrega;
 
   QuiosqueModel({
     required this.nomeQuiosque,
     this.imgPerfilQuiosque,
     this.imgBannerQuiosque,
     this.avalicaoQuiosque,
-    this.distanciaQuiosque});
+    this.distanciaQuiosque,
+    this.disponivelEntrega = true,
+  });
 
   // factory QuiosqueModel.fromJson(Map<String, dynamic> json) {
   //   return QuiosqueModel(

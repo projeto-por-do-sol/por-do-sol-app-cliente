@@ -17,6 +17,7 @@ class _HomePageState extends State<HomePage> {
     imgBannerQuiosque: "bannerTeste.png",
     avalicaoQuiosque: "4,5",
     distanciaQuiosque: "60",
+    disponivelEntrega: false,
   );
 
   QuiosqueModel quiosque2 = QuiosqueModel(
@@ -25,48 +26,146 @@ class _HomePageState extends State<HomePage> {
     imgBannerQuiosque: "logo.png",
     avalicaoQuiosque: "2,1",
     distanciaQuiosque: "84",
+    disponivelEntrega: false,
   );
 
-  late List<QuiosqueModel> listaQuiosques = [quiosque1, quiosque2];
+  QuiosqueModel quiosque3 = QuiosqueModel(
+    nomeQuiosque: "Quiosque do Porto",
+    imgPerfilQuiosque: "logo.png",
+    imgBannerQuiosque: "bannerTeste.png",
+    avalicaoQuiosque: "4,8",
+    distanciaQuiosque: "12",
+    disponivelEntrega: true,
+  );
+
+  QuiosqueModel quiosque4 = QuiosqueModel(
+    nomeQuiosque: "Quiosque Beira Mar",
+    imgPerfilQuiosque: "logo.png",
+    imgBannerQuiosque: "bannerTeste.png",
+    avalicaoQuiosque: "3,9",
+    distanciaQuiosque: "45",
+    disponivelEntrega: false,
+  );
+
+  QuiosqueModel quiosque5 = QuiosqueModel(
+    nomeQuiosque: "Cantinho da Praia",
+    imgPerfilQuiosque: "logo.png",
+    imgBannerQuiosque: "bannerTeste.png",
+    avalicaoQuiosque: "5,0",
+    distanciaQuiosque: "5",
+    disponivelEntrega: true,
+  );
+
+  QuiosqueModel quiosque6 = QuiosqueModel(
+    nomeQuiosque: "Quiosque Central",
+    imgPerfilQuiosque: "logo.png",
+    imgBannerQuiosque: "bannerTeste.png",
+    avalicaoQuiosque: "4,2",
+    distanciaQuiosque: "110",
+    disponivelEntrega: false,
+  );
+
+  late List<QuiosqueModel> listaQuiosques = [quiosque1, quiosque2, quiosque3, quiosque4, quiosque5, quiosque6];
+
+  @override
+  void initState() {
+    super.initState();
+    // Ordena a lista pela menor distância assim que o app inicia
+    listaQuiosques.sort((a, b) =>
+        double.parse(a.distanciaQuiosque!).compareTo(double.parse(b.distanciaQuiosque!))
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        body: Column(
-          children: [
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
 
-            const SizedBox(height: 20),
+              // const SizedBox(height: 20),
 
-            SearchContainer(
-                trocaFiltro: (filtro, ordenacao) {
-                setState(() {
-                  if (filtro == "distancia"){
-                    if (ordenacao == "menor"){
-                      listaQuiosques.sort((a, b) => double.parse(a.distanciaQuiosque!).compareTo(double.parse(b.distanciaQuiosque!)));
+              ContainerBusca(
+                  trocaFiltro: (filtro, ordenacao) {
+                  setState(() {
+                    if (filtro == "distancia"){
+                      if (ordenacao == "menor"){
+                        listaQuiosques.sort((a, b) => double.parse(a.distanciaQuiosque!).compareTo(double.parse(b.distanciaQuiosque!)));
+                      } else {
+                        listaQuiosques.sort((a, b) => double.parse(b.distanciaQuiosque!).compareTo(double.parse(a.distanciaQuiosque!)));
+                      }
                     } else {
-                      listaQuiosques.sort((a, b) => double.parse(b.distanciaQuiosque!).compareTo(double.parse(a.distanciaQuiosque!)));
+                      if (ordenacao == "menor"){
+                        listaQuiosques.sort((a, b) => double.parse(a.avalicaoQuiosque!.replaceAll(',', '.')).compareTo(double.parse(b.avalicaoQuiosque!.replaceAll(',', '.'))));
+                      } else {
+                        listaQuiosques.sort((a, b) => double.parse(b.avalicaoQuiosque!.replaceAll(',', '.')).compareTo(double.parse(a.avalicaoQuiosque!.replaceAll(',', '.'))));
+                      }
                     }
-                  } else {
-                    if (ordenacao == "menor"){
-                      listaQuiosques.sort((a, b) => double.parse(a.avalicaoQuiosque!.replaceAll(',', '.')).compareTo(double.parse(b.avalicaoQuiosque!.replaceAll(',', '.'))));
-                    } else {
-                      listaQuiosques.sort((a, b) => double.parse(b.avalicaoQuiosque!.replaceAll(',', '.')).compareTo(double.parse(a.avalicaoQuiosque!.replaceAll(',', '.'))));
-                    }
-                  }
-                });
-              }),
+                  });
+                }
+              ),
 
-            ...listaQuiosques.map((quiosque) {
-              return CardQuiosque(
-                quiosque: quiosque,
-              );
-            }),
+              const SizedBox(height: 30,),
 
-            const SizedBox(height: 10),
+            if (listaQuiosques.any((q) => q.disponivelEntrega)) ... [
+              Container(
+                margin: EdgeInsets.only(left: 20),
+                alignment: Alignment.centerLeft,
+                child: Text("Disponível entrega",
+                    style:
+                    TextStyle(
+                      color: Theme.of(context).colorScheme.outline,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 20,
+                    )
+                ),
+              ),
 
-          ],
+              const SizedBox(height: 10,),
+
+              ...listaQuiosques
+                  .where((quiosque) => quiosque.disponivelEntrega)
+                  .map((quiosque) => CardQuiosque(quiosque: quiosque)),
+            ],
+
+            if (listaQuiosques.any((q) => !q.disponivelEntrega)) ... [
+
+              if (listaQuiosques.any((q) => q.disponivelEntrega)) ... {
+                Divider(
+                  color: Theme.of(context).colorScheme.tertiary,
+                  thickness: 2,
+                  indent: 20,
+                  endIndent: 20,
+                  height: 20,
+                ),
+
+                const SizedBox(height: 20,),
+              },
+
+              Container(
+                margin: EdgeInsets.only(left: 20),
+                alignment: Alignment.centerLeft,
+                child: Text("Não entrega aí",
+                    style:
+                    TextStyle(
+                      color: Theme.of(context).colorScheme.outline,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 20,
+                    )
+                ),
+              ),
+
+              const SizedBox(height: 10,),
+
+              ...listaQuiosques
+                  .where((quiosque) => !quiosque.disponivelEntrega)
+                  .map((quiosque) => CardQuiosque(quiosque: quiosque)),
+            ],
+
+            ],
+          ),
         ),
       ),
     );

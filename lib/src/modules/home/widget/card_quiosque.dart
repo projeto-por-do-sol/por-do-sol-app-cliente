@@ -23,7 +23,7 @@ class _CardQuiosqueState extends State<CardQuiosque> {
       children: [
         GestureDetector(
             onTap: () {
-              FocusScope.of(context).unfocus();
+              // FocusScope.of(context).unfocus();
               context.push('/quiosquePage', extra: widget.quiosque);
               },
 
@@ -83,6 +83,8 @@ class _CardQuiosqueState extends State<CardQuiosque> {
                       children: [
                         Text(
                           widget.quiosque.nomeQuiosque,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
                           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                         ),
                         Row(

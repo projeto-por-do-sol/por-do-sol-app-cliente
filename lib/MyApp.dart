@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:client_app/src/modules/cadastro/pages/cadastro.dart';
 import 'package:client_app/src/modules/carrinho/pages/carrinho.dart';
 import 'package:client_app/src/modules/home/pages/inicio.dart';
@@ -92,23 +94,36 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       routerConfig: _router,
       title: "Pôr-do-Sol",
-      // initialRoute: '/',
-      // routes: {
-      //   '/quiosquePage': (context) => QuiosquePage(),
-      //   '/perfil' : (context) => PerfilPage(),
-      // },
-      // debugShowCheckedModeBanner: false,
       theme: ThemeData(
         // fontFamily: GoogleFonts.poppins().fontFamily,
 
+        // seedColor: const Color(0xFFFFF5DD),
+        // outline: const Color(0xFF3A2E2E),
+        // surface: const Color(0xFFFFFCF5),
+        // primary: const Color(0xFFBD6100),
+        // secondary: const Color(0xFFEFEFEF),
+
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFFFF5DD),
+          seedColor: const Color(0xffFDE8DA),
           outline: const Color(0xFF3A2E2E),
           surface: const Color(0xFFFFFCF5),
-          primary: const Color(0xFFBD6100),
-          secondary: const Color(0xFFEFEFEF),
+
+          primary: const Color(0xFFC0420A),
+          secondary: const Color(0xFFF5A06A),
+          tertiary: const Color(0xFFCB6436),
+
+          onPrimary: const Color(0xffFDE8DA),
+          onSecondary: const Color(0xFFF5C4A4),
+          onTertiary: Colors.white,
+          onSurface: const Color(0xFF3A2E2E),
+
+          error: const Color(0xFFBA1A1A),
+          onError: Colors.white,
+          errorContainer: const Color(0xFFFFDAD6),
+          onErrorContainer: const Color(0xFF410002),
         ),
+
         // scaffoldBackgroundColor: const Color(0xFFFFF5DD),
         scaffoldBackgroundColor: const Color(0xffFDE8DA),
         textTheme: GoogleFonts.poppinsTextTheme().copyWith(
@@ -133,17 +148,17 @@ class MyApp extends StatelessWidget {
           titleSmall: GoogleFonts.poppins(
             fontSize: 16,
             fontWeight: FontWeight.w500,
-            color: textColor,
+            color: const Color(0xFFF5C4A4),
           ),
 
-        ).apply(
-          bodyColor: textColor,
-          displayColor: textColor,
+        // ).apply(
+        //   bodyColor: textColor,
+        //   displayColor: textColor,
         ),
 
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFFFFFCF5),
-          foregroundColor: textColor,
+          backgroundColor: Color(0xFFC0420A),
+          foregroundColor: const Color(0xffFDE8DA),
         ),
       ),
       // home: const HomePage(),

@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 
-class SearchContainer extends StatefulWidget {
+class ContainerBusca extends StatefulWidget {
   final Function(String filtro, String ordenacao) trocaFiltro;
 
-  const SearchContainer({
+  const ContainerBusca({
     super.key,
     required this.trocaFiltro,
   });
 
   @override
-  State<SearchContainer> createState() => _SearchContainerState();
+  State<ContainerBusca> createState() => _ContainerBuscaState();
 }
 
-class _SearchContainerState extends State<SearchContainer> {
+class _ContainerBuscaState extends State<ContainerBusca> {
+  String nomeClienteTeste = "Osvaldo";
+  bool notificacoesNaoVistas = false;
   TextEditingController pesquisaController = TextEditingController();
   String filtroSelecionado = 'distancia';
   String ordencaoSelecionado = 'menor';
@@ -24,9 +26,9 @@ class _SearchContainerState extends State<SearchContainer> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      // margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       // height: 50,
-      padding: EdgeInsets.fromLTRB(6, 10, 6, 5),
+      padding: EdgeInsets.fromLTRB(20, 50, 20, 20),
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
@@ -36,28 +38,84 @@ class _SearchContainerState extends State<SearchContainer> {
             offset: const Offset(0, 3),
           ),
         ],
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(10),
+        color: Theme.of(context).colorScheme.primary,
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(10)),
       ),
 
       child: Column(
         children: [
+            Row(
+              children: [
+
+                SizedBox(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Olá, ${nomeClienteTeste}",
+                          style:
+                          TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                          )
+
+                        ),
+
+                      Text("Qual vai ser hoje?",
+                          style:
+                          TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 20,
+                          )
+                      ),
+                    ],
+                  ),
+                ),
+
+                Expanded(child: Container()),
+
+                CircleAvatar(
+                  radius: 25,
+                  backgroundColor: Theme.of(context).colorScheme.tertiary,
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () {
+                    },
+                    icon: Icon(
+                      notificacoesNaoVistas
+                          ? Icons.notifications_rounded
+                          : Icons.notifications_none_rounded,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      size: 25,
+                      weight: 800,
+                    ),
+                  ),
+                ),
+
+              ],
+            ),
+
+          SizedBox(height: 15),
+
           SizedBox(
-            height: 50,
+            // height: 50,
             child: TextField(
                 autocorrect: true,
                 textAlignVertical: TextAlignVertical.center,
                 controller: pesquisaController,
                 // textCapitalization: TextCapitalization.words,
+                style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSecondary),
+                cursorColor: Theme.of(context).colorScheme.secondary,
 
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(horizontal: 10),
                   filled: true,
-                  fillColor: Theme.of(context).colorScheme.secondary,
+                  fillColor: Theme.of(context).colorScheme.tertiary,
                   hintText: "Pesquisar",
-                  hintStyle: TextStyle(fontSize: 16,fontWeight: FontWeight.w600, color: Colors.grey[500]),
+                  hintStyle: TextStyle(fontSize: 16,fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSecondary),
 
-                  suffixIcon: Icon(Icons.search, size: 20, color: Colors.grey[500]),
+                  prefixIcon: Icon(Icons.search, size: 24, color: Theme.of(context).colorScheme.secondary),
 
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -66,14 +124,19 @@ class _SearchContainerState extends State<SearchContainer> {
 
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.secondary,
+                      width: 2,
+                    ),
                   ),
                 )
             ),
           ),
 
+          SizedBox(height: 15,),
+
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 15),
+            // margin: EdgeInsets.symmetric(horizontal: 15),
             width: double.infinity,
 
             child: Row(
@@ -102,7 +165,7 @@ class _SearchContainerState extends State<SearchContainer> {
                   child: Text(filtroSelecionado.toString() == 'distancia' ?
                   'Distância' :
                   'Avaliação',
-                    style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.secondary),
                   ),
                 ),
 
@@ -119,7 +182,7 @@ class _SearchContainerState extends State<SearchContainer> {
                   iconSize: 30,
                   constraints: const BoxConstraints(),
                   padding: const EdgeInsets.all(5),
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
 
 
