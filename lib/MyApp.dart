@@ -95,7 +95,7 @@ class MyApp extends StatelessWidget {
       routerConfig: _router,
       title: "Pôr-do-Sol",
       theme: ThemeData(
-        // fontFamily: GoogleFonts.poppins().fontFamily,
+        fontFamily: GoogleFonts.poppins().fontFamily,
 
         // seedColor: const Color(0xFFFFF5DD),
         // outline: const Color(0xFF3A2E2E),
@@ -116,7 +116,7 @@ class MyApp extends StatelessWidget {
           onPrimary: const Color(0xffFDE8DA),
           onSecondary: const Color(0xFFF5C4A4),
           onTertiary: Colors.white,
-          onSurface: const Color(0xFF3A2E2E),
+          onSurface: const Color(0xFFFDD06A),
 
           error: const Color(0xFFBA1A1A),
           onError: Colors.white,

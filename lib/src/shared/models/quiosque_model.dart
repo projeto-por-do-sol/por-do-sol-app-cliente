@@ -5,6 +5,9 @@ class QuiosqueModel {
   final String? avalicaoQuiosque;
   final String? distanciaQuiosque;
   final bool disponivelEntrega;
+  final int? tempoEspera;
+  List<String>? categorias = [];
+  final String? horarioAtendimento;
 
   QuiosqueModel({
     required this.nomeQuiosque,
@@ -13,6 +16,9 @@ class QuiosqueModel {
     this.avalicaoQuiosque,
     this.distanciaQuiosque,
     this.disponivelEntrega = true,
+    this.tempoEspera,
+    this.categorias,
+    this.horarioAtendimento,
   });
 
   // factory QuiosqueModel.fromJson(Map<String, dynamic> json) {

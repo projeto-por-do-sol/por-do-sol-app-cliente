@@ -18,6 +18,9 @@ class _HomePageState extends State<HomePage> {
     avalicaoQuiosque: "4,5",
     distanciaQuiosque: "60",
     disponivelEntrega: false,
+    tempoEspera: 30,
+    categorias: ["Lanches", "Bebidas"],
+    horarioAtendimento: "09:00 - 18:00",
   );
 
   QuiosqueModel quiosque2 = QuiosqueModel(
@@ -27,33 +30,33 @@ class _HomePageState extends State<HomePage> {
     avalicaoQuiosque: "2,1",
     distanciaQuiosque: "84",
     disponivelEntrega: false,
+    tempoEspera: 45,
+    categorias: ["Porções", "Cervejas"],
+    horarioAtendimento: "11:00 - 23:00",
   );
 
   QuiosqueModel quiosque3 = QuiosqueModel(
-    nomeQuiosque: "Quiosque do Porto",
-    imgPerfilQuiosque: "logo.png",
+    nomeQuiosque: "Quiosque do Porto Teste aleatório",
+    imgPerfilQuiosque: "logo1.png",
     imgBannerQuiosque: "bannerTeste.png",
     avalicaoQuiosque: "4,8",
     distanciaQuiosque: "12",
     disponivelEntrega: true,
+    tempoEspera: 15,
+    categorias: ["Frutos do Mar", "Bebidas"],
+    horarioAtendimento: "08:00 - 20:00",
   );
 
   QuiosqueModel quiosque4 = QuiosqueModel(
     nomeQuiosque: "Quiosque Beira Mar",
-    imgPerfilQuiosque: "logo.png",
+    // imgPerfilQuiosque: "logo.png",
     imgBannerQuiosque: "bannerTeste.png",
     avalicaoQuiosque: "3,9",
     distanciaQuiosque: "45",
     disponivelEntrega: false,
-  );
-
-  QuiosqueModel quiosque5 = QuiosqueModel(
-    nomeQuiosque: "Cantinho da Praia",
-    imgPerfilQuiosque: "logo.png",
-    imgBannerQuiosque: "bannerTeste.png",
-    avalicaoQuiosque: "5,0",
-    distanciaQuiosque: "5",
-    disponivelEntrega: true,
+    tempoEspera: 25,
+    categorias: ["Lanches", "Sucos Naturais"],
+    horarioAtendimento: "09:00 - 21:00",
   );
 
   QuiosqueModel quiosque6 = QuiosqueModel(
@@ -63,6 +66,21 @@ class _HomePageState extends State<HomePage> {
     avalicaoQuiosque: "4,2",
     distanciaQuiosque: "110",
     disponivelEntrega: false,
+    tempoEspera: 40,
+    categorias: ["Pratos Feitos", "Sobremesas"],
+    horarioAtendimento: "10:00 - 22:00",
+  );
+
+  QuiosqueModel quiosque5 = QuiosqueModel(
+    nomeQuiosque: "Cantinho da Praia",
+    imgPerfilQuiosque: "bannerTeste.png",
+    imgBannerQuiosque: "bannerTeste.png",
+    avalicaoQuiosque: "5,0",
+    distanciaQuiosque: "5",
+    disponivelEntrega: true,
+    tempoEspera: 20,
+    categorias: ["Lanches", "Porções", "Bebidas", "Outros"],
+    horarioAtendimento: "10:00 - 22:00",
   );
 
   late List<QuiosqueModel> listaQuiosques = [quiosque1, quiosque2, quiosque3, quiosque4, quiosque5, quiosque6];

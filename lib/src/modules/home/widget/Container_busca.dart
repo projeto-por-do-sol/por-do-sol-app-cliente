@@ -39,7 +39,7 @@ class _ContainerBuscaState extends State<ContainerBusca> {
           ),
         ],
         color: Theme.of(context).colorScheme.primary,
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(10)),
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
       ),
 
       child: Column(
@@ -118,12 +118,12 @@ class _ContainerBuscaState extends State<ContainerBusca> {
                   prefixIcon: Icon(Icons.search, size: 24, color: Theme.of(context).colorScheme.secondary),
 
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(20),
                     borderSide: BorderSide.none,
                   ),
 
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(20),
                     borderSide: BorderSide(
                       color: Theme.of(context).colorScheme.secondary,
                       width: 2,
