@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 class CustomButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
-
+  final IconData? icone;
 
   const CustomButton({
     super.key,
     required this.label,
     required this.onPressed,
+    this.icone,
   });
 
   @override
@@ -22,7 +23,7 @@ class CustomButton extends StatelessWidget {
           onPressed: onPressed,
           style: ElevatedButton.styleFrom(
             backgroundColor: Theme.of(context).colorScheme.surface,
-            foregroundColor: Theme.of(context).colorScheme.outline, // Cor do texto
+            foregroundColor: Theme.of(context).colorScheme.outline,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -30,7 +31,23 @@ class CustomButton extends StatelessWidget {
             shadowColor: Theme.of(context).colorScheme.outline.withValues(alpha: 0.1),
             textStyle: Theme.of(context).textTheme.titleMedium,
           ),
-          child: Text(label.toUpperCase()),
+          child: Stack(
+            children: [
+              if (icone != null)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Icon(icone, size: 20),
+              ),
+
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                  label.toUpperCase(),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          ),
         ),
 
       ),

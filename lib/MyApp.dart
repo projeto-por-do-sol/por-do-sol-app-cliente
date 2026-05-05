@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:client_app/src/modules/cadastro/pages/cadastro.dart';
 import 'package:client_app/src/modules/carrinho/pages/carrinho.dart';
-import 'package:client_app/src/modules/home/pages/inicio.dart';
+import 'package:client_app/src/modules/inicio/pages/inicio.dart';
 import 'package:client_app/src/modules/login/pages/login.dart';
 import 'package:client_app/src/modules/pedidos/pages/pedidos.dart';
 import 'package:client_app/src/shared/widget/CustomNavBar.dart';
@@ -158,7 +158,7 @@ class MyApp extends StatelessWidget {
 
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFFC0420A),
-          foregroundColor: const Color(0xffFDE8DA),
+          foregroundColor: Color(0xffFDE8DA),
         ),
       ),
       // home: const HomePage(),

@@ -2,23 +2,27 @@ class QuiosqueModel {
   final String nomeQuiosque;
   final String? imgPerfilQuiosque;
   final String? imgBannerQuiosque;
-  final String? avalicaoQuiosque;
+  final double? avaliacaoQuiosque;
   final String? distanciaQuiosque;
   final bool disponivelEntrega;
   final int? tempoEspera;
   List<String>? categorias = [];
-  final String? horarioAtendimento;
+  final String? horarioAbre;
+  final String? horarioFecha;
+  final int? qtdeAvaliacoes;
 
   QuiosqueModel({
     required this.nomeQuiosque,
     this.imgPerfilQuiosque,
     this.imgBannerQuiosque,
-    this.avalicaoQuiosque,
+    this.avaliacaoQuiosque,
     this.distanciaQuiosque,
     this.disponivelEntrega = true,
     this.tempoEspera,
     this.categorias,
-    this.horarioAtendimento,
+    this.horarioAbre,
+    this.horarioFecha,
+    this.qtdeAvaliacoes = 0,
   });
 
   // factory QuiosqueModel.fromJson(Map<String, dynamic> json) {

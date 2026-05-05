@@ -1,5 +1,6 @@
 import 'package:client_app/src/shared/utils/validator.dart';
 import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class CustomInput extends StatefulWidget {
   final String label;
@@ -30,6 +31,19 @@ class CustomInput extends StatefulWidget {
 }
 
 class _CustomInputState extends State<CustomInput> {
+  //Pegar valor sem mascara maskCpf.getUnmaskedText()
+
+  var maskCpf = MaskTextInputFormatter(
+    mask: '###.###.###-##',
+    filter: { "#": RegExp(r'[0-9]') },
+    type: MaskAutoCompletionType.lazy,
+  );
+
+  var maskPhone = MaskTextInputFormatter(
+      mask: '(##) #####-####',
+      filter: { "#": RegExp(r'[0-9]') }
+  );
+
   late bool _obscureText;
   final FocusNode _focusNode = FocusNode();
 
@@ -79,6 +93,8 @@ class _CustomInputState extends State<CustomInput> {
             obscureText: _obscureText && widget.isPassword,
             autocorrect: false,
             textCapitalization: widget.typeText,
+            inputFormatters: widget.isCPF ? [maskCpf] : widget.isPhone ? [maskPhone] : [],
+
             validator: (value) {
               if (widget.isRequired && (value == null || value.isEmpty)) {
                 return 'Este campo é obrigatório';
