@@ -2,23 +2,23 @@ class QuiosqueModel {
   final String nomeQuiosque;
   final String? imgPerfilQuiosque;
   final String? imgBannerQuiosque;
-  final double? avaliacaoQuiosque;
-  final String? distanciaQuiosque;
+  final double avaliacaoQuiosque;
+  final String distanciaQuiosque;
   final bool disponivelEntrega;
-  final int? tempoEspera;
+  final int tempoEspera;
   List<String>? categorias = [];
   final String? horarioAbre;
   final String? horarioFecha;
-  final int? qtdeAvaliacoes;
+  final int qtdeAvaliacoes;
 
   QuiosqueModel({
     required this.nomeQuiosque,
     this.imgPerfilQuiosque,
     this.imgBannerQuiosque,
-    this.avaliacaoQuiosque,
-    this.distanciaQuiosque,
+    this.avaliacaoQuiosque = 0,
+    required this.distanciaQuiosque,
     this.disponivelEntrega = true,
-    this.tempoEspera,
+    this.tempoEspera = 0,
     this.categorias,
     this.horarioAbre,
     this.horarioFecha,

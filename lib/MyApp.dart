@@ -3,8 +3,10 @@ import 'dart:ui';
 import 'package:client_app/src/modules/cadastro/pages/cadastro.dart';
 import 'package:client_app/src/modules/carrinho/pages/carrinho.dart';
 import 'package:client_app/src/modules/inicio/pages/inicio.dart';
+import 'package:client_app/src/modules/itemPage/pages/itemPage.dart';
 import 'package:client_app/src/modules/login/pages/login.dart';
 import 'package:client_app/src/modules/pedidos/pages/pedidos.dart';
+import 'package:client_app/src/shared/models/item_quiosque.dart';
 import 'package:client_app/src/shared/widget/CustomNavBar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -33,6 +35,14 @@ final GoRouter _router = GoRouter(
       builder: (context, state) {
         final quiosque = state.extra as QuiosqueModel;
         return QuiosquePage(quiosque: quiosque);
+      },
+    ),
+
+    GoRoute(
+      path: '/itemPage',
+      builder: (context, state) {
+        final item = state.extra as ItemQuiosque;
+        return ItemPage(item: item);
       },
     ),
 

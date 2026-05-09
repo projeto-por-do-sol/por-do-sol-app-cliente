@@ -1,4 +1,6 @@
+import 'package:client_app/src/shared/models/item_quiosque.dart';
 import 'package:client_app/src/shared/models/quiosque_model.dart';
+import 'package:client_app/src/shared/widget/CardItens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -15,6 +17,16 @@ class QuiosquePage extends StatefulWidget {
 }
 
 class _QuiosquePageState extends State<QuiosquePage> {
+  ItemQuiosque item1 = ItemQuiosque(
+      secaoItem: "Porções",
+      nomeItem: "Batata frita",
+      descricaoItem: "Batata inglesa frita com sal Batata inglesa frita com sal Batata inglesa frita com sal Batata inglesa frita com sal Batata inglesa frita com sal",
+      precoItem: 4590,
+      imgItem: "porcao_batata_frita.jpg",
+      disponivel: true
+  );
+  late List<ItemQuiosque> listaItens = [item1];
+
   var corVerde = 0xff4A8C7A;
 
   dynamic appBar(){
@@ -43,36 +55,36 @@ class _QuiosquePageState extends State<QuiosquePage> {
     );
   }
 
-  dynamic imagemBanner(){
-    double tamanhoImagem = 300;
-    return ClipRRect(
-      //Tamanho Imagem: 150x90
-      // borderRadius: BorderRadius.circular(20),
-      // borderRadius: BorderRadius.only(topLeft: Radius.circular(20), bottomLeft: Radius.circular(20)),
-      child: widget.quiosque.imgBannerQuiosque != null
-          ? Image.asset(
-        "assets/images/${widget.quiosque.imgBannerQuiosque}",
-        height: tamanhoImagem,
-        width: double.infinity,
-        fit: BoxFit.cover,
-        // fit: BoxFit.fitWidth,
-        errorBuilder: (context, error, stackTrace) {
-          return Container(
-            height: tamanhoImagem,
-            width: double.infinity,
-            color: Colors.grey[300],
-            child: const Icon(Icons.image_not_supported, color: Colors.grey, size: 40,),
-          );
-        },
-      )
-          : Container(
-        height: tamanhoImagem,
-        width: double.infinity,
-        color: Colors.grey[300],
-        child: const Icon(Icons.image, color: Colors.grey, size: 40,),
-      ),
-    );
-  }
+  // dynamic imagemBanner(){
+  //   double tamanhoImagem = 300;
+  //   return ClipRRect(
+  //     //Tamanho Imagem: 150x90
+  //     // borderRadius: BorderRadius.circular(20),
+  //     // borderRadius: BorderRadius.only(topLeft: Radius.circular(20), bottomLeft: Radius.circular(20)),
+  //     child: widget.quiosque.imgBannerQuiosque != null
+  //         ? Image.network(
+  //       widget.quiosque.imgBannerQuiosque.toString(),
+  //       height: tamanhoImagem,
+  //       width: double.infinity,
+  //       fit: BoxFit.cover,
+  //       // fit: BoxFit.fitWidth,
+  //       errorBuilder: (context, error, stackTrace) {
+  //         return Container(
+  //           height: tamanhoImagem,
+  //           width: double.infinity,
+  //           color: Colors.grey[300],
+  //           child: const Icon(Icons.image_not_supported, color: Colors.grey, size: 40,),
+  //         );
+  //       },
+  //     )
+  //         : Container(
+  //       height: tamanhoImagem,
+  //       width: double.infinity,
+  //       color: Colors.grey[300],
+  //       child: const Icon(Icons.image, color: Colors.grey, size: 40,),
+  //     ),
+  //   );
+  // }
 
   dynamic funcionamentoQuiosque(){
     bool quiosqueAberto = true;
@@ -114,7 +126,7 @@ class _QuiosquePageState extends State<QuiosquePage> {
             const SizedBox(width: 3),
 
             Text(
-              "${widget.quiosque.avaliacaoQuiosque!.toStringAsFixed(1)} (${widget.quiosque.qtdeAvaliacoes.toString()})",
+              "${widget.quiosque.avaliacaoQuiosque.toStringAsFixed(1)} (${widget.quiosque.qtdeAvaliacoes.toString()})",
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
             ),
 
@@ -148,6 +160,7 @@ class _QuiosquePageState extends State<QuiosquePage> {
 
   @override
   Widget build(BuildContext context) {
+    double tamanhoImagem = 300;
     final quiosque = widget.quiosque;
 
     return Scaffold(
@@ -159,8 +172,8 @@ class _QuiosquePageState extends State<QuiosquePage> {
           child: Column(
               children: [
 
-                Container(
-                  height: 300,
+                SizedBox(
+                  height: tamanhoImagem,
                   width: double.infinity,
                   child: Stack(
                     children: [
@@ -172,14 +185,14 @@ class _QuiosquePageState extends State<QuiosquePage> {
                       ),
 
                       if (quiosque.imgBannerQuiosque != null)
-                        Image.asset(
-                          "assets/images/${widget.quiosque.imgBannerQuiosque}",
-                          height: 300,
+                        Image.network(
+                          widget.quiosque.imgBannerQuiosque.toString(),
+                          height: tamanhoImagem,
                           width: double.infinity,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
                             return Container(
-                              height: 300,
+                              height: tamanhoImagem,
                               width: double.infinity,
                               color: Colors.grey[300],
                               child: const Icon(Icons.image_not_supported, color: Colors.grey, size: 40,),
@@ -188,7 +201,7 @@ class _QuiosquePageState extends State<QuiosquePage> {
                         ),
 
                       Container(
-                        margin: EdgeInsets.only(left: 20),
+                        margin: EdgeInsets.symmetric(horizontal: 20),
                         alignment: Alignment.bottomLeft,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -208,6 +221,8 @@ class _QuiosquePageState extends State<QuiosquePage> {
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(widget.quiosque.nomeQuiosque.toString(),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w600,
@@ -233,9 +248,16 @@ class _QuiosquePageState extends State<QuiosquePage> {
                           children: [
                             containerInfoQuiosque(Icons.hourglass_bottom_rounded, "~${widget.quiosque.tempoEspera} min", "Espera"),
                             containerInfoQuiosque(Icons.location_on_rounded, "${widget.quiosque.distanciaQuiosque}m", "Distância"),
-                            containerInfoQuiosque(Icons.access_time_filled_rounded, "${widget.quiosque.horarioFecha}m", "Fecha"), //TODO: Fazer para o horário de abrir
+                            containerInfoQuiosque(Icons.access_time_filled_rounded, "${widget.quiosque.horarioFecha}", "Fecha"), //TODO: Fazer para o horário de abrir
                           ]
                         ),
+
+                        SizedBox(height: 20,),
+
+                        ...listaItens
+                            .where((item) => item.disponivel)
+                            .map((item) => CardItens(item: item)),
+
                       ],
                     ),
                 ),

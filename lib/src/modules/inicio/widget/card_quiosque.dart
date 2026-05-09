@@ -25,8 +25,8 @@ class _CardQuiosqueState extends State<CardQuiosque> {
       // borderRadius: BorderRadius.circular(20),
       borderRadius: BorderRadius.only(topLeft: Radius.circular(20), bottomLeft: Radius.circular(20)),
       child: widget.quiosque.imgPerfilQuiosque != null
-          ? Image.asset(
-        "assets/images/${widget.quiosque.imgPerfilQuiosque}",
+          ? Image.network( //TODO: dps tem que trocar por Image.network
+        widget.quiosque.imgPerfilQuiosque.toString(),
         height: double.infinity,
         width: tamanhoImagem,
         fit: BoxFit.cover,
@@ -69,7 +69,7 @@ class _CardQuiosqueState extends State<CardQuiosque> {
             const SizedBox(width: 3),
 
             Text(
-              widget.quiosque.avaliacaoQuiosque.toString(),
+              widget.quiosque.avaliacaoQuiosque.toStringAsFixed(1),
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
             ),
 
@@ -130,90 +130,86 @@ class _CardQuiosqueState extends State<CardQuiosque> {
   @override
   Widget build(BuildContext context) {
 
-    return Column(
-      children: [
-        GestureDetector(
-            onTap: () {
-              // FocusScope.of(context).unfocus();
-              context.push('/quiosquePage', extra: widget.quiosque);
-              },
+    return GestureDetector(
+      onTap: () {
+        // FocusScope.of(context).unfocus();
+        context.push('/quiosquePage', extra: widget.quiosque);
+        },
 
-            child: Container(
-              margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-              // padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.1),
-                    spreadRadius: 2,
-                    blurRadius: 5,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.secondary,
-                  width: 1,
-                ),
-                color: Theme.of(context).colorScheme.surface,
-              ),
-              height: 150,
-              width: double.infinity,
-              child: Row(
-                children: [
-
-                  imagemBanner(),
-
-                  Expanded(
-                    child: Container(
-                      // color: Colors.purple,
-                      // width: double.infinity,
-                      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        spacing: 2,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.circle, size: 10, color: Color(corVerde)),
-
-                              SizedBox(width: 5,),
-
-                              Expanded(
-                                child: Text(
-                                  widget.quiosque.nomeQuiosque,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                                ),
-                              ),
-
-                              notaQuiosque(),
-                            ],
-                          ),
-
-                          // const SizedBox(height: 3),
-                          Spacer(),
-
-                          infoQuiosque(),
-
-                          // SizedBox(height: 5,),
-
-                          Spacer(),
-
-                          categoriasQuiosque(),
-
-                          Spacer(),
-
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              )
+      child: Container(
+        margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
+        // padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.1),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 3),
             ),
+          ],
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.secondary,
+            width: 1,
+          ),
+          color: Theme.of(context).colorScheme.surface,
         ),
-      ],
+        height: 150,
+        width: double.infinity,
+        child: Row(
+          children: [
+
+            imagemBanner(),
+
+            Expanded(
+              child: Container(
+                // color: Colors.purple,
+                // width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 2,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.circle, size: 10, color: Color(corVerde)),
+
+                        SizedBox(width: 5,),
+
+                        Expanded(
+                          child: Text(
+                            widget.quiosque.nomeQuiosque,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+
+                        notaQuiosque(),
+                      ],
+                    ),
+
+                    // const SizedBox(height: 3),
+                    Spacer(),
+
+                    infoQuiosque(),
+
+                    // SizedBox(height: 5,),
+
+                    Spacer(),
+
+                    categoriasQuiosque(),
+
+                    Spacer(),
+
+                  ],
+                ),
+              ),
+            ),
+          ],
+        )
+      ),
     );
   }
 }

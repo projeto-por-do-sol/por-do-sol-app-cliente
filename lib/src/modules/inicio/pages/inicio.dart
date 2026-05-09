@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
   );
 
   QuiosqueModel quiosque3 = QuiosqueModel(
-    nomeQuiosque: "Quiosque do Porto Teste aleatório",
+    nomeQuiosque: "Quiosque do Porto Teste aleatório Teste aleatório 2.0",
     imgPerfilQuiosque: "logo1.png",
     imgBannerQuiosque: "bannerTeste1.png",
     avaliacaoQuiosque: 4.8,
@@ -79,8 +79,8 @@ class _HomePageState extends State<HomePage> {
 
   QuiosqueModel quiosque5 = QuiosqueModel(
     nomeQuiosque: "Cantinho da Praia",
-    imgPerfilQuiosque: "bannerTeste.png",
-    imgBannerQuiosque: "bannerTeste.png",
+    imgPerfilQuiosque: "https://www.guiaviagensbrasil.com/imagens/quiosque-praia-monguaga-sp.jpg",
+    imgBannerQuiosque: "https://www.guiaviagensbrasil.com/imagens/quiosque-praia-monguaga-sp.jpg",
     avaliacaoQuiosque: 5.0,
     distanciaQuiosque: "5",
     disponivelEntrega: true,
