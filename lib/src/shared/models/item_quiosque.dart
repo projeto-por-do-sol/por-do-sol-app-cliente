@@ -5,6 +5,7 @@ class ItemQuiosque {
   final int precoItem;
   final String imgItem;
   final bool disponivel;
+  final List<String> ingredientes;
   int qtdeItem;
 
   ItemQuiosque({
@@ -15,6 +16,7 @@ class ItemQuiosque {
     required this.imgItem,
     required this.disponivel,
     this.qtdeItem = 0,
+    required this.ingredientes,
   });
 
 

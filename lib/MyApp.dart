@@ -128,6 +128,8 @@ class MyApp extends StatelessWidget {
           onTertiary: Colors.white,
           onSurface: const Color(0xFFFDD06A),
 
+          outlineVariant: const Color(0xFF575757),
+
           error: const Color(0xFFBA1A1A),
           onError: Colors.white,
           errorContainer: const Color(0xFFFFDAD6),

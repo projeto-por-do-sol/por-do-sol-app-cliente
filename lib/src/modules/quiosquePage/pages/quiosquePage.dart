@@ -1,6 +1,7 @@
 import 'package:client_app/src/shared/models/item_quiosque.dart';
 import 'package:client_app/src/shared/models/quiosque_model.dart';
 import 'package:client_app/src/shared/widget/CardItens.dart';
+import 'package:client_app/src/shared/widget/appBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -22,38 +23,13 @@ class _QuiosquePageState extends State<QuiosquePage> {
       nomeItem: "Batata frita",
       descricaoItem: "Batata inglesa frita com sal Batata inglesa frita com sal Batata inglesa frita com sal Batata inglesa frita com sal Batata inglesa frita com sal",
       precoItem: 4590,
-      imgItem: "porcao_batata_frita.jpg",
-      disponivel: true
+      imgItem: "https://www.tendaatacado.com.br/dicas/wp-content/webp-express/webp-images/uploads/2022/06/como-fazer-batata-frita-topo.jpg.webp",
+      disponivel: true,
+      ingredientes: ["batata", "sal"],
   );
   late List<ItemQuiosque> listaItens = [item1];
 
   var corVerde = 0xff4A8C7A;
-
-  dynamic appBar(){
-    return AppBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      systemOverlayStyle: SystemUiOverlayStyle.dark,
-      leading: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.black.withAlpha(90),
-            shape: BoxShape.circle,
-          ),
-          child: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios_new,
-              color: Colors.white,
-              size: 18,
-            ),
-            onPressed: () => Navigator.maybePop(context),
-            splashRadius: 10,
-          ),
-        ),
-      ),
-    );
-  }
 
   // dynamic imagemBanner(){
   //   double tamanhoImagem = 300;
@@ -166,7 +142,7 @@ class _QuiosquePageState extends State<QuiosquePage> {
     return Scaffold(
       extendBodyBehindAppBar: true,
 
-      appBar: appBar(),
+      appBar: CustomAppBar(),
 
       body: SingleChildScrollView(
           child: Column(

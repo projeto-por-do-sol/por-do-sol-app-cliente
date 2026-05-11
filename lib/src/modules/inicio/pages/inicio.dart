@@ -2,6 +2,7 @@
 import 'package:client_app/src/modules/inicio/widget/Container_busca.dart';
 import 'package:client_app/src/modules/inicio/widget/card_quiosque.dart';
 import 'package:client_app/src/shared/models/quiosque_model.dart';
+import 'package:client_app/src/shared/widget/CustomDivider.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -97,7 +98,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     // Ordena a lista pela menor distância assim que o app inicia
     listaQuiosques.sort((a, b) =>
-        double.parse(a.distanciaQuiosque!).compareTo(double.parse(b.distanciaQuiosque!))
+        double.parse(a.distanciaQuiosque).compareTo(double.parse(b.distanciaQuiosque))
     );
   }
 
@@ -108,91 +109,92 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         body: SingleChildScrollView(
           child: Column(
-            children: [
+              children: [
 
-              // const SizedBox(height: 20),
+                // const SizedBox(height: 20),
 
-              ContainerBusca(
-                  trocaFiltro: (filtro, ordenacao) {
-                  setState(() {
-                    if (filtro == "distancia"){
-                      if (ordenacao == "menor"){
-                        listaQuiosques.sort((a, b) => double.parse(a.distanciaQuiosque!).compareTo(double.parse(b.distanciaQuiosque!)));
+                ContainerBusca(
+                    trocaFiltro: (filtro, ordenacao) {
+                    setState(() {
+                      if (filtro == "distancia"){
+                        if (ordenacao == "menor"){
+                          listaQuiosques.sort((a, b) => double.parse(a.distanciaQuiosque).compareTo(double.parse(b.distanciaQuiosque)));
+                        } else {
+                          listaQuiosques.sort((a, b) => double.parse(b.distanciaQuiosque).compareTo(double.parse(a.distanciaQuiosque)));
+                        }
                       } else {
-                        listaQuiosques.sort((a, b) => double.parse(b.distanciaQuiosque!).compareTo(double.parse(a.distanciaQuiosque!)));
+                        if (ordenacao == "menor"){
+                          listaQuiosques.sort((a, b) => a.avaliacaoQuiosque.compareTo(b.avaliacaoQuiosque));
+                        } else {
+                          listaQuiosques.sort((a, b) => b.avaliacaoQuiosque.compareTo(a.avaliacaoQuiosque));
+                        }
                       }
-                    } else {
-                      if (ordenacao == "menor"){
-                        listaQuiosques.sort((a, b) => a.avaliacaoQuiosque!.compareTo(b.avaliacaoQuiosque!));
-                      } else {
-                        listaQuiosques.sort((a, b) => b.avaliacaoQuiosque!.compareTo(a.avaliacaoQuiosque!));
-                      }
-                    }
-                  });
-                }
-              ),
-
-              const SizedBox(height: 30,),
-
-            if (listaQuiosques.any((q) => q.disponivelEntrega)) ... [
-              Container(
-                margin: EdgeInsets.only(left: 20),
-                alignment: Alignment.centerLeft,
-                child: Text("Disponível entrega",
-                    style:
-                    TextStyle(
-                      color: Theme.of(context).colorScheme.outline,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 20,
-                    )
-                ),
-              ),
-
-              const SizedBox(height: 10,),
-
-              ...listaQuiosques
-                  .where((quiosque) => quiosque.disponivelEntrega)
-                  .map((quiosque) => CardQuiosque(quiosque: quiosque)),
-            ],
-
-            if (listaQuiosques.any((q) => !q.disponivelEntrega)) ... [
-
-              if (listaQuiosques.any((q) => q.disponivelEntrega)) ... {
-                Divider(
-                  color: Theme.of(context).colorScheme.tertiary,
-                  thickness: 2,
-                  indent: 20,
-                  endIndent: 20,
-                  height: 20,
+                    });
+                  }
                 ),
 
-                const SizedBox(height: 20,),
-              },
+                const SizedBox(height: 30,),
 
               Container(
-                margin: EdgeInsets.only(left: 20),
-                alignment: Alignment.centerLeft,
-                child: Text("Não entrega aí",
-                    style:
-                    TextStyle(
-                      color: Theme.of(context).colorScheme.outline,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 20,
-                    )
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: [
+                    if (listaQuiosques.any((q) => q.disponivelEntrega)) ... [
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Text("Disponível entrega",
+                            style:
+                            TextStyle(
+                              color: Theme.of(context).colorScheme.outline,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 20,
+                            )
+                        ),
+                      ),
+
+                      const SizedBox(height: 10,),
+
+                      ...listaQuiosques
+                          .where((quiosque) => quiosque.disponivelEntrega)
+                          .map((quiosque) => CardQuiosque(quiosque: quiosque)),
+                    ],
+
+                    if (listaQuiosques.any((q) => !q.disponivelEntrega)) ... [
+
+                      if (listaQuiosques.any((q) => q.disponivelEntrega)) ... {
+                        CustomDivider(),
+
+                        const SizedBox(height: 20,),
+                      },
+
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Text("Não entrega aí",
+                            style:
+                            TextStyle(
+                              color: Theme.of(context).colorScheme.outline,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 20,
+                            )
+                        ),
+                      ),
+
+                      const SizedBox(height: 10,),
+
+                      ...listaQuiosques
+                          .where((quiosque) => !quiosque.disponivelEntrega)
+                          .map((quiosque) => CardQuiosque(quiosque: quiosque)),
+                    ],
+                  ]
                 ),
               ),
 
-              const SizedBox(height: 10,),
 
-              ...listaQuiosques
-                  .where((quiosque) => !quiosque.disponivelEntrega)
-                  .map((quiosque) => CardQuiosque(quiosque: quiosque)),
-            ],
 
-            ],
+              ],
+            ),
           ),
         ),
-      ),
     );
   }
 }

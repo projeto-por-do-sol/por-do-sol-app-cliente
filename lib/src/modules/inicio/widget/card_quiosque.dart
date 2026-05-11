@@ -137,7 +137,7 @@ class _CardQuiosqueState extends State<CardQuiosque> {
         },
 
       child: Container(
-        margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
+        margin: EdgeInsets.only(bottom: 20),
         // padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           boxShadow: [
