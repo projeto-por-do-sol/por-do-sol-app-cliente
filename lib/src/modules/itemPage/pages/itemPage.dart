@@ -1,3 +1,4 @@
+import 'package:client_app/src/modules/itemPage/widget/adicionais.dart';
 import 'package:client_app/src/modules/itemPage/widget/removerIngrediente.dart';
 import 'package:client_app/src/shared/models/item_quiosque.dart';
 import 'package:client_app/src/shared/widget/CustomDivider.dart';
@@ -59,6 +60,9 @@ class _ItemPageState extends State<ItemPage> {
 
   @override
   Widget build(BuildContext context) {
+    var verdeTexto = 0xFF64AFC6;
+    var verdeFundo = 0xFFEBF5F0;
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: CustomAppBar(),
@@ -177,6 +181,49 @@ class _ItemPageState extends State<ItemPage> {
 
                     //Lista de ingredientes do item
                     RemoverIngrediente(ingredientes: widget.item.ingredientes),
+
+                    SizedBox(height: 15),
+
+                    CustomDivider(),
+
+                    SizedBox(height: 15),
+
+                    Row(
+                      children: [
+                        Text("Adicionais",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Theme.of(context).colorScheme.outline,
+                            )
+
+                        ),
+
+                        Spacer(),
+
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Color(verdeFundo),
+                              border: Border.all(
+                                color: Color(verdeTexto),
+                                width: 1,
+                              )
+                          ),
+
+                          child: Text("Opcional",
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: Color(verdeTexto),
+                              )
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    Adicionais(adicionais: widget.item.adicionais),
 
                   ],
                 ),

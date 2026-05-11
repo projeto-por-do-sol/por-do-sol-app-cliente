@@ -1,3 +1,4 @@
+import 'package:client_app/src/shared/models/adicionaisItem.dart';
 import 'package:client_app/src/shared/models/item_quiosque.dart';
 import 'package:client_app/src/shared/models/quiosque_model.dart';
 import 'package:client_app/src/shared/widget/CardItens.dart';
@@ -18,7 +19,29 @@ class QuiosquePage extends StatefulWidget {
 }
 
 class _QuiosquePageState extends State<QuiosquePage> {
-  ItemQuiosque item1 = ItemQuiosque(
+  AdicionaisItem adicional1 = AdicionaisItem(
+      nomeAdicional: "ketchup",
+      precoAdicional: 200
+  );
+
+  AdicionaisItem adicional2 = AdicionaisItem(
+      nomeAdicional: "mostarda",
+      precoAdicional: 300
+  );
+
+  AdicionaisItem adicional3 = AdicionaisItem(
+      nomeAdicional: "cheddar",
+      precoAdicional: 1500
+  );
+
+  AdicionaisItem adicional4 = AdicionaisItem(
+      nomeAdicional: "bacon",
+      precoAdicional: 1800
+  );
+
+  late List<AdicionaisItem> listaAdicionais = [adicional1, adicional2, adicional3, adicional4];
+
+  late ItemQuiosque item1 = ItemQuiosque(
       secaoItem: "Porções",
       nomeItem: "Batata frita",
       descricaoItem: "Batata inglesa frita com sal Batata inglesa frita com sal Batata inglesa frita com sal Batata inglesa frita com sal Batata inglesa frita com sal",
@@ -26,6 +49,7 @@ class _QuiosquePageState extends State<QuiosquePage> {
       imgItem: "https://www.tendaatacado.com.br/dicas/wp-content/webp-express/webp-images/uploads/2022/06/como-fazer-batata-frita-topo.jpg.webp",
       disponivel: true,
       ingredientes: ["batata", "sal"],
+      adicionais: listaAdicionais
   );
   late List<ItemQuiosque> listaItens = [item1];
 

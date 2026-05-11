@@ -1,34 +1,47 @@
+import 'package:client_app/src/shared/models/adicionaisItem.dart';
 import 'package:flutter/material.dart';
 
 /*
- * Classe responsável por criar os checkbox de remoção de ingredientes na página
- * de informações do item.
+ * Classe responsável por criar os checkbox de adição de complementos/adicionais
+ * na página de informações do item.
  */
 
-class RemoverIngrediente extends StatefulWidget {
-  final List<String> ingredientes; //Recebe a lista de ingredientes do item
+class Adicionais extends StatefulWidget {
+  final List<AdicionaisItem> adicionais; //Recebe a lista de adicionais do item
 
-  const RemoverIngrediente({
+  const Adicionais({
     super.key,
-    required this.ingredientes,
+    required this.adicionais,
   });
 
   @override
-  State<RemoverIngrediente> createState() => _RemoverIngredienteState();
+  State<Adicionais> createState() => _Adicionais();
 }
 
-class _RemoverIngredienteState extends State<RemoverIngrediente> {
-  final Set<String> _selecionados = {}; //Conjunto com os itens removidos
+class _Adicionais extends State<Adicionais> {
+  final Set<AdicionaisItem> _selecionados = {}; //Conjunto com os itens adicionados
+  
+  dynamic corrigeValorPreco(int item){
+    double itemCorrigido = item / 100;
+    return itemCorrigido.toStringAsFixed(2).replaceAll('.', ',');
+  }
 
   @override
   Widget build(BuildContext context) {
+    // var verdeTexto = 0xFF64AFC6;
+    // var verdeFundo = 0xFFEBF5F0;
+
+    var amareloTexto = 0xff8B6540;
+    var amareloDetalhes = 0xFFFDD06A;
+    var amareloFundo = 0xFFFFF3DC;
+
     return ListView.builder(
       padding: EdgeInsets.only(top: 10),
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: widget.ingredientes.length,
+      itemCount: widget.adicionais.length,
       itemBuilder: (context, index) {
-        final item = widget.ingredientes[index];
+        final item = widget.adicionais[index];
         final marcado = _selecionados.contains(item);
 
         return GestureDetector(
@@ -47,12 +60,12 @@ class _RemoverIngredienteState extends State<RemoverIngrediente> {
             margin: const EdgeInsets.symmetric(vertical: 6),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
             decoration: BoxDecoration(
-              color: marcado ? Theme.of(context).colorScheme.secondary : Colors.white,
+              color: marcado ? Color(amareloFundo) : Colors.white,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: marcado
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.secondary
+                  color: marcado
+                      ? Color(amareloDetalhes)
+                      : Theme.of(context).colorScheme.secondary
               ),
             ),
             child: Row(
@@ -63,17 +76,17 @@ class _RemoverIngredienteState extends State<RemoverIngrediente> {
                   width: 24,
                   height: 24,
                   decoration: BoxDecoration(
-                    color: marcado ? Theme.of(context).colorScheme.primary : Colors.white,
+                    color: marcado ? Color(amareloDetalhes) : Colors.white,
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(
                       color: marcado
-                          ? Theme.of(context).colorScheme.primary
+                          ? Color(amareloDetalhes)
                           : Theme.of(context).colorScheme.secondary,
                       width: 2,
                     ),
                   ),
                   child: marcado
-                      ? Icon(Icons.check, size: 16, color: Theme.of(context).colorScheme.secondary)
+                      ? Icon(Icons.check, size: 16, color: Theme.of(context).colorScheme.outline)
                       : null,
                 ),
 
@@ -82,32 +95,26 @@ class _RemoverIngredienteState extends State<RemoverIngrediente> {
                 // Texto
                 Expanded(
                   child: Text(
-                    item[0].toUpperCase() + item.substring(1).toLowerCase(),
+                    item.nomeAdicional[0].toUpperCase() + item.nomeAdicional.substring(1).toLowerCase(),
                     style: TextStyle(
                       fontSize: 16,
                       color: marcado
-                          ? Theme.of(context).colorScheme.primary
+                          ? Color(amareloTexto)
                           : Theme.of(context).colorScheme.outline,
-                      decoration: marcado
-                          ? TextDecoration.lineThrough
-                          : TextDecoration.none,
-                      decorationColor: Theme.of(context).colorScheme.outline,
-                      decorationThickness: 2,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
 
-                // Label "Removido"
-                if (marcado)
-                  Text(
-                    'Removido',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
+                Text(
+                  "+ R\$${corrigeValorPreco(item.precoAdicional)}",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: marcado ? Color(amareloTexto) : Theme.of(context).colorScheme.outline,
+                    fontWeight: FontWeight.w600,
                   ),
+                ),
+
               ],
             ),
           ),
