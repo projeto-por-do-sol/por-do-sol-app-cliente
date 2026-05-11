@@ -63,20 +63,29 @@ class _CardItensState extends State<CardItens> {
     }
 
     icone(IconData icone, Function funcao){
+      bool estaAtivo = !(funcao == adicionarQuantidade && widget.item.qtdeItem == 99);
+
       return IconButton.filled(
           icon: Icon(icone),
           style: IconButton.styleFrom(
-            backgroundColor: funcao == removerQuantidade ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.primary,
-            foregroundColor: funcao == removerQuantidade ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onTertiary,
+            backgroundColor: funcao == removerQuantidade
+                ? Theme.of(context).colorScheme.onPrimary
+                : Theme.of(context).colorScheme.primary,
+            foregroundColor: funcao == removerQuantidade
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.onTertiary,
+
+            // disabledBackgroundColor: Color(0xFFF5F5F5),
+            // disabledForegroundColor: Color(0xFFD0D0D0),
           ),
           constraints: BoxConstraints.tightFor(width: 40, height: 40),
           padding: EdgeInsets.zero,
           iconSize: 30,
-          onPressed: (){
+          onPressed: estaAtivo ? (){
             setState(() {
               funcao();
             });
-          }
+          } : (){}
       );
     }
 
@@ -92,13 +101,13 @@ class _CardItensState extends State<CardItens> {
 
             Spacer(),
 
-            Text(widget.item.qtdeItem.toString(),
+            widget.item.qtdeItem > 0 ? Text(widget.item.qtdeItem.toString(),
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
-            ),
+            ) : Container(),
 
             Spacer(),
 
@@ -146,8 +155,6 @@ class _CardItensState extends State<CardItens> {
 
               Expanded(
                 child: Container(
-                  // color: Colors.purple,
-                  // width: double.infinity,
                   padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

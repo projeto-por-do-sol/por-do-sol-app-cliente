@@ -58,6 +58,154 @@ class _ItemPageState extends State<ItemPage> {
     );
   }
 
+  dynamic alterarQuantidade(){
+    removerQuantidade(){
+      widget.item.qtdeItem -= 1;
+    }
+
+    adicionarQuantidade(){
+      widget.item.qtdeItem += 1;
+    }
+
+    icone(IconData icone, Function funcao){
+      bool estaAtivo = !(funcao == removerQuantidade && widget.item.qtdeItem == 0) &&
+          !(funcao == adicionarQuantidade && widget.item.qtdeItem == 99);
+
+      return IconButton.filled(
+        icon: Icon(icone),
+          style: IconButton.styleFrom(
+            backgroundColor: funcao == removerQuantidade
+                ? Theme.of(context).colorScheme.onPrimary
+                : Theme.of(context).colorScheme.primary,
+            foregroundColor: funcao == removerQuantidade
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.onTertiary,
+
+            disabledBackgroundColor: Color(0xFFF5F5F5),
+            disabledForegroundColor: Color(0xFFD0D0D0),
+          ),
+        constraints: BoxConstraints.tightFor(width: 40, height: 40),
+        padding: EdgeInsets.zero,
+        iconSize: 30,
+        onPressed: estaAtivo ? (){
+          setState(() {
+            funcao();
+          });
+        } : null
+      );
+    }
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.primary,
+          width: 1,
+        )
+      ),
+      alignment: Alignment.centerRight,
+      child: SizedBox(
+        width: 150,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            icone(Icons.remove, removerQuantidade),
+
+            Spacer(),
+
+            Text(widget.item.qtdeItem.toString(),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+
+            Spacer(),
+
+            icone(Icons.add, adicionarQuantidade)
+
+          ],
+        ),
+      ),
+    );
+  }
+
+  dynamic botaoAdicionar(){ //TODO: Somar o valor dos adicionais
+    double precoCarrinho = widget.item.precoItem / 100 * widget.item.qtdeItem;
+    
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primary,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizedBox(
+            width: 60,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(widget.item.qtdeItem.toString(),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.onSecondary,
+                  ),
+                ),
+
+                Text(widget.item.qtdeItem < 2 ? "item" : "itens",
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.onSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          Text("Adicionar ao carrinho",
+            style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSecondary,
+            ),
+          ),
+
+          SizedBox(
+            width: 80,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("R\$",
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.onSecondary,
+                  ),
+                ),
+
+                Text(precoCarrinho.toStringAsFixed(2).replaceAll('.', ','),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.onSecondary,
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var verdeTexto = 0xFF64AFC6;
@@ -225,6 +373,29 @@ class _ItemPageState extends State<ItemPage> {
 
                     Adicionais(adicionais: widget.item.adicionais),
 
+                    SizedBox(height: 15),
+
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text("Quantidade: ",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Theme.of(context).colorScheme.outline,
+                            ),
+                          ),
+                        ),
+
+                        alterarQuantidade(),
+                      ],
+                    ),
+
+                    SizedBox(height: 15),
+
+                    botaoAdicionar(),
+
+                    SizedBox(height: 15),
                   ],
                 ),
               )
