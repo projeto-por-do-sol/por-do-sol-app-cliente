@@ -24,7 +24,7 @@ class Adicionais extends StatefulWidget {
 class _Adicionais extends State<Adicionais> {
   final Set<AdicionaisItem> _selecionados = {}; //Conjunto com os itens adicionados
   
-  dynamic corrigeValorPreco(int item){
+  dynamic corrigeValorPreco(int item) {
     double itemCorrigido = item / 100;
     return itemCorrigido.toStringAsFixed(2).replaceAll('.', ',');
   }

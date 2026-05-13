@@ -27,9 +27,9 @@ class _ItemPageState extends State<ItemPage> {
   int qtdeItem = 1;
 
   List<AdicionaisItem> _meusAdicionais = [];
-  double _precoTotalAdicionais = 0.0;
+  int _precoTotalAdicionais = 0;
 
-  double get precoCarrinho => widget.item.precoItem / 100 * qtdeItem + _precoTotalAdicionais;
+  int get precoCarrinho => (widget.item.precoItem * qtdeItem + _precoTotalAdicionais);
 
 
   dynamic caixaPreco(){ //Criar a caixa de preço do item
@@ -98,6 +98,7 @@ class _ItemPageState extends State<ItemPage> {
         onPressed: estaAtivo ? (){
           setState(() {
             funcao();
+            debugPrint("${widget.item.precoItem.toString()}, ${qtdeItem.toString()}, ${_precoTotalAdicionais.toString()}, ${precoCarrinho.toString()}");
           });
         } : null
       );
@@ -143,6 +144,8 @@ class _ItemPageState extends State<ItemPage> {
   }
 
   Widget botaoAdicionar() {
+    double precoCarrinhoFormatado = precoCarrinho / 100;
+
     return ElevatedButton(
       onPressed: () {
 
@@ -177,7 +180,7 @@ class _ItemPageState extends State<ItemPage> {
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
               ),
               Text(
-                precoCarrinho.toStringAsFixed(2).replaceAll('.', ','),
+                precoCarrinhoFormatado.toStringAsFixed(2).replaceAll('.', ','),
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
               ),
             ],
@@ -361,7 +364,7 @@ class _ItemPageState extends State<ItemPage> {
                         onChanged: (selecionados) {
                           setState(() {
                             _meusAdicionais = selecionados;
-                            _precoTotalAdicionais = selecionados.fold(0, (soma, item) => soma + (item.precoAdicional / 100));
+                            _precoTotalAdicionais = selecionados.fold(0, (soma, item) => soma + (item.precoAdicional));
                           });
                         }
                     ),
