@@ -9,9 +9,12 @@ import 'package:flutter/material.dart';
 class Adicionais extends StatefulWidget {
   final List<AdicionaisItem> adicionais; //Recebe a lista de adicionais do item
 
+  final Function(List<AdicionaisItem> selecionados) onChanged; //Callback (envia os adicionais selecionados para o pai)
+
   const Adicionais({
     super.key,
     required this.adicionais,
+    required this.onChanged,
   });
 
   @override
@@ -52,6 +55,7 @@ class _Adicionais extends State<Adicionais> {
               } else {
                 _selecionados.add(item);
               }
+              widget.onChanged(_selecionados.toList());
             });
           },
           // Container com o checkbox e o texto

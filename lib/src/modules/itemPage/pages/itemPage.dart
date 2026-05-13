@@ -1,5 +1,6 @@
 import 'package:client_app/src/modules/itemPage/widget/adicionais.dart';
 import 'package:client_app/src/modules/itemPage/widget/removerIngrediente.dart';
+import 'package:client_app/src/shared/models/adicionaisItem.dart';
 import 'package:client_app/src/shared/models/item_quiosque.dart';
 import 'package:client_app/src/shared/widget/CustomDivider.dart';
 import 'package:client_app/src/shared/widget/appBar.dart';
@@ -23,6 +24,13 @@ class ItemPage extends StatefulWidget {
 
 class _ItemPageState extends State<ItemPage> {
   double tamanhoImagem = 300; //Tamanho da imagem do item
+  int qtdeItem = 1;
+
+  List<AdicionaisItem> _meusAdicionais = [];
+  double _precoTotalAdicionais = 0.0;
+
+  double get precoCarrinho => widget.item.precoItem / 100 * qtdeItem + _precoTotalAdicionais;
+
 
   dynamic caixaPreco(){ //Criar a caixa de preço do item
     double preco = widget.item.precoItem / 100; //Converte o preço para R$
@@ -60,16 +68,16 @@ class _ItemPageState extends State<ItemPage> {
 
   dynamic alterarQuantidade(){
     removerQuantidade(){
-      widget.item.qtdeItem -= 1;
+      qtdeItem -= 1;
     }
 
     adicionarQuantidade(){
-      widget.item.qtdeItem += 1;
+      qtdeItem += 1;
     }
 
     icone(IconData icone, Function funcao){
-      bool estaAtivo = !(funcao == removerQuantidade && widget.item.qtdeItem == 0) &&
-          !(funcao == adicionarQuantidade && widget.item.qtdeItem == 99);
+      bool estaAtivo = !(funcao == removerQuantidade && qtdeItem == 1) &&
+          !(funcao == adicionarQuantidade && qtdeItem == 99);
 
       return IconButton.filled(
         icon: Icon(icone),
@@ -116,7 +124,7 @@ class _ItemPageState extends State<ItemPage> {
 
             Spacer(),
 
-            Text(widget.item.qtdeItem.toString(),
+            Text(qtdeItem.toString(),
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
                 fontSize: 16,
@@ -134,73 +142,46 @@ class _ItemPageState extends State<ItemPage> {
     );
   }
 
-  dynamic botaoAdicionar(){ //TODO: Somar o valor dos adicionais
-    double precoCarrinho = widget.item.precoItem / 100 * widget.item.qtdeItem;
-    
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary,
-        borderRadius: BorderRadius.circular(20),
+  Widget botaoAdicionar() {
+    return ElevatedButton(
+      onPressed: () {
+
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        elevation: 2,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          SizedBox(
-            width: 60,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(widget.item.qtdeItem.toString(),
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSecondary,
-                  ),
-                ),
-
-                Text(widget.item.qtdeItem < 2 ? "item" : "itens",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          Text("Adicionar ao carrinho",
+          // Texto Principal
+          Text(
+            "Adicionar ao carrinho",
             style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).colorScheme.onSecondary,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
             ),
           ),
 
-          SizedBox(
-            width: 80,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("R\$",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSecondary,
-                  ),
-                ),
-
-                Text(precoCarrinho.toStringAsFixed(2).replaceAll('.', ','),
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSecondary,
-                  ),
-                ),
-              ],
-            ),
-          )
+          // Bloco de Preço
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "R\$ ",
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              ),
+              Text(
+                precoCarrinho.toStringAsFixed(2).replaceAll('.', ','),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -210,6 +191,10 @@ class _ItemPageState extends State<ItemPage> {
   Widget build(BuildContext context) {
     var verdeTexto = 0xFF64AFC6;
     var verdeFundo = 0xFFEBF5F0;
+
+    var amareloTexto = 0xff8B6540;
+    var amareloDetalhes = 0xFFFDD06A;
+    var amareloFundo = 0xFFFFF3DC;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -353,9 +338,9 @@ class _ItemPageState extends State<ItemPage> {
                           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
-                              color: Color(verdeFundo),
+                              color: Color(amareloFundo),
                               border: Border.all(
-                                color: Color(verdeTexto),
+                                color: Color(amareloDetalhes),
                                 width: 1,
                               )
                           ),
@@ -364,14 +349,22 @@ class _ItemPageState extends State<ItemPage> {
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
-                                color: Color(verdeTexto),
+                                color: Color(amareloTexto),
                               )
                           ),
                         ),
                       ],
                     ),
 
-                    Adicionais(adicionais: widget.item.adicionais),
+                    Adicionais(
+                        adicionais: widget.item.adicionais,
+                        onChanged: (selecionados) {
+                          setState(() {
+                            _meusAdicionais = selecionados;
+                            _precoTotalAdicionais = selecionados.fold(0, (soma, item) => soma + (item.precoAdicional / 100));
+                          });
+                        }
+                    ),
 
                     SizedBox(height: 15),
 

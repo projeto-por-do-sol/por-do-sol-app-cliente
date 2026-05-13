@@ -49,7 +49,7 @@ class _QuiosquePageState extends State<QuiosquePage> {
       imgItem: "https://www.tendaatacado.com.br/dicas/wp-content/webp-express/webp-images/uploads/2022/06/como-fazer-batata-frita-topo.jpg.webp",
       disponivel: true,
       ingredientes: ["batata", "sal"],
-      adicionais: listaAdicionais
+      adicionais: listaAdicionais,
   );
   late List<ItemQuiosque> listaItens = [item1];
 
@@ -157,6 +157,77 @@ class _QuiosquePageState extends State<QuiosquePage> {
       ),
     );
   }
+
+  // Widget botaoAdicionar(){
+  //
+  //   return Container(
+  //     padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+  //     decoration: BoxDecoration(
+  //       color: Theme.of(context).colorScheme.primary,
+  //       borderRadius: BorderRadius.circular(20),
+  //     ),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //       children: [
+  //         // SizedBox(
+  //         //   width: 55,
+  //         //   child: Row(
+  //         //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //         //     children: [
+  //         //       Text(qtdeItem.toString(),
+  //         //         style: TextStyle(
+  //         //           fontSize: 14,
+  //         //           fontWeight: FontWeight.w600,
+  //         //           color: Theme.of(context).colorScheme.onSecondary,
+  //         //         ),
+  //         //       ),
+  //         //
+  //         //       Text(qtdeItem < 2 ? "item" : "itens",
+  //         //         style: TextStyle(
+  //         //           fontSize: 14,
+  //         //           fontWeight: FontWeight.w600,
+  //         //           color: Theme.of(context).colorScheme.onSecondary,
+  //         //         ),
+  //         //       ),
+  //         //     ],
+  //         //   ),
+  //         // ),
+  //
+  //         Text("Adicionar ao carrinho",
+  //           style: TextStyle(
+  //               fontSize: 16,
+  //               fontWeight: FontWeight.w600,
+  //               color: Theme.of(context).colorScheme.onSecondary,
+  //           ),
+  //         ),
+  //
+  //         SizedBox(
+  //           width: 80,
+  //           child: Row(
+  //             mainAxisAlignment: MainAxisAlignment.start,
+  //             children: [
+  //               Text("R\$ ",
+  //                 style: TextStyle(
+  //                   fontSize: 14,
+  //                   fontWeight: FontWeight.w600,
+  //                   color: Theme.of(context).colorScheme.onSecondary,
+  //                 ),
+  //               ),
+  //
+  //               Text(precoCarrinho.toStringAsFixed(2).replaceAll('.', ','),
+  //                 style: TextStyle(
+  //                   fontSize: 14,
+  //                   fontWeight: FontWeight.w600,
+  //                   color: Theme.of(context).colorScheme.onSecondary,
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         )
+  //       ],
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
