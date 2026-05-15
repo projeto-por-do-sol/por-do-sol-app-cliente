@@ -1,13 +1,16 @@
+import 'package:client_app/src/modules/quiosquePage/pages/quiosquePage.dart';
 import 'package:client_app/src/shared/models/item_quiosque.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class CardItens extends StatefulWidget {
   ItemQuiosque item;
+  final Function(ItemCarrinho) onChanged;
 
   CardItens({
     super.key,
     required this.item,
+    required this.onChanged,
   });
 
   @override
@@ -15,6 +18,7 @@ class CardItens extends StatefulWidget {
 }
 
 class _CardItensState extends State<CardItens> {
+  int qtdItens = 0;
 
   dynamic imagemBanner(){
     double tamanhoImagem = 90.0;
@@ -23,7 +27,7 @@ class _CardItensState extends State<CardItens> {
       // borderRadius: BorderRadius.circular(20),
       borderRadius: BorderRadius.only(topLeft: Radius.circular(20), bottomLeft: Radius.circular(20)),
       child: Image.network(
-        "https://img.drogaraia.com.br/uploads/2019/12/french-fries-phr3xn9_easy-resize-e1577120471937.jpg",
+        widget.item.imgItem.toString(),
         height: double.infinity,
         width: tamanhoImagem,
         fit: BoxFit.cover,
@@ -55,15 +59,17 @@ class _CardItensState extends State<CardItens> {
 
   dynamic alterarQuantidade(){
     removerQuantidade(){
-      widget.item.qtdeItem -= 1;
+      qtdItens -= 1;
     }
 
     adicionarQuantidade(){
-      widget.item.qtdeItem += 1;
+      qtdItens += 1;
     }
 
     icone(IconData icone, Function funcao){
-      bool estaAtivo = !(funcao == adicionarQuantidade && widget.item.qtdeItem == 99);
+      bool estaAtivo = true;
+      if (funcao == adicionarQuantidade && qtdItens == 99) estaAtivo = false;
+      if (funcao == removerQuantidade && qtdItens == 0) estaAtivo = false;
 
       return IconButton.filled(
           icon: Icon(icone),
@@ -81,11 +87,15 @@ class _CardItensState extends State<CardItens> {
           constraints: BoxConstraints.tightFor(width: 40, height: 40),
           padding: EdgeInsets.zero,
           iconSize: 30,
-          onPressed: estaAtivo ? (){
-            setState(() {
-              funcao();
-            });
-          } : (){}
+        onPressed: estaAtivo ? () {
+          setState(() {
+            funcao();
+          });
+          widget.onChanged(ItemCarrinho(
+            nomeItem: widget.item.nomeItem,
+            qtdItem: qtdItens,
+          ));
+        } : null,
       );
     }
 
@@ -97,11 +107,11 @@ class _CardItensState extends State<CardItens> {
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            widget.item.qtdeItem > 0 ?  icone(Icons.remove, removerQuantidade) : SizedBox(width: 50,),
+            qtdItens > 0 ?  icone(Icons.remove, removerQuantidade) : SizedBox(width: 50,),
 
             Spacer(),
 
-            widget.item.qtdeItem > 0 ? Text(widget.item.qtdeItem.toString(),
+            qtdItens > 0 ? Text(qtdItens.toString(),
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
                 fontSize: 16,
