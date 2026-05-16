@@ -26,7 +26,7 @@ class _ItemPageState extends State<ItemPage> {
   double tamanhoImagem = 300; //Tamanho da imagem do item
   int qtdeItem = 1;
 
-  List<AdicionaisItem> _meusAdicionais = [];
+  List<AdicionaisItem> _adicionais = [];
   int _precoTotalAdicionais = 0;
 
   int get precoCarrinho => (widget.item.precoItem * qtdeItem + _precoTotalAdicionais);
@@ -148,7 +148,7 @@ class _ItemPageState extends State<ItemPage> {
 
     return ElevatedButton(
       onPressed: () {
-
+        debugPrint(_adicionais.length.toString());
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Theme.of(context).colorScheme.primary,
@@ -363,7 +363,7 @@ class _ItemPageState extends State<ItemPage> {
                         adicionais: widget.item.adicionais,
                         onChanged: (selecionados) {
                           setState(() {
-                            _meusAdicionais = selecionados;
+                            _adicionais = selecionados;
                             _precoTotalAdicionais = selecionados.fold(0, (soma, item) => soma + (item.precoAdicional));
                           });
                         }
