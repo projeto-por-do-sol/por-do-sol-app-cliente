@@ -6,6 +6,7 @@ import 'package:client_app/src/modules/inicio/pages/inicio.dart';
 import 'package:client_app/src/modules/itemPage/pages/itemPage.dart';
 import 'package:client_app/src/modules/login/pages/login.dart';
 import 'package:client_app/src/modules/pedidos/pages/pedidos.dart';
+import 'package:client_app/src/shared/models/item_carrinho.dart';
 import 'package:client_app/src/shared/models/item_quiosque.dart';
 import 'package:client_app/src/shared/widget/CustomNavBar.dart';
 import 'package:flutter/material.dart';
@@ -41,8 +42,8 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/itemPage',
       builder: (context, state) {
-        final item = state.extra as ItemQuiosque;
-        return ItemPage(item: item);
+        final extra = state.extra as ({ItemQuiosque item, QuiosqueCarrinho quiosque, bool desabilitado});
+        return ItemPage(item: extra.item, quiosque: extra.quiosque, desabilitado: extra.desabilitado);
       },
     ),
 

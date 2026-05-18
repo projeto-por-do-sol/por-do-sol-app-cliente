@@ -1,4 +1,5 @@
 class QuiosqueModel {
+  final String idQuiosque;
   final String nomeQuiosque;
   final String? imgPerfilQuiosque;
   final String? imgBannerQuiosque;
@@ -7,11 +8,12 @@ class QuiosqueModel {
   final bool disponivelEntrega;
   final int tempoEspera;
   List<String>? categorias = [];
-  final String? horarioAbre;
-  final String? horarioFecha;
+  final String horarioAbre;
+  final String horarioFecha;
   final int qtdeAvaliacoes;
 
   QuiosqueModel({
+    required this.idQuiosque,
     required this.nomeQuiosque,
     this.imgPerfilQuiosque,
     this.imgBannerQuiosque,
@@ -20,8 +22,8 @@ class QuiosqueModel {
     this.disponivelEntrega = true,
     this.tempoEspera = 0,
     this.categorias,
-    this.horarioAbre,
-    this.horarioFecha,
+    this.horarioAbre = "08:00",
+    this.horarioFecha = "23:00",
     this.qtdeAvaliacoes = 0,
   });
 

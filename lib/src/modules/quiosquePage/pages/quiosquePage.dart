@@ -1,12 +1,16 @@
 import 'package:client_app/src/shared/models/adicionaisItem.dart';
+import 'package:client_app/src/shared/models/item_carrinho.dart';
 import 'package:client_app/src/shared/models/item_quiosque.dart';
 import 'package:client_app/src/shared/models/quiosque_model.dart';
+import 'package:client_app/src/shared/utils/verificarHorario.dart';
 import 'package:client_app/src/shared/widget/CardItens.dart';
 import 'package:client_app/src/shared/widget/appBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:client_app/providers/carrinho_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class QuiosquePage extends StatefulWidget {
+class QuiosquePage extends ConsumerStatefulWidget {
   final QuiosqueModel quiosque;
 
   QuiosquePage({
@@ -15,30 +19,10 @@ class QuiosquePage extends StatefulWidget {
   });
 
   @override
-  State<QuiosquePage> createState() => _QuiosquePageState();
+  ConsumerState<QuiosquePage> createState() => _QuiosquePageState();
 }
 
-class ItemCarrinho {
-  final String nomeItem;
-  int qtdItem;
-
-  ItemCarrinho({
-    required this.nomeItem,
-    required this.qtdItem,
-  });
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-          other is ItemCarrinho &&
-              runtimeType == other.runtimeType &&
-              nomeItem == other.nomeItem;
-
-  @override
-  int get hashCode => nomeItem.hashCode;
-}
-
-class _QuiosquePageState extends State<QuiosquePage> {
+class _QuiosquePageState extends ConsumerState<QuiosquePage> {
   AdicionaisItem adicional1 = AdicionaisItem(
       nomeAdicional: "ketchup",
       precoAdicional: 200
@@ -62,17 +46,21 @@ class _QuiosquePageState extends State<QuiosquePage> {
   late List<AdicionaisItem> listaAdicionais = [adicional1, adicional2, adicional3, adicional4];
 
   late ItemQuiosque item1 = ItemQuiosque(
-      secaoItem: "Porções",
-      nomeItem: "Batata frita",
-      descricaoItem: "Batata inglesa frita com sal Batata inglesa frita com sal Batata inglesa frita com sal Batata inglesa frita com sal Batata inglesa frita com sal",
-      precoItem: 4590,
-      imgItem: "https://www.tendaatacado.com.br/dicas/wp-content/webp-express/webp-images/uploads/2022/06/como-fazer-batata-frita-topo.jpg.webp",
-      disponivel: true,
-      ingredientes: ["batata", "sal"],
-      adicionais: listaAdicionais,
+    idItem: "1",
+    idQuiosque: "quiosque_01",
+    secaoItem: "Porções",
+    nomeItem: "Batata frita",
+    descricaoItem: "Batata inglesa frita com sal Batata inglesa frita com sal Batata inglesa frita com sal Batata inglesa frita com sal Batata inglesa frita com sal",
+    precoItem: 4590,
+    imgItem: "https://www.tendaatacado.com.br/dicas/wp-content/webp-express/webp-images/uploads/2022/06/como-fazer-batata-frita-topo.jpg.webp",
+    disponivel: true,
+    ingredientes: ["batata", "sal"],
+    adicionais: listaAdicionais,
   );
 
   late ItemQuiosque item2 = ItemQuiosque(
+    idItem: "2",
+    idQuiosque: "quiosque_01",
     secaoItem: "Porções",
     nomeItem: "Iscas de Frango",
     descricaoItem: "Peito de frango empanado e frito, crocante por fora e suculento por dentro. Acompanha molho da casa.",
@@ -84,6 +72,8 @@ class _QuiosquePageState extends State<QuiosquePage> {
   );
 
   late ItemQuiosque item3 = ItemQuiosque(
+    idItem: "3",
+    idQuiosque: "quiosque_02",
     secaoItem: "Bebidas",
     nomeItem: "Suco de Laranja",
     descricaoItem: "Suco natural da fruta, espremido na hora. Fonte de vitamina C, refrescante e sem conservantes.",
@@ -95,6 +85,8 @@ class _QuiosquePageState extends State<QuiosquePage> {
   );
 
   late ItemQuiosque item4 = ItemQuiosque(
+    idItem: "4",
+    idQuiosque: "quiosque_01",
     secaoItem: "Hambúrgueres",
     nomeItem: "X-Salada Especial",
     descricaoItem: "Pão brioche, blend bovino 150g, queijo prato, alface, tomate, cebola roxa e maionese artesanal.",
@@ -106,6 +98,8 @@ class _QuiosquePageState extends State<QuiosquePage> {
   );
 
   late ItemQuiosque item5 = ItemQuiosque(
+    idItem: "5",
+    idQuiosque: "quiosque_01",
     secaoItem: "Porções",
     nomeItem: "Anéis de Cebola",
     descricaoItem: "Cebolas selecionadas empanadas com farinha panko, fritas até ficarem douradas e muito crocantes.",
@@ -117,6 +111,8 @@ class _QuiosquePageState extends State<QuiosquePage> {
   );
 
   late ItemQuiosque item6 = ItemQuiosque(
+    idItem: "6",
+    idQuiosque: "quiosque_01",
     secaoItem: "Sobremesas",
     nomeItem: "Petit Gâteau",
     descricaoItem: "Bolinho quente de chocolate com recheio cremoso. Acompanha uma bola de sorvete de baunilha.",
@@ -130,49 +126,21 @@ class _QuiosquePageState extends State<QuiosquePage> {
   late List<ItemQuiosque> listaItens = [item1, item2, item3, item4, item5, item6];
 
   var corVerde = 0xff4A8C7A;
+  var corVermelha = 0xffFF5000;
   int precoCarrinho = 0;
-  List<ItemCarrinho> ItensAdicionarCarrinho = [];
-
-  // dynamic imagemBanner(){
-  //   double tamanhoImagem = 300;
-  //   return ClipRRect(
-  //     //Tamanho Imagem: 150x90
-  //     // borderRadius: BorderRadius.circular(20),
-  //     // borderRadius: BorderRadius.only(topLeft: Radius.circular(20), bottomLeft: Radius.circular(20)),
-  //     child: widget.quiosque.imgBannerQuiosque != null
-  //         ? Image.network(
-  //       widget.quiosque.imgBannerQuiosque.toString(),
-  //       height: tamanhoImagem,
-  //       width: double.infinity,
-  //       fit: BoxFit.cover,
-  //       // fit: BoxFit.fitWidth,
-  //       errorBuilder: (context, error, stackTrace) {
-  //         return Container(
-  //           height: tamanhoImagem,
-  //           width: double.infinity,
-  //           color: Colors.grey[300],
-  //           child: const Icon(Icons.image_not_supported, color: Colors.grey, size: 40,),
-  //         );
-  //       },
-  //     )
-  //         : Container(
-  //       height: tamanhoImagem,
-  //       width: double.infinity,
-  //       color: Colors.grey[300],
-  //       child: const Icon(Icons.image, color: Colors.grey, size: 40,),
-  //     ),
-  //   );
-  // }
+  List<ItemCarrinho> _itensAdicionarCarrinho = [];
+  Key _cardsKey = UniqueKey();
 
   dynamic funcionamentoQuiosque(){
-    bool quiosqueAberto = true;
+    bool quiosqueAberto = verificarQuiosqueAberto(widget.quiosque.horarioAbre, widget.quiosque.horarioFecha);
+
     return Container(
       height: 30,
       alignment: Alignment.center,
       margin: EdgeInsets.only(right: 10),
       padding: EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
-        color: quiosqueAberto? Color(corVerde) : Theme.of(context).colorScheme.primary,
+        color: quiosqueAberto? Color(corVerde) : Color(corVermelha),
         borderRadius: BorderRadius.circular(20),
       ),
       child:
@@ -239,16 +207,16 @@ class _QuiosquePageState extends State<QuiosquePage> {
   Widget botaoAdicionar() {
     calcularQtdItens() {
       int qtdItens = 0;
-      for (var item in ItensAdicionarCarrinho) {
-        qtdItens += item.qtdItem;
+      for (var item in _itensAdicionarCarrinho) {
+        qtdItens += item.qtdeItem;
       }
       return qtdItens;
     }
 
     calcularPrecoCarrinho() {
       double precoCarrinho = 0;
-      for (var item in ItensAdicionarCarrinho) {
-        precoCarrinho += item.qtdItem *
+      for (var item in _itensAdicionarCarrinho) {
+        precoCarrinho += item.qtdeItem *
             listaItens
                 .firstWhere((element) => element.nomeItem == item.nomeItem)
                 .precoItem;
@@ -257,16 +225,72 @@ class _QuiosquePageState extends State<QuiosquePage> {
     }
 
     return ElevatedButton(
-      onPressed: () {
+      onPressed: !verificarQuiosqueAberto(widget.quiosque.horarioAbre, widget.quiosque.horarioFecha) ? null : () {
+        QuiosqueCarrinho quiosqueCarrinho = QuiosqueCarrinho(
+          idQuiosque: widget.quiosque.idQuiosque,
+          nomeQuiosque: widget.quiosque.nomeQuiosque,
+          imgBannerQuiosque: widget.quiosque.imgBannerQuiosque,
+        );
 
+        bool tudoSucesso = true;
+
+        for (var item in _itensAdicionarCarrinho) {
+          bool sucessoItem = ref.read(carrinhoProvider.notifier).adicionarItem(quiosqueCarrinho, item);
+
+          if (!sucessoItem) {
+            tudoSucesso = false;
+          }
+        }
+
+        ScaffoldMessenger.of(context).clearSnackBars();
+
+        if (tudoSucesso) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                "Itens adicionados com sucesso!".toUpperCase(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+              ),
+              backgroundColor: Theme.of(context).colorScheme.tertiary,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+
+          setState(() {
+            _itensAdicionarCarrinho.clear();
+            _cardsKey = UniqueKey();
+          });
+
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                "Houve um erro ao adicionar algum itens".toUpperCase(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+              ),
+              backgroundColor: Theme.of(context).colorScheme.error,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
       },
+
       style: ElevatedButton.styleFrom(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
+
+        disabledBackgroundColor: Colors.grey.shade300,
+        disabledForegroundColor: Colors.grey.shade600,
+
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
+        elevation: 2,
       ),
+
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -280,7 +304,7 @@ class _QuiosquePageState extends State<QuiosquePage> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSecondary,
+                    // color: Theme.of(context).colorScheme.onSecondary,
                   ),
                 ),
                 Text(
@@ -288,7 +312,7 @@ class _QuiosquePageState extends State<QuiosquePage> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSecondary,
+                    // color: Theme.of(context).colorScheme.onSecondary,
                   ),
                 ),
               ],
@@ -299,7 +323,7 @@ class _QuiosquePageState extends State<QuiosquePage> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: Theme.of(context).colorScheme.onSecondary,
+              // color: Theme.of(context).colorScheme.onSecondary,
             ),
           ),
           SizedBox(
@@ -312,7 +336,7 @@ class _QuiosquePageState extends State<QuiosquePage> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSecondary,
+                    // color: Theme.of(context).colorScheme.onSecondary,
                   ),
                 ),
                 Text(
@@ -320,7 +344,7 @@ class _QuiosquePageState extends State<QuiosquePage> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSecondary,
+                    // color: Theme.of(context).colorScheme.onSecondary,
                   ),
                 ),
               ],
@@ -415,6 +439,7 @@ class _QuiosquePageState extends State<QuiosquePage> {
                   SizedBox(height: 20,),
 
                   SafeArea(
+                    key: _cardsKey,
                     top: false,
                       child: Column(
                         children: [
@@ -423,7 +448,13 @@ class _QuiosquePageState extends State<QuiosquePage> {
                             children: [
                               containerInfoQuiosque(Icons.hourglass_bottom_rounded, "~${widget.quiosque.tempoEspera} min", "Espera"),
                               containerInfoQuiosque(Icons.location_on_rounded, "${widget.quiosque.distanciaQuiosque}m", "Distância"),
-                              containerInfoQuiosque(Icons.access_time_filled_rounded, "${widget.quiosque.horarioFecha}", "Fecha"), //TODO: Fazer para o horário de abrir
+                              containerInfoQuiosque(Icons.access_time_filled_rounded,
+                                  verificarQuiosqueAberto(widget.quiosque.horarioAbre, widget.quiosque.horarioFecha) ?
+                                  widget.quiosque.horarioFecha :
+                                  widget.quiosque.horarioAbre,
+
+                                  verificarQuiosqueAberto(widget.quiosque.horarioAbre, widget.quiosque.horarioFecha) ?
+                                  "Fecha" : "Abre"),
                             ]
                           ),
 
@@ -433,33 +464,39 @@ class _QuiosquePageState extends State<QuiosquePage> {
                               .where((item) => item.disponivel)
                               .map((item) =>
                                 CardItens(
+                                  desabilitado: !verificarQuiosqueAberto(widget.quiosque.horarioAbre, widget.quiosque.horarioFecha),
                                   item: item,
+                                    quiosque: QuiosqueCarrinho(
+                                        idQuiosque: widget.quiosque.idQuiosque,
+                                        nomeQuiosque: widget.quiosque.nomeQuiosque,
+                                        imgBannerQuiosque: widget.quiosque.imgBannerQuiosque
+                                    ),
                                     // No seu CardItens ou onde o onChanged é chamado:
                                     onChanged: (itemAtualizado) {
                                       setState(() {
                                         // 1. Procura se o item já está no carrinho
-                                        int index = ItensAdicionarCarrinho.indexWhere(
+                                        int index = _itensAdicionarCarrinho.indexWhere(
                                                 (i) => i.nomeItem == itemAtualizado.nomeItem
                                         );
 
                                         if (index != -1) {
                                           // 2. Se existe e a nova qtd é > 0, atualiza
-                                          if (itemAtualizado.qtdItem > 0) {
-                                            ItensAdicionarCarrinho[index] = itemAtualizado;
+                                          if (itemAtualizado.qtdeItem > 0) {
+                                            _itensAdicionarCarrinho[index] = itemAtualizado;
                                           } else {
                                             // 3. Se a qtd chegou a 0, remove da lista
-                                            ItensAdicionarCarrinho.removeAt(index);
+                                            _itensAdicionarCarrinho.removeAt(index);
                                           }
-                                        } else if (itemAtualizado.qtdItem > 0) {
+                                        } else if (itemAtualizado.qtdeItem > 0) {
                                           // 4. Se não existe e tem qtd, adiciona
-                                          ItensAdicionarCarrinho.add(itemAtualizado);
+                                          _itensAdicionarCarrinho.add(itemAtualizado);
                                         }
                                       });
                                     }
                                 )
                           ),
 
-                          if (ItensAdicionarCarrinho.isNotEmpty) SizedBox(height: 90),
+                          if (_itensAdicionarCarrinho.isNotEmpty) SizedBox(height: 90),
                         ],
                       ),
                   ),
@@ -479,7 +516,7 @@ class _QuiosquePageState extends State<QuiosquePage> {
                 ).animate(animation),
                 child: child,
               ),
-              child: ItensAdicionarCarrinho.isNotEmpty
+              child: _itensAdicionarCarrinho.isNotEmpty
                 ? Padding(
                   key: ValueKey('botao'),
                   padding: EdgeInsets.only(

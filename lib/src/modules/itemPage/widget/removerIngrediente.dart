@@ -8,9 +8,12 @@ import 'package:flutter/material.dart';
 class RemoverIngrediente extends StatefulWidget {
   final List<String> ingredientes; //Recebe a lista de ingredientes do item
 
+  final Function(List<String> selecionados) onChanged; //Callback (envia os adicionais selecionados para o pai)
+
   const RemoverIngrediente({
     super.key,
     required this.ingredientes,
+    required this.onChanged,
   });
 
   @override
@@ -39,6 +42,7 @@ class _RemoverIngredienteState extends State<RemoverIngrediente> {
               } else {
                 _selecionados.add(item);
               }
+              widget.onChanged(_selecionados.toList());
             });
           },
           // Container com o checkbox e o texto

@@ -1,16 +1,21 @@
 import 'package:client_app/src/modules/quiosquePage/pages/quiosquePage.dart';
+import 'package:client_app/src/shared/models/item_carrinho.dart';
 import 'package:client_app/src/shared/models/item_quiosque.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class CardItens extends StatefulWidget {
   ItemQuiosque item;
+  QuiosqueCarrinho quiosque;
+  bool desabilitado;
   final Function(ItemCarrinho) onChanged;
 
   CardItens({
     super.key,
     required this.item,
     required this.onChanged,
+    required this.quiosque,
+    required this.desabilitado,
   });
 
   @override
@@ -92,8 +97,13 @@ class _CardItensState extends State<CardItens> {
             funcao();
           });
           widget.onChanged(ItemCarrinho(
+            idProduto: widget.item.idItem,
+            idQuiosque: widget.item.idQuiosque,
             nomeItem: widget.item.nomeItem,
-            qtdItem: qtdItens,
+            valorTotal: widget.item.precoItem * qtdItens,
+            ingredientes: [],
+            adicionais: [],
+            qtdeItem: qtdItens,
           ));
         } : null,
       );
@@ -134,7 +144,7 @@ class _CardItensState extends State<CardItens> {
     return GestureDetector(
       onTap: () {
         // FocusScope.of(context).unfocus();
-        context.push('/itemPage', extra: widget.item);
+        context.push('/itemPage', extra: (item: widget.item, quiosque: widget.quiosque, desabilitado: widget.desabilitado));
       },
 
       child: Container(

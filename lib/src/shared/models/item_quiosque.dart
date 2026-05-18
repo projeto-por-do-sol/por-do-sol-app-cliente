@@ -1,6 +1,8 @@
 import 'package:client_app/src/shared/models/adicionaisItem.dart';
 
 class ItemQuiosque {
+  final String idItem;
+  final String idQuiosque;
   final String secaoItem;
   final String nomeItem;
   final String descricaoItem;
@@ -12,6 +14,8 @@ class ItemQuiosque {
   int qtdeItem;
 
   ItemQuiosque({
+    required this.idItem,
+    required this.idQuiosque,
     required this.secaoItem,
     required this.nomeItem,
     required this.descricaoItem,

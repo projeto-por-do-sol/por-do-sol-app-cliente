@@ -1,5 +1,6 @@
 import 'package:client_app/src/modules/inicio/widget/categorias.dart';
 import 'package:client_app/src/shared/models/quiosque_model.dart';
+import 'package:client_app/src/shared/utils/verificarHorario.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -17,6 +18,7 @@ class CardQuiosque extends StatefulWidget {
 
 class _CardQuiosqueState extends State<CardQuiosque> {
   var corVerde = 0xff4A8C7A;
+  var corVermelha = 0xffFF5000;
 
   dynamic imagemBanner(){
     double tamanhoImagem = 90.0;
@@ -173,7 +175,10 @@ class _CardQuiosqueState extends State<CardQuiosque> {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.circle, size: 10, color: Color(corVerde)),
+                        Icon(Icons.circle, size: 10, color:
+                          verificarQuiosqueAberto(widget.quiosque.horarioAbre, widget.quiosque.horarioFecha) ?
+                          Color(corVerde) :
+                          Color(corVermelha)),
 
                         SizedBox(width: 5,),
 

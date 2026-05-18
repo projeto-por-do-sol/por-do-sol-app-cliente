@@ -1,35 +1,47 @@
 import 'package:client_app/src/modules/itemPage/widget/adicionais.dart';
 import 'package:client_app/src/modules/itemPage/widget/removerIngrediente.dart';
 import 'package:client_app/src/shared/models/adicionaisItem.dart';
+import 'package:client_app/src/shared/models/item_carrinho.dart';
 import 'package:client_app/src/shared/models/item_quiosque.dart';
 import 'package:client_app/src/shared/widget/CustomDivider.dart';
 import 'package:client_app/src/shared/widget/appBar.dart';
 import 'package:flutter/material.dart';
+import 'package:client_app/providers/carrinho_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /*
  * Classe responsável por criar a página de informações do item.
  */
 
-class ItemPage extends StatefulWidget {
+class ItemPage extends ConsumerStatefulWidget {
   ItemQuiosque item; //Recebe o item que será exibido na página
+  QuiosqueCarrinho quiosque;
+  bool desabilitado;
 
   ItemPage({
     super.key,
     required this.item,
+    required this.quiosque,
+    required this.desabilitado,
   });
 
   @override
-  State<ItemPage> createState() => _ItemPageState();
+  ConsumerState<ItemPage> createState() => _ItemPageState();
 }
 
-class _ItemPageState extends State<ItemPage> {
+class _ItemPageState extends ConsumerState<ItemPage> {
   double tamanhoImagem = 300; //Tamanho da imagem do item
   int qtdeItem = 1;
+
+  List<String> _removidos = [];
 
   List<AdicionaisItem> _adicionais = [];
   int _precoTotalAdicionais = 0;
 
-  int get precoCarrinho => (widget.item.precoItem * qtdeItem + _precoTotalAdicionais);
+  Key _ingredientesKey = UniqueKey();
+  Key _adicionaisKey = UniqueKey();
+
+  int get precoCarrinho => (widget.item.precoItem + _precoTotalAdicionais) * qtdeItem;
 
 
   dynamic caixaPreco(){ //Criar a caixa de preço do item
@@ -147,12 +159,59 @@ class _ItemPageState extends State<ItemPage> {
     double precoCarrinhoFormatado = precoCarrinho / 100;
 
     return ElevatedButton(
-      onPressed: () {
-        debugPrint(_adicionais.length.toString());
+      onPressed: widget.desabilitado ? null : () {
+        ItemCarrinho item = ItemCarrinho(
+          idProduto: widget.item.idItem,
+          idQuiosque: widget.item.idQuiosque,
+          nomeItem: widget.item.nomeItem,
+          valorTotal: precoCarrinho,
+          ingredientes: _removidos,
+          adicionais: _adicionais,
+          qtdeItem: qtdeItem,
+        );
+
+        // Executa a ação e captura o retorno booleano
+        bool sucesso = ref.read(carrinhoProvider.notifier).adicionarItem(widget.quiosque, item);
+
+        if (sucesso) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Adicionado com sucesso".toUpperCase(), textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                backgroundColor: Theme.of(context).colorScheme.tertiary,
+                duration: Duration(seconds: 3),
+              )
+          );
+
+          setState(() {
+            qtdeItem = 1;
+            _removidos = [];
+            _adicionais = [];
+            _precoTotalAdicionais = 0;
+            _ingredientesKey = UniqueKey();
+            _adicionaisKey = UniqueKey();
+          });
+
+        } else {
+          // Se deu erro, avisa o usuário
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Erro ao adicionar ao carrinho".toUpperCase(), textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                backgroundColor: Theme.of(context).colorScheme.error,
+                duration: Duration(seconds: 3),
+              )
+          );
+        }
+
       },
+
+
       style: ElevatedButton.styleFrom(
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onSecondary,
+
+        disabledBackgroundColor: Colors.grey.shade300,
+        disabledForegroundColor: Colors.grey.shade600,
+
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
@@ -316,7 +375,15 @@ class _ItemPageState extends State<ItemPage> {
                     // SizedBox(height: 10,),
 
                     //Lista de ingredientes do item
-                    RemoverIngrediente(ingredientes: widget.item.ingredientes),
+                    RemoverIngrediente(
+                        key: _ingredientesKey,
+                        ingredientes: widget.item.ingredientes,
+                        onChanged: (selecionados) {
+                          setState(() {
+                            _removidos = selecionados;
+                          });
+                        }
+                    ),
 
                     SizedBox(height: 15),
 
@@ -360,6 +427,7 @@ class _ItemPageState extends State<ItemPage> {
                     ),
 
                     Adicionais(
+                        key: _adicionaisKey,
                         adicionais: widget.item.adicionais,
                         onChanged: (selecionados) {
                           setState(() {

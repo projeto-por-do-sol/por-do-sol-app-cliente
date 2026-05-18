@@ -2,6 +2,7 @@
 import 'package:client_app/src/modules/inicio/widget/Container_busca.dart';
 import 'package:client_app/src/modules/inicio/widget/card_quiosque.dart';
 import 'package:client_app/src/shared/models/quiosque_model.dart';
+import 'package:client_app/src/shared/utils/verificarHorario.dart';
 import 'package:client_app/src/shared/widget/CustomDivider.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +15,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   QuiosqueModel quiosque1 = QuiosqueModel(
+    idQuiosque: "1", // Adicionado
     nomeQuiosque: "Quiosque 1",
     imgPerfilQuiosque: "logo.png",
     imgBannerQuiosque: "bannerTeste.png",
@@ -23,10 +25,11 @@ class _HomePageState extends State<HomePage> {
     tempoEspera: 30,
     categorias: ["Lanches", "Bebidas"],
     horarioAbre: "09:00",
-    horarioFecha: "18:00"
+    horarioFecha: "18:00",
   );
 
   QuiosqueModel quiosque2 = QuiosqueModel(
+    idQuiosque: "2", // Adicionado
     nomeQuiosque: "Quiosque 2",
     imgPerfilQuiosque: "logo.png",
     imgBannerQuiosque: "logo.png",
@@ -36,10 +39,11 @@ class _HomePageState extends State<HomePage> {
     tempoEspera: 45,
     categorias: ["Porções", "Cervejas"],
     horarioAbre: "11:00",
-    horarioFecha: "23:00"
+    horarioFecha: "23:00",
   );
 
   QuiosqueModel quiosque3 = QuiosqueModel(
+    idQuiosque: "3", // Adicionado
     nomeQuiosque: "Quiosque do Porto Teste aleatório Teste aleatório 2.0",
     imgPerfilQuiosque: "logo1.png",
     imgBannerQuiosque: "bannerTeste1.png",
@@ -48,24 +52,24 @@ class _HomePageState extends State<HomePage> {
     disponivelEntrega: true,
     tempoEspera: 15,
     categorias: ["Frutos do Mar", "Bebidas"],
-    horarioAbre: "08:00",
-    horarioFecha: "20:00"
+    horarioAbre: "04:00",
+    horarioFecha: "22:00",
   );
 
   QuiosqueModel quiosque4 = QuiosqueModel(
+    idQuiosque: "4", // Adicionado
     nomeQuiosque: "Quiosque Beira Mar",
-    // imgPerfilQuiosque: "logo.png",
-    // imgBannerQuiosque: "bannerTeste.png",
     avaliacaoQuiosque: 3.9,
     distanciaQuiosque: "45",
     disponivelEntrega: false,
     tempoEspera: 25,
     categorias: ["Lanches", "Sucos Naturais"],
     horarioAbre: "09:00",
-    horarioFecha: "21:00"
+    horarioFecha: "21:00",
   );
 
   QuiosqueModel quiosque6 = QuiosqueModel(
+    idQuiosque: "6", // Adicionado
     nomeQuiosque: "Quiosque Central",
     imgPerfilQuiosque: "logo.png",
     imgBannerQuiosque: "bannerTeste.png",
@@ -75,10 +79,11 @@ class _HomePageState extends State<HomePage> {
     tempoEspera: 40,
     categorias: ["Pratos Feitos", "Sobremesas"],
     horarioAbre: "10:00",
-    horarioFecha: "22:00"
+    horarioFecha: "22:00",
   );
 
   QuiosqueModel quiosque5 = QuiosqueModel(
+    idQuiosque: "5", // Adicionado
     nomeQuiosque: "Cantinho da Praia",
     imgPerfilQuiosque: "https://www.guiaviagensbrasil.com/imagens/quiosque-praia-monguaga-sp.jpg",
     imgBannerQuiosque: "https://www.guiaviagensbrasil.com/imagens/quiosque-praia-monguaga-sp.jpg",
@@ -88,7 +93,7 @@ class _HomePageState extends State<HomePage> {
     tempoEspera: 20,
     categorias: ["Lanches", "Porções", "Bebidas", "Outros"],
     horarioAbre: "10:00",
-    horarioFecha: "22:00"
+    horarioFecha: "22:00",
   );
 
   late List<QuiosqueModel> listaQuiosques = [quiosque1, quiosque2, quiosque3, quiosque4, quiosque5, quiosque6];
@@ -139,10 +144,12 @@ class _HomePageState extends State<HomePage> {
                 margin: EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   children: [
-                    if (listaQuiosques.any((q) => q.disponivelEntrega)) ... [
+                    if (listaQuiosques.any((q) => q.disponivelEntrega
+                    //&& verificarQuiosqueAberto(q.horarioAbre, q.horarioFecha) //TODO: Dps tem que remover (exibe a label "Entrega aí" somente se tiver algum quiosque aberto)
+                    )) ... [
                       Container(
                         alignment: Alignment.centerLeft,
-                        child: Text("Disponível entrega",
+                        child: Text("Entrega aí",
                             style:
                             TextStyle(
                               color: Theme.of(context).colorScheme.outline,
@@ -155,13 +162,19 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(height: 10,),
 
                       ...listaQuiosques
-                          .where((quiosque) => quiosque.disponivelEntrega)
+                          .where((quiosque) => quiosque.disponivelEntrega
+                          // && verificarQuiosqueAberto(quiosque.horarioAbre, quiosque.horarioFecha) //TODO: Dps tem que remover (apenas mostra os quiosques que estão abertos)
+                          )
                           .map((quiosque) => CardQuiosque(quiosque: quiosque)),
                     ],
 
-                    if (listaQuiosques.any((q) => !q.disponivelEntrega)) ... [
+                    if (listaQuiosques.any((q) => !q.disponivelEntrega
+                    // && verificarQuiosqueAberto(q.horarioAbre, q.horarioFecha) //TODO: Dps tem que remover (exibe a label "Não entrega aí" somente se tiver algum quiosque aberto)
+                    )) ... [
 
-                      if (listaQuiosques.any((q) => q.disponivelEntrega)) ... {
+                      if (listaQuiosques.any((q) => q.disponivelEntrega
+                      && verificarQuiosqueAberto(q.horarioAbre, q.horarioFecha)
+                      )) ... {
                         CustomDivider(),
 
                         const SizedBox(height: 20,),
@@ -182,7 +195,9 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(height: 10,),
 
                       ...listaQuiosques
-                          .where((quiosque) => !quiosque.disponivelEntrega)
+                          .where((quiosque) => !quiosque.disponivelEntrega
+                          // && verificarQuiosqueAberto(quiosque.horarioAbre, quiosque.horarioFecha) //TODO: Dps tem que remover (apenas mostra os quiosques que estão abertos)
+                          )
                           .map((quiosque) => CardQuiosque(quiosque: quiosque)),
                     ],
                   ]
