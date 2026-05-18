@@ -1,6 +1,5 @@
 import 'package:client_app/providers/carrinho_provider.dart';
 import 'package:client_app/src/shared/models/item_carrinho.dart';
-import 'package:client_app/src/shared/widget/CustomDivider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

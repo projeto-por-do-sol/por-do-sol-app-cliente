@@ -205,6 +205,8 @@ class _QuiosquePageState extends ConsumerState<QuiosquePage> {
   }
 
   Widget botaoAdicionar() {
+    bool disponivelPedir = !verificarQuiosqueAberto(widget.quiosque.horarioAbre, widget.quiosque.horarioFecha) || !widget.quiosque.disponivelEntrega;
+
     calcularQtdItens() {
       int qtdItens = 0;
       for (var item in _itensAdicionarCarrinho) {
@@ -225,7 +227,7 @@ class _QuiosquePageState extends ConsumerState<QuiosquePage> {
     }
 
     return ElevatedButton(
-      onPressed: !verificarQuiosqueAberto(widget.quiosque.horarioAbre, widget.quiosque.horarioFecha) ? null : () {
+      onPressed: disponivelPedir ? null : () {
         QuiosqueCarrinho quiosqueCarrinho = QuiosqueCarrinho(
           idQuiosque: widget.quiosque.idQuiosque,
           nomeQuiosque: widget.quiosque.nomeQuiosque,
@@ -281,8 +283,8 @@ class _QuiosquePageState extends ConsumerState<QuiosquePage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onSecondary,
 
-        disabledBackgroundColor: Colors.grey.shade300,
-        disabledForegroundColor: Colors.grey.shade600,
+        disabledBackgroundColor: Theme.of(context).colorScheme.primary,
+        disabledForegroundColor: Theme.of(context).colorScheme.onSecondary,
 
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
         shape: RoundedRectangleBorder(
@@ -291,7 +293,9 @@ class _QuiosquePageState extends ConsumerState<QuiosquePage> {
         elevation: 2,
       ),
 
-      child: Row(
+      child:
+      !disponivelPedir ?
+      Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SizedBox(
@@ -351,7 +355,13 @@ class _QuiosquePageState extends ConsumerState<QuiosquePage> {
             ),
           ),
         ],
-      ),
+      ) :
+          Text("Não é possível pedir aquí!", style:
+            TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
     );
   }
 

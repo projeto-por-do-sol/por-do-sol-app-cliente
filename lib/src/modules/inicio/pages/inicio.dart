@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
     disponivelEntrega: false,
     tempoEspera: 25,
     categorias: ["Lanches", "Sucos Naturais"],
-    horarioAbre: "09:00",
+    horarioAbre: "05:00",
     horarioFecha: "21:00",
   );
 

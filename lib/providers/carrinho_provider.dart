@@ -1,4 +1,3 @@
-import 'package:client_app/src/shared/models/adicionaisItem.dart';
 import 'package:client_app/src/shared/models/item_carrinho.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

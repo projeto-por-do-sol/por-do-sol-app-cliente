@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:client_app/src/modules/cadastro/pages/cadastro.dart';
 import 'package:client_app/src/modules/carrinho/pages/carrinho.dart';
 import 'package:client_app/src/modules/inicio/pages/inicio.dart';

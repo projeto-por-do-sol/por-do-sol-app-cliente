@@ -1,4 +1,3 @@
-import 'package:client_app/src/modules/quiosquePage/pages/quiosquePage.dart';
 import 'package:client_app/src/shared/models/item_carrinho.dart';
 import 'package:client_app/src/shared/models/item_quiosque.dart';
 import 'package:flutter/material.dart';
