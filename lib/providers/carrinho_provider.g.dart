@@ -46,7 +46,7 @@ final class CarrinhoNotifierProvider
   }
 }
 
-String _$carrinhoNotifierHash() => r'11be29fd0636bfb4caf268dda07d180e00c8380d';
+String _$carrinhoNotifierHash() => r'c90e03e95fedff95fb33154c9b7be972cbc620b9';
 
 abstract class _$CarrinhoNotifier
     extends $Notifier<Map<QuiosqueCarrinho, List<ItemCarrinho>>> {

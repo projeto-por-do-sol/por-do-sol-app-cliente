@@ -356,7 +356,7 @@ class _QuiosquePageState extends ConsumerState<QuiosquePage> {
           ),
         ],
       ) :
-          Text("Não é possível pedir aquí!", style:
+          Text("Não é possível pedir aqui!", style:
             TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -513,7 +513,7 @@ class _QuiosquePageState extends ConsumerState<QuiosquePage> {
                 ],
               ),
           ),
-          Positioned(
+          Positioned( //Dps da pra mudar por bottomNavigationBar, igual na página do carrinho.
             bottom: 0,
             left: 0,
             right: 0,
