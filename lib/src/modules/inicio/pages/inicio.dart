@@ -106,7 +106,7 @@ class _HomePageState extends State<HomePage> {
         double.parse(a.distanciaQuiosque).compareTo(double.parse(b.distanciaQuiosque))
     );
   }
-
+  //TODO: Dps da pra mudar a lógica dos quiosques por um Riverpod
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

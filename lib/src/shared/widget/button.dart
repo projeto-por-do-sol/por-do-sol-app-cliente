@@ -36,7 +36,7 @@ class CustomButton extends StatelessWidget {
               if (icone != null)
               Align(
                 alignment: Alignment.centerLeft,
-                child: Icon(icone, size: 20),
+                child: Icon(icone, size: 26),
               ),
 
               Align(
