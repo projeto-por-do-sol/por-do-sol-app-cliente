@@ -1,8 +1,10 @@
-import 'package:client_app/providers/carrinho_provider.dart';
+import 'package:client_app/providers/carrinho_provider/carrinho_provider.dart';
+import 'package:client_app/providers/pedido_provider/pedido_provider.dart';
 import 'package:client_app/src/shared/models/item_carrinho.dart';
 import 'package:client_app/src/shared/widget/CustomDivider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class CarrinhoPage extends ConsumerStatefulWidget {
   const CarrinhoPage({super.key});
@@ -12,6 +14,7 @@ class CarrinhoPage extends ConsumerStatefulWidget {
 }
 
 class _CarrinhoPageState extends ConsumerState<CarrinhoPage> {
+  bool _isSending = false;
 
   Widget identificadorQuiosque(QuiosqueCarrinho quiosque){
     double heightImagem = 80;
@@ -19,16 +22,13 @@ class _CarrinhoPageState extends ConsumerState<CarrinhoPage> {
 
     dynamic imagemBanner(){
       return ClipRRect(
-        //Tamanho Imagem: 150x90
-        // borderRadius: BorderRadius.circular(20),
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
+        borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
         child: quiosque.imgBannerQuiosque != null
-            ? Image.network( //TODO: dps tem que trocar por Image.network
+            ? Image.network(
           quiosque.imgBannerQuiosque.toString(),
           height: heightImagem,
           width: widthImagem,
           fit: BoxFit.cover,
-          // fit: BoxFit.fitWidth,
           errorBuilder: (context, error, stackTrace) {
             return Container(
               height: heightImagem,
@@ -48,8 +48,7 @@ class _CarrinhoPageState extends ConsumerState<CarrinhoPage> {
     }
 
     return Container(
-      margin: EdgeInsets.only(top: 30),
-      // padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      margin: const EdgeInsets.only(top: 30),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primary,
         borderRadius: BorderRadius.circular(10),
@@ -59,22 +58,22 @@ class _CarrinhoPageState extends ConsumerState<CarrinhoPage> {
         children: [
           imagemBanner(),
 
-          SizedBox(width: 10,),
+          const SizedBox(width: 10,),
 
           Expanded(
             child: Text(quiosque.nomeQuiosque.toString(),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
               style:
-                TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Theme.of(context).colorScheme.onTertiary,
-                )
+              TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onTertiary,
+              )
               ,),
           ),
           IconButton(
-              onPressed: (){
+              onPressed: _isSending ? null : (){
                 ref.read(carrinhoProvider.notifier).removerQuiosque(quiosque);
               },
               icon: Icon(
@@ -115,7 +114,7 @@ class _CarrinhoPageState extends ConsumerState<CarrinhoPage> {
                   item.nomeItem,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                     color: Colors.black87,
@@ -146,7 +145,7 @@ class _CarrinhoPageState extends ConsumerState<CarrinhoPage> {
               ),
 
               IconButton(
-                onPressed: () {
+                onPressed: _isSending ? null : () {
                   ref.read(carrinhoProvider.notifier).removerItem(quiosque, item);
                 },
                 icon: const Icon(
@@ -159,70 +158,67 @@ class _CarrinhoPageState extends ConsumerState<CarrinhoPage> {
           ),
 
           if(item.ingredientes.isNotEmpty || item.adicionais.isNotEmpty)
-            Divider(
-              height: 10,
-
-            ),
+            const Divider(height: 10),
 
           if (item.ingredientes.isNotEmpty)
             Container(
-              margin: EdgeInsets.only(left: 15, right: 20, top: 10, bottom: 10),
+              margin: const EdgeInsets.only(left: 15, right: 20, top: 10, bottom: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Remover:", style:
-                      TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: Theme.of(context).colorScheme.outline,
-                      )
+                  TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: Theme.of(context).colorScheme.outline,
+                  )
                   ),
                   ...item.ingredientes.map((ingrediente) =>
-                    Text('• $ingrediente', style:
+                      Text('• $ingrediente', style:
                       TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: Theme.of(context).colorScheme.outline,
                       )
-                    ),
+                      ),
                   )],
               ),
             ),
 
           if (item.adicionais.isNotEmpty)
             Container(
-              margin: EdgeInsets.only(left: 15, right: 20, top: 10, bottom: 10),
+              margin: const EdgeInsets.only(left: 15, right: 20, top: 10, bottom: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Adicionais:", style:
-                    TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: Theme.of(context).colorScheme.outline,
-                    )
+                  TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: Theme.of(context).colorScheme.outline,
+                  )
                   ),
                   ...item.adicionais.map((adicional) => Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('• ${adicional.nomeAdicional}', style:
-                        TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Theme.of(context).colorScheme.outline,
-                        )
+                      TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).colorScheme.outline,
+                      )
                       ),
 
                       Text('R\$ ${(adicional.precoAdicional / 100).toStringAsFixed(2).replaceAll('.', ',')}', style:
-                        TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Theme.of(context).colorScheme.outline,
-                        )
+                      TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).colorScheme.outline,
+                      )
                       )
                     ],
                   )
-                )],
+                  )],
               ),
             ),
 
@@ -233,38 +229,57 @@ class _CarrinhoPageState extends ConsumerState<CarrinhoPage> {
 
   Widget botaoEnviarPedido(){
     return Container(
-      margin: EdgeInsets.only(bottom: 10, left: 20, right: 20),
+      margin: const EdgeInsets.only(bottom: 10, left: 20, right: 20),
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: (){
-          bool sucesso = ref.read(carrinhoProvider.notifier).enviarPedido();
-          if (sucesso) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text("Pedido feito com sucesso!".toUpperCase(), textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                  backgroundColor: Theme.of(context).colorScheme.tertiary,
-                  duration: Duration(seconds: 3),
-                )
-            );
+        onPressed: _isSending ? null : () async {
+          setState(() {
+            _isSending = true;
+          });
 
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text("Erro ao realizar pedido!".toUpperCase(), textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                  backgroundColor: Theme.of(context).colorScheme.error,
-                  duration: Duration(seconds: 3),
-                )
-            );
+          final router = GoRouter.of(context);
+
+          try {
+            bool sucesso = await ref.read(pedidoProvider.notifier).criarPedido();
+
+            if (sucesso) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Pedido realizado!".toUpperCase(), textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      duration: const Duration(seconds: 3),
+                    )
+                );
+                router.pushReplacement('/pedidos');
+              }
+            } else {
+              throw Exception("Falha na criação do pedido");
+            }
+          } catch (e) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Erro ao realizar pedido!".toUpperCase(), textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                    backgroundColor: Theme.of(context).colorScheme.error,
+                    duration: const Duration(seconds: 3),
+                  )
+              );
+            }
+          } finally {
+            if (mounted) {
+              setState(() {
+                _isSending = false;
+              });
+            }
           }
         },
 
         style: ElevatedButton.styleFrom(
           backgroundColor: Theme.of(context).colorScheme.primary,
           foregroundColor: Theme.of(context).colorScheme.onSecondary,
-
           disabledBackgroundColor: Colors.grey.shade300,
           disabledForegroundColor: Colors.grey.shade600,
-
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
@@ -272,11 +287,17 @@ class _CarrinhoPageState extends ConsumerState<CarrinhoPage> {
           elevation: 2,
         ),
 
-        child: Text("Fazer pedido!", style:
-          TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+        child: _isSending
+            ? const SizedBox(
+          height: 28,
+          width: 28,
+          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
+        )
+            : const Text("Fazer pedido!", style:
+        TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
         ),
       ),
     );
@@ -290,33 +311,49 @@ class _CarrinhoPageState extends ConsumerState<CarrinhoPage> {
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        title: Text('Carrinho'),
+        title: const Text('Carrinho'),
         centerTitle: true,
       ),
 
-      body: SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            children: [
-              ...carrinho.entries.map((entry) {
-                var quiosque = entry.key;
-                var itens = entry.value;
+      body: Stack(
+        children: [
+          carrinho.isEmpty
+              ? Center(
+            child: Text(
+              'Seu carrinho está vazio',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Theme.of(context).colorScheme.outline),
+            ),
+          )
+              : SingleChildScrollView(
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  ...carrinho.entries.map((entry) {
+                    var quiosque = entry.key;
+                    var itens = entry.value;
 
-                return Column(
-                  children: [
-                    identificadorQuiosque(quiosque),
-                    for (var item in itens)
-                      itensCarrinho(item, quiosque),
-                  ],
-                );
-              }),
-
-              SizedBox(height: 80,),
-
-            ],
+                    return Column(
+                      children: [
+                        identificadorQuiosque(quiosque),
+                        for (var item in itens)
+                          itensCarrinho(item, quiosque),
+                      ],
+                    );
+                  }),
+                  const SizedBox(height: 100),
+                ],
+              ),
+            ),
           ),
-        ),
+
+          // Bloqueia interações na tela se a API estiver processando o pedido
+          if (_isSending)
+            const ModalBarrier(
+              dismissible: false,
+              color: Colors.black12,
+            ),
+        ],
       ),
 
       bottomNavigationBar: carrinho.isNotEmpty
@@ -325,7 +362,6 @@ class _CarrinhoPageState extends ConsumerState<CarrinhoPage> {
         child: botaoEnviarPedido(),
       )
           : null,
-
     );
   }
 }

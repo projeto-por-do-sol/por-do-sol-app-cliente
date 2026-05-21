@@ -7,7 +7,7 @@ import 'package:client_app/src/shared/widget/CardItens.dart';
 import 'package:client_app/src/shared/widget/appBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:client_app/providers/carrinho_provider.dart';
+import 'package:client_app/providers/carrinho_provider/carrinho_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class QuiosquePage extends ConsumerStatefulWidget {
@@ -474,14 +474,13 @@ class _QuiosquePageState extends ConsumerState<QuiosquePage> {
                               .where((item) => item.disponivel)
                               .map((item) =>
                                 CardItens(
-                                  desabilitado: !verificarQuiosqueAberto(widget.quiosque.horarioAbre, widget.quiosque.horarioFecha),
+                                  desabilitado: !verificarQuiosqueAberto(widget.quiosque.horarioAbre, widget.quiosque.horarioFecha) || !widget.quiosque.disponivelEntrega,
                                   item: item,
                                     quiosque: QuiosqueCarrinho(
                                         idQuiosque: widget.quiosque.idQuiosque,
                                         nomeQuiosque: widget.quiosque.nomeQuiosque,
                                         imgBannerQuiosque: widget.quiosque.imgBannerQuiosque
                                     ),
-                                    // No seu CardItens ou onde o onChanged é chamado:
                                     onChanged: (itemAtualizado) {
                                       setState(() {
                                         // 1. Procura se o item já está no carrinho

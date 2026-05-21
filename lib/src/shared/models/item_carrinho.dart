@@ -45,7 +45,6 @@ class ItemCarrinho extends Equatable{
   List<Object?> get props => [
     idProduto,
     idQuiosque,
-    // valorTotal,
     ingredientes,
     adicionais,
   ];

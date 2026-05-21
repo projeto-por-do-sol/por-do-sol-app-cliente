@@ -13,7 +13,7 @@ class _PerfilPageState extends State<PerfilPage> { //Precisa criar o model do us
   List<List<dynamic>> listaTopicos = [ //TODO: Dps tem que mudar os onPressed
     ['Modificar perfil', '/login', Icons.info_outline],
     ['Histórico de pedidos', '/login', Icons.history_outlined],
-    ['Ajuda', '/login', Icons.history_outlined],
+    ['Ajuda', '/login', Icons.help_outline],
     ['Sair', '/login', Icons.logout_outlined],
     ['Excluir conta', '/login', Icons.delete_forever_outlined]
   ];
@@ -92,27 +92,20 @@ class _PerfilPageState extends State<PerfilPage> { //Precisa criar o model do us
 
             SizedBox(height: 15,),
 
-            Column(
-              children: [
-                ...listaTopicos.map((topico) =>
-                    Column(
-                      children: [
-                        CustomButton(
-                          label: topico[0],
-                          onPressed: () {
-                            context.push(topico[1]);
-                          },
-                          icone: topico[2],
-                        ),
+          ...listaTopicos.map((topico) =>
+              Column(
+                children: [
+                  CustomButton(
+                    label: topico[0],
+                    onPressed: () {
+                      context.push(topico[1]);
+                    },
+                    icone: topico[2],
+                  ),
 
-                        SizedBox(height: 15,),
-                      ],
-                    ),
-                ),
-
-
-
-              ],
+                  SizedBox(height: 15,),
+                ],
+              ),
             ),
           ],
         ),

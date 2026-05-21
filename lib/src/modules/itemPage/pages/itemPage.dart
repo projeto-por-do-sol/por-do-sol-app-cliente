@@ -6,7 +6,7 @@ import 'package:client_app/src/shared/models/item_quiosque.dart';
 import 'package:client_app/src/shared/widget/CustomDivider.dart';
 import 'package:client_app/src/shared/widget/appBar.dart';
 import 'package:flutter/material.dart';
-import 'package:client_app/providers/carrinho_provider.dart';
+import 'package:client_app/providers/carrinho_provider/carrinho_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /*

@@ -69,15 +69,6 @@ class CarrinhoNotifier extends _$CarrinhoNotifier{
     state = novoMapa;
   }
 
-  bool enviarPedido(){
-    try{ //TODO: Fazer a parte de enviar o pedido para o back-end
-      limparCarrinho();
-      return true;
-    } catch(e){
-      return false;
-    }
-  }
-
   void limparCarrinho(){
     state = {};
   }

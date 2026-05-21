@@ -13,11 +13,7 @@ part of 'pedido_provider.dart';
 final pedidoProvider = PedidoNotifierProvider._();
 
 final class PedidoNotifierProvider
-    extends
-        $NotifierProvider<
-          PedidoNotifier,
-          Map<QuiosqueCarrinho, List<ItemCarrinho>>
-        > {
+    extends $AsyncNotifierProvider<PedidoNotifier, List<PedidosModel>> {
   PedidoNotifierProvider._()
     : super(
         from: null,
@@ -35,39 +31,22 @@ final class PedidoNotifierProvider
   @$internal
   @override
   PedidoNotifier create() => PedidoNotifier();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(Map<QuiosqueCarrinho, List<ItemCarrinho>> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride:
-          $SyncValueProvider<Map<QuiosqueCarrinho, List<ItemCarrinho>>>(value),
-    );
-  }
 }
 
-String _$pedidoNotifierHash() => r'77d54322347a7fade4c103e7fc8d203fae66d752';
+String _$pedidoNotifierHash() => r'3aed505b9f692ab64e6902e322e78e8e32cadf17';
 
-abstract class _$PedidoNotifier
-    extends $Notifier<Map<QuiosqueCarrinho, List<ItemCarrinho>>> {
-  Map<QuiosqueCarrinho, List<ItemCarrinho>> build();
+abstract class _$PedidoNotifier extends $AsyncNotifier<List<PedidosModel>> {
+  FutureOr<List<PedidosModel>> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final ref =
-        this.ref
-            as $Ref<
-              Map<QuiosqueCarrinho, List<ItemCarrinho>>,
-              Map<QuiosqueCarrinho, List<ItemCarrinho>>
-            >;
+        this.ref as $Ref<AsyncValue<List<PedidosModel>>, List<PedidosModel>>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<
-                Map<QuiosqueCarrinho, List<ItemCarrinho>>,
-                Map<QuiosqueCarrinho, List<ItemCarrinho>>
-              >,
-              Map<QuiosqueCarrinho, List<ItemCarrinho>>,
+              AnyNotifier<AsyncValue<List<PedidosModel>>, List<PedidosModel>>,
+              AsyncValue<List<PedidosModel>>,
               Object?,
               Object?
             >;

@@ -1,15 +1,225 @@
+import 'dart:convert';
+
+import 'package:client_app/data/repositories/pedido_repository.dart';
+import 'package:client_app/providers/carrinho_provider/carrinho_provider.dart';
+import 'package:client_app/src/shared/models/adicionaisItem.dart';
 import 'package:client_app/src/shared/models/item_carrinho.dart';
+import 'package:client_app/src/shared/models/pedidos_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:uuid/uuid.dart';
+import 'package:intl/intl.dart';
 
 part 'pedido_provider.g.dart';
 
 @Riverpod(keepAlive: true)
-class PedidoNotifier extends _$PedidoNotifier{
+class PedidoNotifier extends _$PedidoNotifier {
+  final _uuid = const Uuid();
+  @override
+  FutureOr<List<PedidosModel>> build() async {
+    final dadosDB = await PedidoRepository.instance.listarPedidos();
 
-  @override //TODO: tem que fazer tudo (não sei como fazer aqui)
-  Map<QuiosqueCarrinho, List<ItemCarrinho>> build() {
-    return {};
+    if (dadosDB.isEmpty) return [];
+
+    final Map<String, List<ItemCarrinho>> itensAgrupados = {};
+    final Map<String, QuiosqueCarrinho> quiosquesPorPedido = {};
+    final Map<String, String> statusPorPedido = {};
+    final Map<String, String> codigoPorPedido = {};
+    final Map<String, String> horaPorPedido = {};
+
+    for (var linha in dadosDB) {
+      final idPedido = linha['idPedido'] as String;
+
+      final listIngredientes = (jsonDecode(linha['ingredientes'] as String) as List).cast<String>();
+
+      final listMapAdicionais = jsonDecode(linha['adicionais'] as String) as List;
+      final listAdicionais = listMapAdicionais.map((adicionalJson) {
+        return AdicionaisItem.fromMap(adicionalJson as Map<String, dynamic>);
+      }).toList();
+
+      final item = ItemCarrinho(
+        idProduto: linha['idProduto'] as String,
+        idQuiosque: linha['idQuiosque'] as String,
+        nomeItem: linha['nomeItem'] as String,
+        valorTotal: (linha['valorTotal'] as int),
+        qtdeItem: linha['qtdeItem'] as int,
+        ingredientes: listIngredientes,
+        adicionais: listAdicionais,
+      );
+
+      itensAgrupados.putIfAbsent(idPedido, () => []).add(item);
+
+      quiosquesPorPedido.putIfAbsent(
+        idPedido,
+            () => QuiosqueCarrinho(
+          idQuiosque: linha['idQuiosque'] as String,
+          nomeQuiosque: linha['nomeQuiosque'] as String,
+          imgBannerQuiosque: linha['imgBannerQuiosque'] as String,
+        ),
+      );
+      statusPorPedido.putIfAbsent(idPedido, () => linha['status'] as String);
+
+      codigoPorPedido.putIfAbsent(idPedido, () => linha['codigoPedido'] as String);
+
+      horaPorPedido.putIfAbsent(idPedido, () => linha['horaPedido'] as String);
+    }
+
+    final listPedidosSalvos = itensAgrupados.keys.map((idPedido) {
+      return PedidosModel(
+        idPedido: idPedido,
+        codigoPedido: codigoPorPedido[idPedido]!,
+        quiosque: quiosquesPorPedido[idPedido]!,
+        itens: itensAgrupados[idPedido]!,
+        status: statusPorPedido[idPedido]!,
+        horaPedido: horaPorPedido[idPedido]!,
+      );
+    }).toList();
+
+    return listPedidosSalvos;
+  }
+
+  // Future<bool> criarPedido() async {
+  //   final dados = ref.read(carrinhoProvider);
+  //
+  //   if (dados.isEmpty) return false;
+  //
+  //   try {
+  //     final idPedido = _uuid.v4(); //TODO: Tem que mudar. Cada quiosque deve ter um idPedido diferente.
+  //     final novosPedidos = <PedidosModel>[];
+  //     final pedidosAtuais = state.value ?? [];
+  //
+  //     final codigoPedido = pedidosAtuais.isNotEmpty
+  //         ? pedidosAtuais.first.codigoPedido
+  //         : _uuid.v4().substring(0, 6);
+  //
+  //     for (var entry in dados.entries) {
+  //       final quiosque = entry.key;
+  //       final itens = entry.value;
+  //
+  //       final pedido = PedidosModel(
+  //         idPedido: idPedido,
+  //         codigoPedido: codigoPedido,
+  //         quiosque: quiosque,
+  //         itens: itens,
+  //         status: "Esperando o quiosque aceitar",
+  //         // status: "Preparando",
+  //         horaPedido: DateFormat('HH:mm').format(DateTime.now()),
+  //       );
+  //
+  //       await mandarPedidoParaOBanco(pedido);
+  //       novosPedidos.add(pedido);
+  //     }
+  //
+  //     state = AsyncData([...pedidosAtuais, ...novosPedidos]);
+  //
+  //     ref.read(carrinhoProvider.notifier).limparCarrinho();
+  //     return true;
+  //   } catch (e) {
+  //     print("Erro ao criar pedido: $e");
+  //     return false;
+  //   }
+  // }
+
+  Future<bool> criarPedido() async {
+    final dados = ref.read(carrinhoProvider);
+    if (dados.isEmpty) return false;
+
+    try {
+      final novosPedidos = <PedidosModel>[];
+      final pedidosAtuais = state.value ?? [];
+
+      // Gera um código humano (ex: 6 dígitos) que pode ser o mesmo para a "sessão" de compra
+      // ou único por quiosque. Geralmente é único por pedido/quiosque.
+      final codigoBase = _uuid.v4().substring(0, 6).toUpperCase();
+
+      for (var entry in dados.entries) {
+        final quiosque = entry.key;
+        final itens = entry.value;
+
+        // MOVIDO PARA DENTRO DO LOOP: Cada quiosque ganha um ID único
+        final idPedidoUnico = _uuid.v4();
+
+        final pedido = PedidosModel(
+          idPedido: idPedidoUnico,
+          codigoPedido: codigoBase, // Pode manter o mesmo código visual ou gerar outro
+          quiosque: quiosque,
+          itens: itens,
+          // status: "Esperando o quiosque aceitar",
+          status: "Preparando",
+          horaPedido: DateFormat('HH:mm').format(DateTime.now()),
+        );
+
+        await mandarPedidoParaOBanco(pedido);
+        novosPedidos.add(pedido);
+      }
+
+      // Em vez de manipular o state manualmente com [...],
+      // é mais seguro invalidar para reler do banco e garantir sincronia
+      ref.invalidateSelf();
+
+      ref.read(carrinhoProvider.notifier).limparCarrinho();
+      return true;
+    } catch (e) {
+      print("Erro ao criar pedido: $e");
+      return false;
+    }
   }
 
 
+  Future<void> mandarPedidoParaOBanco(PedidosModel pedido) async {
+    for (var item in pedido.itens) {
+      final Map<String, dynamic> novoItem = {
+        'idPedido': pedido.idPedido,
+        'idProduto': item.idProduto,
+        'idQuiosque': item.idQuiosque,
+        'codigoPedido': pedido.codigoPedido,
+        'nomeQuiosque': pedido.quiosque.nomeQuiosque,
+        'imgBannerQuiosque': pedido.quiosque.imgBannerQuiosque,
+        'nomeItem': item.nomeItem,
+        'valorTotal': item.valorTotal,
+        'ingredientes': jsonEncode(item.ingredientes),
+        'adicionais': jsonEncode(item.adicionais),
+        'qtdeItem': item.qtdeItem,
+        'status': pedido.status,
+        'horaPedido': DateFormat('HH:mm').format(DateTime.now()),
+      };
+
+      int idResultado = await PedidoRepository.instance.inserirItem(novoItem);
+
+      if (idResultado < 0) {
+        throw Exception("Falha ao inserir o item no banco local.");
+      }
+    }
+  }
+
+  void alterarStatus(String idPedido, String novoStatus) async {
+    await PedidoRepository.instance.atualizarStatus(idPedido, novoStatus);
+
+    if (state.hasValue) {
+      state = AsyncData(
+        state.value!.map((pedido) {
+          if (pedido.idPedido == idPedido) {
+            return PedidosModel(
+              idPedido: pedido.idPedido,
+              codigoPedido: pedido.codigoPedido,
+              quiosque: pedido.quiosque,
+              itens: pedido.itens,
+              status: novoStatus,
+              horaPedido: pedido.horaPedido,
+            );
+          }
+          return pedido;
+        }).toList(),
+      );
+    }
+  }
+
+  void apagarPedidos() async {
+    state = const AsyncData([]);
+    await PedidoRepository.instance.deletarPedido();
+  }
+
+  void apagarPedidoPorIdPedidoIdQuiosque(String idPedido) async {
+    await PedidoRepository.instance.deletarPedidoIdPedidoIdQuiosque(idPedido);
+    ref.invalidateSelf();
+  }
 }
