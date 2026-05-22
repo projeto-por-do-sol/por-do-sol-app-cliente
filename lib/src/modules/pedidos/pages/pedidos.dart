@@ -331,7 +331,6 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
                     label: const Text('SIM', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                     onPressed: () {
-                      //TODO: Colocar a lógica de cancelar pedido aqui (criar uma função para cancelar o pedido)
                       ref.read(pedidoProvider.notifier).apagarPedidoPorIdPedidoIdQuiosque(idPedido);
                       Navigator.pop(context);
                     },

@@ -1,0 +1,10 @@
+-- Criar o provider do cliente.
+-- Criar o flutter_secure_storage para armazenar o jwt.
+-- Criar o banco de dados para os dados do usuário (nome completo, email e telefone).
+-- Criar telas:
+    - Modificar perfil;
+    - Histórico de pedidos;
+    - Ajuda.
+
+-- Excluir conta.
+-- Alterar o nome do cliente na tela inicial e na tela de perfil.

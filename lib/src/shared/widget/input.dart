@@ -169,7 +169,7 @@ class _CustomInputState extends State<CustomInput> {
               ),
 
               filled: true,
-              fillColor: Colors.white,
+              fillColor: Theme.of(context).colorScheme.surface,
 
             ),
           ),
