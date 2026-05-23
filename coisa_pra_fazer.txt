@@ -1,16 +1,9 @@
--- Criar o provider do cliente.
--- Repository do cliente.
--- Service do cliente.
--- Criar o flutter_secure_storage para armazenar o jwt.
--- Criar o banco de dados para os dados do usuário (nome completo, email e telefone).
-
--- Excluir conta.
--- Alterar o nome do cliente na tela inicial e na tela de perfil.
--- Pesquisa por quiosque.
--- Remover a parte de notificação.
--- Pegar as coordenadas do cliente.
--- Alterar os botões do perfil para quando o cliente estiver deslogado.
--- Repository dos pedidos.
--- Service dos pedidos.
--- Provider dos pedidos.
--- Alterar tela de histórico para o provider de histórico de pedidos.
+-- Página de detalhes do pedido, junto com a avaliação do quiosque;
+-- Fazer a parte do back-end:
+    -- Criar conta;
+    -- Alterar dados da conta;
+    -- Deletar conta;
+    -- Requisição de quiosques próximos;
+    -- Enviar pedido;
+    -- Requisição de histórico de pedidos;
+    -- Enviar avaliação;

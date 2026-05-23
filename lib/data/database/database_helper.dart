@@ -2,37 +2,30 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class DatabaseHelper {
-  // Instância privada do Singleton
   static final DatabaseHelper instance = DatabaseHelper._init();
 
-  // Objeto do banco de dados do sqflite
   static Database? _database;
 
-  // Construtor privado
   DatabaseHelper._init();
 
-  // Getter para o banco de dados (abre o banco se não estiver aberto)
   Future<Database> get database async {
     if (_database != null) return _database!;
-
     _database = await _initDB('cliente.db');
     return _database!;
   }
 
-  // Inicializa o banco de dados no caminho correto do dispositivo
   Future<Database> _initDB(String filePath) async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
-    // Abre o banco e define a versão e o que fazer na criação
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _createDB,
+      onUpgrade: _onUpgradeDB,
     );
   }
 
-  // Define a estrutura das tabelas usando SQL puro
   Future _createDB(Database db, int version) async {
     await db.execute('''
       CREATE TABLE pedidos (
@@ -52,5 +45,29 @@ class DatabaseHelper {
         PRIMARY KEY (idPedido, idProduto, idQuiosque)
       )
     ''');
+
+    await db.execute('''
+      CREATE TABLE clientes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nomeCompleto TEXT NOT NULL,
+        email TEXT NOT NULL,
+        telefone TEXT NOT NULL,
+        fotoPath TEXT
+      )
+    ''');
+  }
+
+  Future _onUpgradeDB(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS clientes (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          nomeCompleto TEXT NOT NULL,
+          email TEXT NOT NULL,
+          telefone TEXT NOT NULL,
+          fotoPath TEXT
+        )
+      ''');
+    }
   }
 }

@@ -1,21 +1,25 @@
-
+import 'package:client_app/data/services/cliente_service.dart';
+import 'package:client_app/providers/cliente_provider/cliente_provider.dart';
 import 'package:client_app/src/modules/inicio/widget/Container_busca.dart';
 import 'package:client_app/src/modules/inicio/widget/card_quiosque.dart';
 import 'package:client_app/src/shared/models/quiosque_model.dart';
 import 'package:client_app/src/shared/utils/verificarHorario.dart';
 import 'package:client_app/src/shared/widget/CustomDivider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> {
+  String _termoBusca = '';
+
   QuiosqueModel quiosque1 = QuiosqueModel(
-    idQuiosque: "1", // Adicionado
+    idQuiosque: "1",
     nomeQuiosque: "Quiosque 1",
     imgPerfilQuiosque: "logo.png",
     imgBannerQuiosque: "bannerTeste.png",
@@ -29,7 +33,7 @@ class _HomePageState extends State<HomePage> {
   );
 
   QuiosqueModel quiosque2 = QuiosqueModel(
-    idQuiosque: "2", // Adicionado
+    idQuiosque: "2",
     nomeQuiosque: "Quiosque 2",
     imgPerfilQuiosque: "logo.png",
     imgBannerQuiosque: "logo.png",
@@ -43,7 +47,7 @@ class _HomePageState extends State<HomePage> {
   );
 
   QuiosqueModel quiosque3 = QuiosqueModel(
-    idQuiosque: "3", // Adicionado
+    idQuiosque: "3",
     nomeQuiosque: "Quiosque do Porto Teste aleatório Teste aleatório 2.0",
     imgPerfilQuiosque: "logo1.png",
     imgBannerQuiosque: "bannerTeste1.png",
@@ -57,7 +61,7 @@ class _HomePageState extends State<HomePage> {
   );
 
   QuiosqueModel quiosque4 = QuiosqueModel(
-    idQuiosque: "4", // Adicionado
+    idQuiosque: "4",
     nomeQuiosque: "Quiosque Beira Mar",
     avaliacaoQuiosque: 3.9,
     distanciaQuiosque: "45",
@@ -69,7 +73,7 @@ class _HomePageState extends State<HomePage> {
   );
 
   QuiosqueModel quiosque6 = QuiosqueModel(
-    idQuiosque: "6", // Adicionado
+    idQuiosque: "6",
     nomeQuiosque: "Quiosque Central",
     imgPerfilQuiosque: "logo.png",
     imgBannerQuiosque: "bannerTeste.png",
@@ -83,10 +87,12 @@ class _HomePageState extends State<HomePage> {
   );
 
   QuiosqueModel quiosque5 = QuiosqueModel(
-    idQuiosque: "5", // Adicionado
+    idQuiosque: "5",
     nomeQuiosque: "Cantinho da Praia",
-    imgPerfilQuiosque: "https://www.guiaviagensbrasil.com/imagens/quiosque-praia-monguaga-sp.jpg",
-    imgBannerQuiosque: "https://www.guiaviagensbrasil.com/imagens/quiosque-praia-monguaga-sp.jpg",
+    imgPerfilQuiosque:
+        "https://www.guiaviagensbrasil.com/imagens/quiosque-praia-monguaga-sp.jpg",
+    imgBannerQuiosque:
+        "https://www.guiaviagensbrasil.com/imagens/quiosque-praia-monguaga-sp.jpg",
     avaliacaoQuiosque: 5.0,
     distanciaQuiosque: "5",
     disponivelEntrega: true,
@@ -96,182 +102,169 @@ class _HomePageState extends State<HomePage> {
     horarioFecha: "22:00",
   );
 
-  late List<QuiosqueModel> listaQuiosques = [quiosque1, quiosque2, quiosque3, quiosque4, quiosque5, quiosque6];
+  late List<QuiosqueModel> listaQuiosques = [
+    quiosque1,
+    quiosque2,
+    quiosque3,
+    quiosque4,
+    quiosque5,
+    quiosque6,
+  ];
 
   @override
   void initState() {
     super.initState();
-    // Ordena a lista pela menor distância assim que o app inicia
-    listaQuiosques.sort((a, b) =>
-        double.parse(a.distanciaQuiosque).compareTo(double.parse(b.distanciaQuiosque))
+    listaQuiosques.sort(
+      (a, b) => double.parse(a.distanciaQuiosque).compareTo(
+        double.parse(b.distanciaQuiosque),
+      ),
     );
+    _obterLocalizacao();
   }
-  //TODO: Dps da pra mudar a lógica dos quiosques por um Riverpod
+
+  Future<void> _obterLocalizacao() async {
+    await ClienteService.instance.obterLocalizacao();
+  }
+
+  List<QuiosqueModel> get _listaFiltrada {
+    if (_termoBusca.isEmpty) return listaQuiosques;
+    final termo = _termoBusca.toLowerCase();
+    return listaQuiosques
+        .where((q) => q.nomeQuiosque.toLowerCase().contains(termo))
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final clienteAsync = ref.watch(clienteProvider);
+    final nomeCliente = clienteAsync.value?.nomeCompleto.split(' ').first;
+    final listaFiltrada = _listaFiltrada;
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         body: SingleChildScrollView(
           child: Column(
-              children: [
-
-                // const SizedBox(height: 20),
-
-                ContainerBusca(
-                    trocaFiltro: (filtro, ordenacao) {
-                    setState(() {
-                      if (filtro == "distancia"){
-                        if (ordenacao == "menor"){
-                          listaQuiosques.sort((a, b) => double.parse(a.distanciaQuiosque).compareTo(double.parse(b.distanciaQuiosque)));
-                        } else {
-                          listaQuiosques.sort((a, b) => double.parse(b.distanciaQuiosque).compareTo(double.parse(a.distanciaQuiosque)));
-                        }
+            children: [
+              ContainerBusca(
+                nomeCliente: nomeCliente,
+                onSearch: (termo) {
+                  setState(() {
+                    _termoBusca = termo;
+                  });
+                },
+                trocaFiltro: (filtro, ordenacao) {
+                  setState(() {
+                    if (filtro == "distancia") {
+                      if (ordenacao == "menor") {
+                        listaQuiosques.sort(
+                          (a, b) => double.parse(a.distanciaQuiosque).compareTo(
+                            double.parse(b.distanciaQuiosque),
+                          ),
+                        );
                       } else {
-                        if (ordenacao == "menor"){
-                          listaQuiosques.sort((a, b) => a.avaliacaoQuiosque.compareTo(b.avaliacaoQuiosque));
-                        } else {
-                          listaQuiosques.sort((a, b) => b.avaliacaoQuiosque.compareTo(a.avaliacaoQuiosque));
-                        }
+                        listaQuiosques.sort(
+                          (a, b) => double.parse(b.distanciaQuiosque).compareTo(
+                            double.parse(a.distanciaQuiosque),
+                          ),
+                        );
                       }
-                    });
-                  }
-                ),
-
-                const SizedBox(height: 30,),
-
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: [
-                    if (listaQuiosques.any((q) => q.disponivelEntrega
-                    //&& verificarQuiosqueAberto(q.horarioAbre, q.horarioFecha) //TODO: Dps tem que remover (exibe a label "Entrega aí" somente se tiver algum quiosque aberto)
-                    )) ... [
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        child: Text("Entrega aí",
-                            style:
-                            TextStyle(
-                              color: Theme.of(context).colorScheme.outline,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 20,
-                            )
-                        ),
-                      ),
-
-                      const SizedBox(height: 10,),
-
-                      ...listaQuiosques
-                          .where((quiosque) => quiosque.disponivelEntrega
-                          // && verificarQuiosqueAberto(quiosque.horarioAbre, quiosque.horarioFecha) //TODO: Dps tem que remover (apenas mostra os quiosques que estão abertos)
-                          )
-                          .map((quiosque) => CardQuiosque(quiosque: quiosque)),
-                    ],
-
-                    if (listaQuiosques.any((q) => !q.disponivelEntrega
-                    // && verificarQuiosqueAberto(q.horarioAbre, q.horarioFecha) //TODO: Dps tem que remover (exibe a label "Não entrega aí" somente se tiver algum quiosque aberto)
-                    )) ... [
-
-                      if (listaQuiosques.any((q) => q.disponivelEntrega
-                      && verificarQuiosqueAberto(q.horarioAbre, q.horarioFecha)
-                      )) ... {
-                        CustomDivider(),
-
-                        const SizedBox(height: 20,),
-                      },
-
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        child: Text("Não entrega aí",
-                            style:
-                            TextStyle(
-                              color: Theme.of(context).colorScheme.outline,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 20,
-                            )
-                        ),
-                      ),
-
-                      const SizedBox(height: 10,),
-
-                      ...listaQuiosques
-                          .where((quiosque) => !quiosque.disponivelEntrega
-                          // && verificarQuiosqueAberto(quiosque.horarioAbre, quiosque.horarioFecha) //TODO: Dps tem que remover (apenas mostra os quiosques que estão abertos)
-                          )
-                          .map((quiosque) => CardQuiosque(quiosque: quiosque)),
-                    ],
-                  ]
-                ),
+                    } else {
+                      if (ordenacao == "menor") {
+                        listaQuiosques.sort(
+                          (a, b) => a.avaliacaoQuiosque.compareTo(
+                            b.avaliacaoQuiosque,
+                          ),
+                        );
+                      } else {
+                        listaQuiosques.sort(
+                          (a, b) => b.avaliacaoQuiosque.compareTo(
+                            a.avaliacaoQuiosque,
+                          ),
+                        );
+                      }
+                    }
+                  });
+                },
               ),
 
+              const SizedBox(height: 30),
 
+              if (listaFiltrada.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    "Nenhum quiosque encontrado.",
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.outline,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
+                    ),
+                  ),
+                )
+              else
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      if (listaFiltrada.any((q) => q.disponivelEntrega)) ...[
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "Entrega aí",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.outline,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 20,
+                            ),
+                          ),
+                        ),
 
-              ],
-            ),
+                        const SizedBox(height: 10),
+
+                        ...listaFiltrada
+                            .where((quiosque) => quiosque.disponivelEntrega)
+                            .map((quiosque) => CardQuiosque(quiosque: quiosque)),
+                      ],
+
+                      if (listaFiltrada.any((q) => !q.disponivelEntrega)) ...[
+                        if (listaFiltrada.any(
+                          (q) =>
+                              q.disponivelEntrega &&
+                              verificarQuiosqueAberto(
+                                q.horarioAbre,
+                                q.horarioFecha,
+                              ),
+                        )) ...[
+                          CustomDivider(),
+                          const SizedBox(height: 20),
+                        ],
+
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "Não entrega aí",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.outline,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 20,
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 10),
+
+                        ...listaFiltrada
+                            .where((quiosque) => !quiosque.disponivelEntrega)
+                            .map((quiosque) => CardQuiosque(quiosque: quiosque)),
+                      ],
+                    ],
+                  ),
+                ),
+            ],
           ),
         ),
+      ),
     );
   }
 }
-
-
-// TextButton(onPressed: () {
-//   showModalBottomSheet(
-//       context: context,
-//       builder: (BuildContext context) {
-//         return Container(
-//           height: 200,
-//         );
-//       });
-// }, child: Text("Distância"))
-
-
-// Container(
-//   child: DropdownButtonHideUnderline(
-//       child: DropdownButton<String>(
-//         value: filtroSelecionado,
-//         isExpanded: false,
-//         style: Theme.of(context).textTheme.titleSmall,
-//         items: const [
-//           DropdownMenuItem(
-//             value: 'distancia',
-//             child: Text('Distância'),
-//           ),
-//           DropdownMenuItem(
-//             value: 'avaliacao',
-//             child: Text('Avaliação'),
-//           ),
-//         ],
-//         onChanged: (String? newValue) {
-//           setState(() {
-//             filtroSelecionado = newValue;
-//           });
-//         }),
-//
-//   ),
-// ),
-
-// DropdownMenu<String>(
-//   initialSelection: filtroSelecionado,
-//   width: 130,
-//   trailingIcon: const Icon(Icons.keyboard_arrow_down, size: 18),
-//   selectedTrailingIcon: const Icon(Icons.keyboard_arrow_up, size: 18),
-//   textStyle: Theme.of(context).textTheme.titleSmall,
-//
-//   inputDecorationTheme: const InputDecorationTheme(
-//     isDense: true,
-//     isCollapsed: true,
-//     contentPadding: EdgeInsets.only(right: -10),
-//     border: InputBorder.none,
-//   ),
-//
-//   onSelected: (String? newValue) {
-//     setState(() {
-//       filtroSelecionado = newValue;
-//     });
-//   },
-//   dropdownMenuEntries: const [
-//     DropdownMenuEntry(value: 'distancia', label: 'Distância'),
-//     DropdownMenuEntry(value: 'avaliacao', label: 'Avaliação'),
-//   ],
-// ),

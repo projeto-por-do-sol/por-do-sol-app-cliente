@@ -1,4 +1,4 @@
-import 'package:client_app/providers/pedido_provider/pedido_provider.dart';
+import 'package:client_app/providers/historico_provider/historico_provider.dart';
 import 'package:client_app/src/shared/models/item_carrinho.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -192,7 +192,7 @@ class HistoricoPedidos extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final pedidos = ref.watch(pedidoProvider); //TODO: Dps tem que trocar pelo provider do histórico de pedidos
+    final pedidos = ref.watch(historicoProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text("Histórico de pedidos"),

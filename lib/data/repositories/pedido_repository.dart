@@ -40,7 +40,7 @@ class PedidoRepository {
     );
   }
 
-  Future<int> deletarPedidoIdPedidoIdQuiosque(String idPedido) async{
+  Future<int> deletarPedidoIdPedidoIdQuiosque(String idPedido) async {
     final db = await _dbHelper.database;
     return await db.delete(
       'pedidos',
@@ -49,4 +49,13 @@ class PedidoRepository {
     );
   }
 
+  Future<int> finalizarTodos() async {
+    final db = await _dbHelper.database;
+    return await db.update(
+      'pedidos',
+      {'status': 'Finalizado'},
+      where: "status != ?",
+      whereArgs: ['Finalizado'],
+    );
+  }
 }

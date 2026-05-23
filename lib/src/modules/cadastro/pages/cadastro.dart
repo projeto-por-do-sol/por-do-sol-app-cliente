@@ -1,17 +1,19 @@
+import 'package:client_app/providers/cliente_provider/cliente_provider.dart';
 import 'package:client_app/src/shared/widget/button.dart';
 import 'package:client_app/src/shared/widget/input.dart';
 import 'package:client_app/src/shared/widget/inputImagem.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class Cadastro extends StatefulWidget {
+class Cadastro extends ConsumerStatefulWidget {
   const Cadastro({super.key});
 
   @override
-  State<Cadastro> createState() => _CadastroState();
+  ConsumerState<Cadastro> createState() => _CadastroState();
 }
 
-class _CadastroState extends State<Cadastro> {
+class _CadastroState extends ConsumerState<Cadastro> {
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
@@ -19,6 +21,17 @@ class _CadastroState extends State<Cadastro> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController passwordConfirmController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    cpfController.dispose();
+    passwordController.dispose();
+    passwordConfirmController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +83,7 @@ class _CadastroState extends State<Cadastro> {
                   isCPF: true,
                 ),
 
+
                 const SizedBox(height: 15),
 
                 CustomInput(
@@ -96,27 +110,31 @@ class _CadastroState extends State<Cadastro> {
 
                 CustomButton(
                   label: "criar conta",
-                  onPressed: () {
-                    if (passwordController.text == passwordConfirmController.text) {
-                      if (_formKey.currentState!.validate()) {
-                        debugPrint("Formulário válido!");
-                        // if (loginController == "teste@gmail.com" && passwordController == "123"){
-                        //
-                        // }
-                        context.go('/inicio');
-                      } else {
-                        debugPrint("Formulário inválido.");
-                      }
-                    } else {
+                  onPressed: () async {
+                    print(cpfController.text);
+                    if (passwordController.text != passwordConfirmController.text) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("As senhas não coincidem!".toUpperCase(), textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.w600),),
-                            backgroundColor: Theme.of(context).colorScheme.primary,
-                            duration: Duration(seconds: 3),
-                          )
+                        SnackBar(
+                          content: Text(
+                            "As senhas não coincidem!".toUpperCase(),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          backgroundColor: Theme.of(context).colorScheme.primary,
+                          duration: Duration(seconds: 3),
+                        ),
                       );
+                      return;
                     }
 
+                    if (_formKey.currentState!.validate()) {
+                      await ref.read(clienteProvider.notifier).login(
+                        nomeCompleto: nameController.text.trim(),
+                        email: emailController.text.trim(),
+                        telefone: phoneController.text.trim(),
+                      );
+                      if (context.mounted) context.go('/inicio');
+                    }
                   },
                 ),
                 const SizedBox(height: 20),
@@ -124,9 +142,7 @@ class _CadastroState extends State<Cadastro> {
             ),
           ),
         ),
-      )
-
-
+      ),
     );
   }
 }

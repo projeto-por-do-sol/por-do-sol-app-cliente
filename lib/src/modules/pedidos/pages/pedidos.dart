@@ -504,15 +504,37 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pedidos'),
+        title: const Text('Pedidos'),
         centerTitle: true,
-      ),
-
-      floatingActionButton: FloatingActionButton( //TODO: dps precisa que remover
-          onPressed: (){
-            ref.read(pedidoProvider.notifier).apagarPedidos();
-          }
-
+        actions: [
+          if (pedidos.hasValue &&
+              pedidos.value!.any((p) => p.status != 'Finalizado'))
+            IconButton(
+              tooltip: 'Finalizar todos',
+              icon: const Icon(Icons.check_circle_outline),
+              onPressed: () async {
+                final confirmar = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Finalizar pedidos'),
+                    content: const Text(
+                        'Deseja marcar todos os pedidos como finalizados?'),
+                    actions: [
+                      TextButton(
+                          onPressed: () => Navigator.pop(ctx, false),
+                          child: const Text('Cancelar')),
+                      TextButton(
+                          onPressed: () => Navigator.pop(ctx, true),
+                          child: const Text('Finalizar')),
+                    ],
+                  ),
+                );
+                if (confirmar == true) {
+                  ref.read(pedidoProvider.notifier).finalizarTodosPedidos();
+                }
+              },
+            ),
+        ],
       ),
 
       body: pedidos.when(

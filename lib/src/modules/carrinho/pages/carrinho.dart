@@ -1,4 +1,5 @@
 import 'package:client_app/providers/carrinho_provider/carrinho_provider.dart';
+import 'package:client_app/providers/cliente_provider/cliente_provider.dart';
 import 'package:client_app/providers/pedido_provider/pedido_provider.dart';
 import 'package:client_app/src/shared/models/item_carrinho.dart';
 import 'package:client_app/src/shared/widget/CustomDivider.dart';
@@ -227,12 +228,80 @@ class _CarrinhoPageState extends ConsumerState<CarrinhoPage> {
     );
   }
 
-  Widget botaoEnviarPedido(){
+  void _mostrarLoginObrigatorio() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.all(24),
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.lock_outline, size: 48, color: Theme.of(context).colorScheme.primary),
+              const SizedBox(height: 12),
+              Text(
+                'Entre na sua conta para fazer pedidos',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(ctx),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        side: BorderSide(color: Theme.of(context).colorScheme.primary),
+                      ),
+                      child: Text('Cancelar',
+                          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(ctx);
+                        context.push('/login');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor: Theme.of(context).colorScheme.onTertiary,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: const Text('Entrar'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget botaoEnviarPedido() {
     return Container(
       margin: const EdgeInsets.only(bottom: 10, left: 20, right: 20),
       width: double.infinity,
       child: ElevatedButton(
         onPressed: _isSending ? null : () async {
+          final cliente = ref.read(clienteProvider).value;
+          if (cliente == null) {
+            _mostrarLoginObrigatorio();
+            return;
+          }
+
           setState(() {
             _isSending = true;
           });

@@ -1,13 +1,12 @@
 import 'dart:convert';
 
-import 'package:client_app/data/repositories/pedido_repository.dart';
+import 'package:client_app/data/services/pedido_service.dart';
 import 'package:client_app/providers/carrinho_provider/carrinho_provider.dart';
 import 'package:client_app/src/shared/models/adicionaisItem.dart';
 import 'package:client_app/src/shared/models/item_carrinho.dart';
 import 'package:client_app/src/shared/models/pedidos_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
-import 'package:intl/intl.dart';
 
 part 'pedido_provider.g.dart';
 
@@ -16,7 +15,7 @@ class PedidoNotifier extends _$PedidoNotifier {
   final _uuid = const Uuid();
   @override
   FutureOr<List<PedidosModel>> build() async {
-    final dadosDB = await PedidoRepository.instance.listarPedidos();
+    final dadosDB = await PedidoService.instance.listarPedidos();
 
     if (dadosDB.isEmpty) return [];
 
@@ -135,7 +134,7 @@ class PedidoNotifier extends _$PedidoNotifier {
         'horaPedido': pedido.horaPedido,
       };
 
-      int idResultado = await PedidoRepository.instance.inserirItem(novoItem);
+      int idResultado = await PedidoService.instance.inserirItem(novoItem);
 
       if (idResultado < 0) {
         throw Exception("Falha ao inserir o item no banco local.");
@@ -144,7 +143,7 @@ class PedidoNotifier extends _$PedidoNotifier {
   }
 
   void alterarStatus(String idPedido, String novoStatus) async {
-    await PedidoRepository.instance.atualizarStatus(idPedido, novoStatus);
+    await PedidoService.instance.atualizarStatus(idPedido, novoStatus);
 
     if (state.hasValue) {
       state = AsyncData(
@@ -167,11 +166,29 @@ class PedidoNotifier extends _$PedidoNotifier {
 
   void apagarPedidos() async {
     state = const AsyncData([]);
-    await PedidoRepository.instance.deletarPedido();
+    await PedidoService.instance.deletarTodosPedidos();
   }
 
   void apagarPedidoPorIdPedidoIdQuiosque(String idPedido) async {
-    await PedidoRepository.instance.deletarPedidoIdPedidoIdQuiosque(idPedido);
+    await PedidoService.instance.deletarPedidoPorId(idPedido);
     ref.invalidateSelf();
+  }
+
+  void finalizarTodosPedidos() async {
+    await PedidoService.instance.finalizarTodosPedidos();
+    if (state.hasValue) {
+      state = AsyncData(
+        state.value!
+            .map((p) => PedidosModel(
+                  idPedido: p.idPedido,
+                  codigoPedido: p.codigoPedido,
+                  quiosque: p.quiosque,
+                  itens: p.itens,
+                  status: 'Finalizado',
+                  horaPedido: p.horaPedido,
+                ))
+            .toList(),
+      );
+    }
   }
 }

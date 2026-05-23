@@ -18,10 +18,14 @@ class cpfValidator{
    // }
 
    static bool isValidCpf(String cpf) {
+     cpf = cpf.replaceAll(RegExp(r'\D'), '');
+
      if (cpf.length != 11) return false;
+
+     if (RegExp(r'^(\d)\1+$').hasMatch(cpf)) return false;
+
      List<int> numbers = cpf.split('').map((e) => int.parse(e)).toList();
 
-     //Calcula primeiro dígito
      int sum = 0;
      for (int i = 0; i < 9; i++) {
        sum += numbers[i] * (10 - i);
@@ -30,7 +34,6 @@ class cpfValidator{
      if (firstDigit == 10) firstDigit = 0;
      if (numbers[9] != firstDigit) return false;
 
-     //Calcula o segundo dígito
      sum = 0;
      for (int i = 0; i < 10; i++) {
        sum += numbers[i] * (11 - i);
