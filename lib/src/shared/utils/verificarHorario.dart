@@ -13,40 +13,34 @@ bool verificarQuiosqueAberto(String horaAbertura, String horaFechamento) {
     final abertura = extrairHora(horaAbertura, agora);
     var fechamento = extrairHora(horaFechamento, agora);
 
-    // Tratamento caso o quiosque feche de madrugada (ex: abre 18:00 e fecha 02:00)
+    // Tratamento caso o quiosque feche de madrugada
     if (fechamento.isBefore(abertura)) {
-      fechamento = fechamento.add(Duration(days: 1));
+      fechamento = fechamento.add(const Duration(days: 1));
     }
 
-    // O quiosque está aberto se o momento atual for depois da abertura E antes do fechamento
-    return agora.isAfter(abertura) && agora.isBefore(fechamento);
+    return (agora.isAfter(abertura) || agora.isAtSameMomentAs(abertura)) &&
+        (agora.isBefore(fechamento));
+
   } catch (e) {
-    // Caso a string venha em formato inválido do banco, evita que o app quebre
-    print("Erro ao formatar horas: $e");
+    print("Erro ao formatar horas de funcionamento: $e");
     return false;
   }
 }
 
-dynamic verificarCancelamentoPedidoHorario(String horarioPedido) {
-  final agora = DateTime.now();
-
+List<dynamic> verificarCancelamentoPedidoHorario(String horarioPedidoIso) {
   try {
-    var pedido = extrairHora(horarioPedido, agora);
+    // Transforma a String ISO 8601 do banco diretamente em DateTime
+    final pedido = DateTime.parse(horarioPedidoIso);
+    final agora = DateTime.now();
 
-    // Ajuste para pedidos feitos antes da meia-noite caso já seja madrugada do dia seguinte
-    // Ex: Pedido feito às 23:50 e agora são 00:10.
-    if (pedido.isAfter(agora)) {
-      pedido = pedido.subtract(const Duration(days: 1));
-    }
-
-    // Calcula a diferença entre o momento atual e o horário do pedido
+    // Calcula a diferença exata entre os dois momentos
     final diferenca = agora.difference(pedido);
 
-    // Retorna true se passou 30 minutos ou mais
+    // Retorna true se passou de 30 minutos e os minutos restantes
     return [diferenca.inMinutes >= 30, 30 - diferenca.inMinutes];
 
   } catch (e) {
-    print("Erro ao formatar horas ou calcular tempo: $e");
-    return false;
+    print("Erro ao processar data do pedido: $e");
+    return [false, 0];
   }
 }

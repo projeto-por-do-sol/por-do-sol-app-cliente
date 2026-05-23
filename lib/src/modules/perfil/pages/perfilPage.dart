@@ -11,9 +11,9 @@ class PerfilPage extends StatefulWidget {
 
 class _PerfilPageState extends State<PerfilPage> { //Precisa criar o model do usuário
   List<List<dynamic>> listaTopicos = [ //TODO: Dps tem que mudar os onPressed
-    ['Modificar perfil', '/login', Icons.info_outline],
-    ['Histórico de pedidos', '/login', Icons.history_outlined],
-    ['Ajuda', '/login', Icons.help_outline],
+    ['Modificar perfil', '/modificarPerfil', Icons.info_outline],
+    ['Histórico de pedidos', '/historicoPedidos', Icons.history_outlined],
+    ['Ajuda', '/ajuda', Icons.help_outline],
     ['Sair', '/login', Icons.logout_outlined],
     ['Excluir conta', '/login', Icons.delete_forever_outlined]
   ];

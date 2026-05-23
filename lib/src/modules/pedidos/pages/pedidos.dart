@@ -3,6 +3,7 @@ import 'package:client_app/src/shared/models/item_carrinho.dart';
 import 'package:client_app/src/shared/utils/verificarHorario.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 class PedidosPage extends ConsumerStatefulWidget {
@@ -13,7 +14,7 @@ class PedidosPage extends ConsumerStatefulWidget {
 }
 
 class _PedidosPageState extends ConsumerState<PedidosPage> {
-  Widget identificadorQuiosque(QuiosqueCarrinho quiosque, String status, String horaPedido, String idPedido){
+  Widget identificadorQuiosque(QuiosqueCarrinho quiosque, String status, String horaPedido, String idPedido, String horaPedidoIso){
     double heightImagem = 80;
     double widthImagem = 90;
 
@@ -80,7 +81,7 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
                 ),
                 IconButton(
                     onPressed: (){
-                      showBottomModal(context, status, horaPedido, idPedido);
+                      showBottomModal(context, status, horaPedidoIso, idPedido);
                     },
                     icon: Icon(
                       Icons.cancel_outlined,
@@ -139,7 +140,7 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: Colors.black87,
+                    color: Theme.of(context).colorScheme.outline,
                   ),
                 ),
               ),
@@ -148,9 +149,9 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 30),
                 child: Text(
                   'Qtde: ${item.qtdeItem}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
-                    color: Colors.black87,
+                    color: Theme.of(context).colorScheme.outline,
                   ),
                 ),
               ),
@@ -159,9 +160,9 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
                 width: 80,
                 child: Text(
                   'R\$ ${(item.valorTotal / 100).toStringAsFixed(2).replaceAll('.', ',')}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
-                    color: Colors.black87,
+                    color: Theme.of(context).colorScheme.outline,
                   ),
                 ),
               ),
@@ -177,7 +178,7 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
 
           if (item.ingredientes.isNotEmpty)
             Container(
-              margin: EdgeInsets.only(left: 15, right: 20, top: 10, bottom: 10),
+              margin: EdgeInsets.only(left: 15, right: 20, top: 5, bottom: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -202,7 +203,7 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
 
           if (item.adicionais.isNotEmpty)
             Container(
-              margin: EdgeInsets.only(left: 15, right: 20, top: 10, bottom: 10),
+              margin: EdgeInsets.only(left: 15, right: 20, top: 5, bottom: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -539,7 +540,13 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
                   ...listaDePedidos.map((pedido) =>
                       Column(
                         children: [
-                          identificadorQuiosque(pedido.quiosque, pedido.status, pedido.horaPedido, pedido.idPedido),
+                          identificadorQuiosque(
+                              pedido.quiosque,
+                              pedido.status,
+                              DateFormat('HH:mm').format(DateTime.parse(pedido.horaPedido)),
+                              pedido.idPedido,
+                              pedido.horaPedido,
+                          ),
                           for (var item in pedido.itens)
                             itensCarrinho(item, pedido.quiosque),
                         ],

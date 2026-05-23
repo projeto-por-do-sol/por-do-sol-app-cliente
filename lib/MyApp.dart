@@ -1,19 +1,23 @@
+import 'package:client_app/src/modules/ajuda/pages/ajudaPage.dart';
+import 'package:client_app/src/modules/ajuda/pages/ajudaTopico.dart';
 import 'package:client_app/src/modules/cadastro/pages/cadastro.dart';
 import 'package:client_app/src/modules/carrinho/pages/carrinho.dart';
+import 'package:client_app/src/modules/historicoPedidos/pages/historicoPedidosPage.dart';
 import 'package:client_app/src/modules/inicio/pages/inicio.dart';
 import 'package:client_app/src/modules/itemPage/pages/itemPage.dart';
 import 'package:client_app/src/modules/login/pages/login.dart';
+import 'package:client_app/src/modules/modificar_perfil/pages/modificarPerfilPage.dart';
 import 'package:client_app/src/modules/pedidos/pages/pedidos.dart';
+import 'package:client_app/src/modules/perfil/pages/perfilPage.dart';
+import 'package:client_app/src/modules/quiosquePage/pages/quiosquePage.dart';
+import 'package:client_app/src/shared/models/ajuda_model.dart';
 import 'package:client_app/src/shared/models/item_carrinho.dart';
 import 'package:client_app/src/shared/models/item_quiosque.dart';
+import 'package:client_app/src/shared/models/quiosque_model.dart';
 import 'package:client_app/src/shared/widget/CustomNavBar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import 'src/modules/perfil/pages/perfilPage.dart';
-import 'src/modules/quiosquePage/pages/quiosquePage.dart';
-import 'src/shared/models/quiosque_model.dart';
 
 final GoRouter _router = GoRouter(
   initialLocation: '/inicio',
@@ -35,6 +39,29 @@ final GoRouter _router = GoRouter(
         final quiosque = state.extra as QuiosqueModel;
         return QuiosquePage(quiosque: quiosque);
       },
+    ),
+
+    GoRoute(
+      path: '/modificarPerfil',
+      builder: (context, state) => ModificarPerfilPage(),
+    ),
+
+    GoRoute(
+      path: '/ajuda',
+      builder: (context, state) => AjudaPage(),
+    ),
+
+    GoRoute(
+      path: '/ajudaTopico',
+      builder: (context, state) {
+        final ajuda = state.extra as AjudaModel;
+        return AjudaTopico(assunto: ajuda);
+      },
+    ),
+
+    GoRoute(
+      path: '/historicoPedidos',
+      builder: (context, state) => HistoricoPedidos(),
     ),
 
     GoRoute(

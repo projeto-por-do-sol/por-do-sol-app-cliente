@@ -10,14 +10,14 @@ class AdicionaisItem {
   Map<String, dynamic> toJson() {
     return {
       'nome': nomeAdicional,
-      'valor': precoAdicional,
+      'preco': precoAdicional,
     };
   }
 
   factory AdicionaisItem.fromMap(Map<String, dynamic> map) {
     return AdicionaisItem(
       nomeAdicional: map['nome'] ?? '',
-      precoAdicional: (map['preco'] as int),
+      precoAdicional: (map['preco'] as int?) ?? 0,
     );
   }
 

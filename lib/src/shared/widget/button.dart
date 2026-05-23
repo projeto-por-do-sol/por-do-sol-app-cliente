@@ -42,7 +42,14 @@ class CustomButton extends StatelessWidget {
               Align(
                 alignment: Alignment.center,
                 child: Text(
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
                   label.toUpperCase(),
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: Theme.of(context).colorScheme.outline
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ),

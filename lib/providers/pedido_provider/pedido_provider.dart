@@ -77,48 +77,6 @@ class PedidoNotifier extends _$PedidoNotifier {
     return listPedidosSalvos;
   }
 
-  // Future<bool> criarPedido() async {
-  //   final dados = ref.read(carrinhoProvider);
-  //
-  //   if (dados.isEmpty) return false;
-  //
-  //   try {
-  //     final idPedido = _uuid.v4(); //TODO: Tem que mudar. Cada quiosque deve ter um idPedido diferente.
-  //     final novosPedidos = <PedidosModel>[];
-  //     final pedidosAtuais = state.value ?? [];
-  //
-  //     final codigoPedido = pedidosAtuais.isNotEmpty
-  //         ? pedidosAtuais.first.codigoPedido
-  //         : _uuid.v4().substring(0, 6);
-  //
-  //     for (var entry in dados.entries) {
-  //       final quiosque = entry.key;
-  //       final itens = entry.value;
-  //
-  //       final pedido = PedidosModel(
-  //         idPedido: idPedido,
-  //         codigoPedido: codigoPedido,
-  //         quiosque: quiosque,
-  //         itens: itens,
-  //         status: "Esperando o quiosque aceitar",
-  //         // status: "Preparando",
-  //         horaPedido: DateFormat('HH:mm').format(DateTime.now()),
-  //       );
-  //
-  //       await mandarPedidoParaOBanco(pedido);
-  //       novosPedidos.add(pedido);
-  //     }
-  //
-  //     state = AsyncData([...pedidosAtuais, ...novosPedidos]);
-  //
-  //     ref.read(carrinhoProvider.notifier).limparCarrinho();
-  //     return true;
-  //   } catch (e) {
-  //     print("Erro ao criar pedido: $e");
-  //     return false;
-  //   }
-  // }
-
   Future<bool> criarPedido() async {
     final dados = ref.read(carrinhoProvider);
     if (dados.isEmpty) return false;
@@ -127,33 +85,28 @@ class PedidoNotifier extends _$PedidoNotifier {
       final novosPedidos = <PedidosModel>[];
       final pedidosAtuais = state.value ?? [];
 
-      // Gera um código humano (ex: 6 dígitos) que pode ser o mesmo para a "sessão" de compra
-      // ou único por quiosque. Geralmente é único por pedido/quiosque.
       final codigoBase = _uuid.v4().substring(0, 6).toUpperCase();
 
       for (var entry in dados.entries) {
         final quiosque = entry.key;
         final itens = entry.value;
 
-        // MOVIDO PARA DENTRO DO LOOP: Cada quiosque ganha um ID único
         final idPedidoUnico = _uuid.v4();
 
         final pedido = PedidosModel(
           idPedido: idPedidoUnico,
-          codigoPedido: codigoBase, // Pode manter o mesmo código visual ou gerar outro
+          codigoPedido: codigoBase,
           quiosque: quiosque,
           itens: itens,
           // status: "Esperando o quiosque aceitar",
           status: "Preparando",
-          horaPedido: DateFormat('HH:mm').format(DateTime.now()),
+          horaPedido: DateTime.now().toIso8601String(),
         );
 
         await mandarPedidoParaOBanco(pedido);
         novosPedidos.add(pedido);
       }
 
-      // Em vez de manipular o state manualmente com [...],
-      // é mais seguro invalidar para reler do banco e garantir sincronia
       ref.invalidateSelf();
 
       ref.read(carrinhoProvider.notifier).limparCarrinho();
@@ -180,7 +133,7 @@ class PedidoNotifier extends _$PedidoNotifier {
         'adicionais': jsonEncode(item.adicionais),
         'qtdeItem': item.qtdeItem,
         'status': pedido.status,
-        'horaPedido': DateFormat('HH:mm').format(DateTime.now()),
+        'horaPedido': pedido.horaPedido,
       };
 
       int idResultado = await PedidoRepository.instance.inserirItem(novoItem);
