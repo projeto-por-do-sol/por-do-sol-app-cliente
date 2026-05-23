@@ -83,7 +83,6 @@ class PedidoNotifier extends _$PedidoNotifier {
 
     try {
       final novosPedidos = <PedidosModel>[];
-      final pedidosAtuais = state.value ?? [];
 
       final codigoBase = _uuid.v4().substring(0, 6).toUpperCase();
 
@@ -99,7 +98,7 @@ class PedidoNotifier extends _$PedidoNotifier {
           quiosque: quiosque,
           itens: itens,
           // status: "Esperando o quiosque aceitar",
-          status: "Preparando",
+          status: "Finalizado",
           horaPedido: DateTime.now().toIso8601String(),
         );
 

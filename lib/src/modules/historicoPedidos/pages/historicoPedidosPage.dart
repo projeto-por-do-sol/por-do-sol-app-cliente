@@ -1,6 +1,5 @@
 import 'package:client_app/providers/pedido_provider/pedido_provider.dart';
 import 'package:client_app/src/shared/models/item_carrinho.dart';
-import 'package:client_app/src/shared/models/pedidos_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -8,7 +7,11 @@ import 'package:intl/intl.dart';
 class HistoricoPedidos extends ConsumerWidget {
   const HistoricoPedidos({super.key});
 
-  Widget pedidosResumo(BuildContext context, List<ItemCarrinho> item, QuiosqueCarrinho quiosque, String dataPedido) {
+  double calcularValorTotalPedido(List<ItemCarrinho> item){
+    return item.fold(0, (previousValue, element) => previousValue + element.valorTotal) / 100;
+  }
+
+  Widget pedidosResumo(BuildContext context, List<ItemCarrinho> item, QuiosqueCarrinho quiosque, String dataPedido, String statusPedido) {
     return Container(
       margin: const EdgeInsets.only(top: 15),
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
@@ -169,7 +172,18 @@ class HistoricoPedidos extends ConsumerWidget {
               ),
           ),
 
+          SizedBox(height: 10,),
 
+            Text(statusPedido == 'Finalizado' ?
+              'Valor: R\$${calcularValorTotalPedido(item).toStringAsFixed(2).replaceAll('.', ',')}' :
+              statusPedido,
+                style:
+                  TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.outline
+                  )
+            ),
 
         ],
       )
@@ -198,22 +212,25 @@ class HistoricoPedidos extends ConsumerWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Theme.of(context).colorScheme.outline),));
           }
 
-          return SingleChildScrollView(
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: [
-                  ...listaDePedidos.map((pedido) =>
-                      pedidosResumo(
-                          context,
-                          pedido.itens,
-                          pedido.quiosque,
-                          DateFormat('dd/MM/yyyy').format(DateTime.parse(pedido.horaPedido))
-                      ),
-                  ),
+          return SafeArea(
+            child: SingleChildScrollView(
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: [
+                    ...listaDePedidos.map((pedido) =>
+                        pedidosResumo(
+                            context,
+                            pedido.itens,
+                            pedido.quiosque,
+                            DateFormat('dd/MM/yyyy').format(DateTime.parse(pedido.horaPedido)),
+                            pedido.status,
+                        ),
+                    ),
 
-                  SizedBox(height: 20,),
-                ],
+                    SizedBox(height: 20,),
+                  ],
+                ),
               ),
             ),
           );
