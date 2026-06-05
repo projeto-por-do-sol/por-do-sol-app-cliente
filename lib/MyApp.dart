@@ -2,6 +2,7 @@ import 'package:client_app/src/modules/ajuda/pages/ajudaPage.dart';
 import 'package:client_app/src/modules/ajuda/pages/ajudaTopico.dart';
 import 'package:client_app/src/modules/cadastro/pages/cadastro.dart';
 import 'package:client_app/src/modules/carrinho/pages/carrinho.dart';
+import 'package:client_app/src/modules/historicoPedidos/pages/avaliar_pedidos.dart';
 import 'package:client_app/src/modules/historicoPedidos/pages/historicoPedidosPage.dart';
 import 'package:client_app/src/modules/inicio/pages/inicio.dart';
 import 'package:client_app/src/modules/itemPage/pages/itemPage.dart';
@@ -13,6 +14,7 @@ import 'package:client_app/src/modules/quiosquePage/pages/quiosquePage.dart';
 import 'package:client_app/src/shared/models/ajuda_model.dart';
 import 'package:client_app/src/shared/models/item_carrinho.dart';
 import 'package:client_app/src/shared/models/item_quiosque.dart';
+import 'package:client_app/src/shared/models/pedidos_model.dart';
 import 'package:client_app/src/shared/models/quiosque_model.dart';
 import 'package:client_app/src/shared/widget/CustomNavBar.dart';
 import 'package:flutter/material.dart';
@@ -62,6 +64,14 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/historicoPedidos',
       builder: (context, state) => HistoricoPedidos(),
+    ),
+
+    GoRoute(
+      path: '/avaliarPedidos',
+      builder: (context, state) {
+        final pedido = state.extra as PedidosModel;
+        return AvaliarPedidos(pedido: pedido);
+      },
     ),
 
     GoRoute(

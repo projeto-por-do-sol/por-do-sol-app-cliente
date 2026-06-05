@@ -2,6 +2,7 @@ import 'package:client_app/providers/historico_provider/historico_provider.dart'
 import 'package:client_app/src/shared/models/item_carrinho.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class HistoricoPedidos extends ConsumerWidget {
@@ -219,12 +220,15 @@ class HistoricoPedidos extends ConsumerWidget {
                 child: Column(
                   children: [
                     ...listaDePedidos.map((pedido) =>
-                        pedidosResumo(
-                            context,
-                            pedido.itens,
-                            pedido.quiosque,
-                            DateFormat('dd/MM/yyyy').format(DateTime.parse(pedido.horaPedido)),
-                            pedido.status,
+                        GestureDetector(
+                          onTap: () => context.push('/avaliarPedidos', extra: pedido),
+                          child: pedidosResumo(
+                              context,
+                              pedido.itens,
+                              pedido.quiosque,
+                              DateFormat('dd/MM/yyyy').format(DateTime.parse(pedido.horaPedido)),
+                              pedido.status,
+                          ),
                         ),
                     ),
 

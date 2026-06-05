@@ -96,7 +96,7 @@ class PedidoNotifier extends _$PedidoNotifier {
           codigoPedido: codigoBase,
           quiosque: quiosque,
           itens: itens,
-          status: "Esperando o quiosque aceitar",
+          status: "Finalizado",
           horaPedido: DateTime.now().toIso8601String(),
         );
 

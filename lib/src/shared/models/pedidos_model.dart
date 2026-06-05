@@ -7,6 +7,7 @@ class PedidosModel {
   final List<ItemCarrinho> itens;
   String status;
   String horaPedido;
+  String? motivoCancelamento;
 
   PedidosModel({
     required this.idPedido,
@@ -15,5 +16,6 @@ class PedidosModel {
     required this.itens,
     required this.status,
     required this.horaPedido,
+    this.motivoCancelamento,
   });
 }

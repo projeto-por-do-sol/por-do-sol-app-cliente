@@ -19,7 +19,7 @@ class PedidoService {
   Future<int> deletarTodosPedidos() => _repository.deletarPedido();
 
   Future<int> deletarPedidoPorId(String idPedido) =>
-      _repository.deletarPedidoIdPedidoIdQuiosque(idPedido);
+      _repository.deletarPedidoIdPedido(idPedido);
 
   Future<int> finalizarTodosPedidos() => _repository.finalizarTodos();
 }

@@ -1,4 +1,5 @@
--- Página de detalhes do pedido, junto com a avaliação do quiosque;
+-- Apagar os pedidos do db interno que foram finalizados.
+-- Puxar a nota de um item já avaliado para a página de avaliar pedidos, caso o cliente queira mudar a nota do pedido.
 -- Fazer a parte do back-end:
     -- Criar conta;
     -- Alterar dados da conta;

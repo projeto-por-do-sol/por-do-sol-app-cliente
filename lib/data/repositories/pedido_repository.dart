@@ -40,7 +40,7 @@ class PedidoRepository {
     );
   }
 
-  Future<int> deletarPedidoIdPedidoIdQuiosque(String idPedido) async {
+  Future<int> deletarPedidoIdPedido(String idPedido) async {
     final db = await _dbHelper.database;
     return await db.delete(
       'pedidos',
