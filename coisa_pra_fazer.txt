@@ -8,3 +8,17 @@
     -- Enviar pedido;
     -- Requisição de histórico de pedidos;
     -- Enviar avaliação;
+
+
+
+1. flutterfire configure na raiz — gera o firebase_options.dart, o
+  google-services.json e ajusta os gradle do Android automaticamente.
+2. Depois disso, trocar em notification_service.dart (2 lugares —
+  inicializar e o background handler):
+  await Firebase.initializeApp(options:
+  DefaultFirebaseOptions.currentPlatform);
+  2. (tem comentário marcando exatamente onde).
+3. Quando o back-end Spring tiver o endpoint pronto: flutter pub add
+  http, descomentar os blocos no notification_repository.dart e
+  definir a base URL (--dart-define=API_BASE_URL=..., com
+  10.0.2.2:8080 pro emulador).

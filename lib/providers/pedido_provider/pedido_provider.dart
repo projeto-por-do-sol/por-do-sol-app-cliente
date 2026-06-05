@@ -96,7 +96,7 @@ class PedidoNotifier extends _$PedidoNotifier {
           codigoPedido: codigoBase,
           quiosque: quiosque,
           itens: itens,
-          status: "Finalizado",
+          status: "Esperando o quiosque aceitar",
           horaPedido: DateTime.now().toIso8601String(),
         );
 
@@ -175,6 +175,10 @@ class PedidoNotifier extends _$PedidoNotifier {
     await PedidoService.instance.deletarPedidoPorId(idPedido);
     ref.invalidateSelf();
   }
+
+  /// Busca um pedido no back-end (usado quando ele não está no banco local).
+  Future<PedidosModel?> buscarPedidoNoBackend(String idPedido) =>
+      PedidoService.instance.buscarPedidoNoBackend(idPedido);
 
   void finalizarTodosPedidos() async {
     await PedidoService.instance.finalizarTodosPedidos();

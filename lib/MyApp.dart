@@ -21,7 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-final GoRouter _router = GoRouter(
+final GoRouter appRouter = GoRouter(
   initialLocation: '/inicio',
   routes: <RouteBase>[
     //Colocar as páginas que não terão na navBar
@@ -138,7 +138,7 @@ class MyApp extends StatelessWidget {
     // const borderColor = Color(0xFF1D3557);
 
     return MaterialApp.router(
-      routerConfig: _router,
+      routerConfig: appRouter,
       title: "Pôr-do-Sol",
       theme: ThemeData(
         fontFamily: GoogleFonts.poppins().fontFamily,

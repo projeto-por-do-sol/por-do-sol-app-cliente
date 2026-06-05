@@ -1,4 +1,5 @@
 import 'package:client_app/data/services/cliente_service.dart';
+import 'package:client_app/data/services/notification_service.dart';
 import 'package:client_app/providers/carrinho_provider/carrinho_provider.dart';
 import 'package:client_app/providers/pedido_provider/pedido_provider.dart';
 import 'package:client_app/src/shared/models/cliente_model.dart';
@@ -30,6 +31,16 @@ class ClienteNotifier extends AsyncNotifier<ClienteModel?> {
     await ClienteService.instance.salvarCliente(cliente);
     final salvo = await ClienteService.instance.buscarCliente();
     state = AsyncData(salvo);
+
+    // Agora que há usuário logado, pede permissão e registra o token FCM
+    // deste dispositivo no back-end. Envolvido em try/catch para que uma falha
+    // de notificação (ex.: Firebase ainda não configurado) NUNCA quebre o login.
+    try {
+      await NotificationService.instance.solicitarPermissao();
+      await NotificationService.instance.sincronizarToken();
+    } catch (e) {
+      print('[ClienteNotifier] falha ao configurar notificações no login: $e');
+    }
   }
 
   Future<void> atualizarPerfil(ClienteModel cliente) async {
@@ -39,6 +50,8 @@ class ClienteNotifier extends AsyncNotifier<ClienteModel?> {
   }
 
   Future<void> logout() async {
+    // Remove o token do back-end antes de apagar o JWT (a remoção precisa dele).
+    await NotificationService.instance.removerToken();
     await ClienteService.instance.deletarDadosCliente();
     ref.read(carrinhoProvider.notifier).limparCarrinho();
     ref.read(pedidoProvider.notifier).apagarPedidos();
@@ -46,6 +59,7 @@ class ClienteNotifier extends AsyncNotifier<ClienteModel?> {
   }
 
   Future<void> deletarConta() async {
+    await NotificationService.instance.removerToken();
     await ClienteService.instance.deletarDadosCliente();
     ref.read(carrinhoProvider.notifier).limparCarrinho();
     ref.read(pedidoProvider.notifier).apagarPedidos();
