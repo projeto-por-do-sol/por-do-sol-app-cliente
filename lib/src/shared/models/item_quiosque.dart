@@ -27,6 +27,40 @@ class ItemQuiosque {
     required this.adicionais,
   });
 
+  factory ItemQuiosque.fromJson(Map<String, dynamic> json) {
+    return ItemQuiosque(
+      idItem: json['idItem']?.toString() ?? '',
+      idQuiosque: json['idQuiosque']?.toString() ?? '',
+      secaoItem: json['secaoItem'] ?? '',
+      nomeItem: json['nomeItem'] ?? '',
+      descricaoItem: json['descricaoItem'] ?? '',
+      precoItem: (json['precoItem'] as num?)?.toInt() ?? 0,
+      imgItem: json['imgItem'] ?? '',
+      disponivel: json['disponivel'] ?? true,
+      qtdeItem: (json['qtdeItem'] as num?)?.toInt() ?? 0,
+      ingredientes:
+          (json['ingredientes'] as List?)?.map((e) => e.toString()).toList() ??
+              [],
+      adicionais: (json['adicionais'] as List?)
+              ?.map((e) => AdicionaisItem.fromMap(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+  }
 
-
+  Map<String, dynamic> toJson() {
+    return {
+      'idItem': idItem,
+      'idQuiosque': idQuiosque,
+      'secaoItem': secaoItem,
+      'nomeItem': nomeItem,
+      'descricaoItem': descricaoItem,
+      'precoItem': precoItem,
+      'imgItem': imgItem,
+      'disponivel': disponivel,
+      'qtdeItem': qtdeItem,
+      'ingredientes': ingredientes,
+      'adicionais': adicionais.map((e) => e.toJson()).toList(),
+    };
+  }
 }

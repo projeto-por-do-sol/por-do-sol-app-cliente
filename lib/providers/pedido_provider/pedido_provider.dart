@@ -83,7 +83,7 @@ class PedidoNotifier extends _$PedidoNotifier {
     try {
       final novosPedidos = <PedidosModel>[];
 
-      final codigoBase = _uuid.v4().substring(0, 6).toUpperCase();
+      final codigoBase = _uuid.v4().replaceAll('-', '').substring(0, 4).toUpperCase();
 
       for (var entry in dados.entries) {
         final quiosque = entry.key;
@@ -96,8 +96,7 @@ class PedidoNotifier extends _$PedidoNotifier {
           codigoPedido: codigoBase,
           quiosque: quiosque,
           itens: itens,
-          // status: "Esperando o quiosque aceitar",
-          status: "Finalizado",
+          status: "Esperando o quiosque aceitar",
           horaPedido: DateTime.now().toIso8601String(),
         );
 
@@ -149,6 +148,9 @@ class PedidoNotifier extends _$PedidoNotifier {
       state = AsyncData(
         state.value!.map((pedido) {
           if (pedido.idPedido == idPedido) {
+            if (novoStatus == 'Finalizado'){
+              apagarPedidoPorIdPedido(idPedido);
+            }
             return PedidosModel(
               idPedido: pedido.idPedido,
               codigoPedido: pedido.codigoPedido,
@@ -169,7 +171,7 @@ class PedidoNotifier extends _$PedidoNotifier {
     await PedidoService.instance.deletarTodosPedidos();
   }
 
-  void apagarPedidoPorIdPedidoIdQuiosque(String idPedido) async {
+  void apagarPedidoPorIdPedido(String idPedido) async {
     await PedidoService.instance.deletarPedidoPorId(idPedido);
     ref.invalidateSelf();
   }

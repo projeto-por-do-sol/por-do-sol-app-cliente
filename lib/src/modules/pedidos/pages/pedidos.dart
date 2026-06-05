@@ -269,6 +269,7 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: Theme.of(context).colorScheme.outline,
+                letterSpacing: 8.0,
               )
           ),
 
@@ -332,7 +333,7 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
                     label: const Text('SIM', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                     onPressed: () {
-                      ref.read(pedidoProvider.notifier).apagarPedidoPorIdPedidoIdQuiosque(idPedido);
+                      ref.read(pedidoProvider.notifier).apagarPedidoPorIdPedido(idPedido);
                       Navigator.pop(context);
                     },
                   ),
@@ -464,7 +465,7 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
                     label: const Text('SIM', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                     onPressed: () {
-                      ref.read(pedidoProvider.notifier).apagarPedidoPorIdPedidoIdQuiosque(idPedido);
+                      ref.read(pedidoProvider.notifier).apagarPedidoPorIdPedido(idPedido);
                       Navigator.pop(context);
                     },
                   ),
@@ -506,7 +507,7 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
       appBar: AppBar(
         title: const Text('Pedidos'),
         centerTitle: true,
-        actions: [
+        actions: [ //TODO: Dps tem que remover
           if (pedidos.hasValue &&
               pedidos.value!.any((p) => p.status != 'Finalizado'))
             IconButton(
@@ -545,12 +546,14 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
         ),
 
         data: (listaDePedidos) {
-          if (listaDePedidos.isEmpty) {
+          final pedidosAtivos = listaDePedidos.where((p) => p.status != 'Finalizado').toList();
+
+          if (pedidosAtivos.isEmpty) {
             return Center(child: Text("Nenhum pedido encontrado.",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Theme.of(context).colorScheme.outline),));
           }
 
-          final codigoAtual = listaDePedidos.first.codigoPedido;
+          final codigoAtual = pedidosAtivos.first.codigoPedido;
 
           return SingleChildScrollView(
             child: Container(
@@ -559,7 +562,7 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
                 children: [
                   caixaCodigoPedido(codigoAtual),
 
-                  ...listaDePedidos.map((pedido) =>
+                  ...pedidosAtivos.map((pedido) =>
                       Column(
                         children: [
                           identificadorQuiosque(

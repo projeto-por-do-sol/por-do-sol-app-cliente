@@ -33,7 +33,7 @@ final class PedidoNotifierProvider
   PedidoNotifier create() => PedidoNotifier();
 }
 
-String _$pedidoNotifierHash() => r'3aed505b9f692ab64e6902e322e78e8e32cadf17';
+String _$pedidoNotifierHash() => r'7108db3f2e919bb193ac355ba32d7d59004d2d63';
 
 abstract class _$PedidoNotifier extends $AsyncNotifier<List<PedidosModel>> {
   FutureOr<List<PedidosModel>> build();

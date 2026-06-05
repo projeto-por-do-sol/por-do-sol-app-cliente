@@ -1,12 +1,12 @@
-import 'package:client_app/src/shared/models/adicionaisItem.dart';
+import 'package:client_app/providers/quiosque_provider/quiosque_provider.dart';
 import 'package:client_app/src/shared/models/item_carrinho.dart';
 import 'package:client_app/src/shared/models/item_quiosque.dart';
 import 'package:client_app/src/shared/models/quiosque_model.dart';
 import 'package:client_app/src/shared/utils/verificarHorario.dart';
 import 'package:client_app/src/shared/widget/CardItens.dart';
+import 'package:client_app/src/shared/widget/CustomDivider.dart';
 import 'package:client_app/src/shared/widget/appBar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:client_app/providers/carrinho_provider/carrinho_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -23,113 +23,14 @@ class QuiosquePage extends ConsumerStatefulWidget {
 }
 
 class _QuiosquePageState extends ConsumerState<QuiosquePage> {
-  AdicionaisItem adicional1 = AdicionaisItem(
-      nomeAdicional: "ketchup",
-      precoAdicional: 200
-  );
-
-  AdicionaisItem adicional2 = AdicionaisItem(
-      nomeAdicional: "mostarda",
-      precoAdicional: 300
-  );
-
-  AdicionaisItem adicional3 = AdicionaisItem(
-      nomeAdicional: "cheddar",
-      precoAdicional: 1500
-  );
-
-  AdicionaisItem adicional4 = AdicionaisItem(
-      nomeAdicional: "bacon",
-      precoAdicional: 1800
-  );
-
-  late List<AdicionaisItem> listaAdicionais = [adicional1, adicional2, adicional3, adicional4];
-
-  late ItemQuiosque item1 = ItemQuiosque(
-    idItem: "1",
-    idQuiosque: "quiosque_01",
-    secaoItem: "Porções",
-    nomeItem: "Batata frita",
-    descricaoItem: "Batata inglesa frita com sal Batata inglesa frita com sal Batata inglesa frita com sal Batata inglesa frita com sal Batata inglesa frita com sal",
-    precoItem: 4590,
-    imgItem: "https://www.tendaatacado.com.br/dicas/wp-content/webp-express/webp-images/uploads/2022/06/como-fazer-batata-frita-topo.jpg.webp",
-    disponivel: true,
-    ingredientes: ["batata", "sal"],
-    adicionais: listaAdicionais,
-  );
-
-  late ItemQuiosque item2 = ItemQuiosque(
-    idItem: "2",
-    idQuiosque: "quiosque_01",
-    secaoItem: "Porções",
-    nomeItem: "Iscas de Frango",
-    descricaoItem: "Peito de frango empanado e frito, crocante por fora e suculento por dentro. Acompanha molho da casa.",
-    precoItem: 3800,
-    imgItem: "https://www.sabornamesa.com.br/media/k2/items/cache/dcca011eac737955750c5f2f4e56b627_XL.jpg",
-    disponivel: true,
-    ingredientes: ["frango", "farinha de rosca", "tempero especial"],
-    adicionais: listaAdicionais,
-  );
-
-  late ItemQuiosque item3 = ItemQuiosque(
-    idItem: "3",
-    idQuiosque: "quiosque_02",
-    secaoItem: "Bebidas",
-    nomeItem: "Suco de Laranja",
-    descricaoItem: "Suco natural da fruta, espremido na hora. Fonte de vitamina C, refrescante e sem conservantes.",
-    precoItem: 1200,
-    imgItem: "https://www.sabornamesa.com.br/media/k2/items/cache/b018fd5ec8f1b90a1c8015900c2c2630_XL.jpg",
-    disponivel: true,
-    ingredientes: ["laranja"],
-    adicionais: [],
-  );
-
-  late ItemQuiosque item4 = ItemQuiosque(
-    idItem: "4",
-    idQuiosque: "quiosque_01",
-    secaoItem: "Hambúrgueres",
-    nomeItem: "X-Salada Especial",
-    descricaoItem: "Pão brioche, blend bovino 150g, queijo prato, alface, tomate, cebola roxa e maionese artesanal.",
-    precoItem: 3290,
-    imgItem: "https://s2-receitas.glbimg.com/Td050XeFMOBB7XFeJigA5voIlvE=/0x0:1200x675/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_1f540e0b94d8437dbbc39d567a1dee68/internal_photos/bs/2024/7/K/ehv3mfQjmY0VivlyFd8g/x-salada-classico.jpg",
-    disponivel: true,
-    ingredientes: ["carne bovina", "queijo", "alface", "tomate", "pão"],
-    adicionais: listaAdicionais,
-  );
-
-  late ItemQuiosque item5 = ItemQuiosque(
-    idItem: "5",
-    idQuiosque: "quiosque_01",
-    secaoItem: "Porções",
-    nomeItem: "Anéis de Cebola",
-    descricaoItem: "Cebolas selecionadas empanadas com farinha panko, fritas até ficarem douradas e muito crocantes.",
-    precoItem: 2550,
-    imgItem: "https://guiadacozinha.com.br/wp-content/uploads/2018/05/aneldecebola.webp",
-    disponivel: true,
-    ingredientes: ["cebola", "farinha panko"],
-    adicionais: listaAdicionais,
-  );
-
-  late ItemQuiosque item6 = ItemQuiosque(
-    idItem: "6",
-    idQuiosque: "quiosque_01",
-    secaoItem: "Sobremesas",
-    nomeItem: "Petit Gâteau",
-    descricaoItem: "Bolinho quente de chocolate com recheio cremoso. Acompanha uma bola de sorvete de baunilha.",
-    precoItem: 2200,
-    imgItem: "https://s2-receitas.glbimg.com/PSo7shjUPc3x5w_8zMTj3J4ZrEM=/0x0:1280x800/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_1f540e0b94d8437dbbc39d567a1dee68/internal_photos/bs/2022/E/p/KwxNhgRFSwV6vTBCzmqA/petit-gateau.jpg",
-    disponivel: true,
-    ingredientes: ["chocolate", "sorvete de baunilha"],
-    adicionais: [],
-  );
-
-  late List<ItemQuiosque> listaItens = [item1, item2, item3, item4, item5, item6];
+  List<ItemQuiosque> listaItens = [];
 
   var corVerde = 0xff4A8C7A;
   var corVermelha = 0xffFF5000;
   int precoCarrinho = 0;
   List<ItemCarrinho> _itensAdicionarCarrinho = [];
   Key _cardsKey = UniqueKey();
+  String _categoriaSelecionada = 'Todos';
 
   dynamic funcionamentoQuiosque(){
     bool quiosqueAberto = verificarQuiosqueAberto(widget.quiosque.horarioAbre, widget.quiosque.horarioFecha);
@@ -365,10 +266,159 @@ class _QuiosquePageState extends ConsumerState<QuiosquePage> {
     );
   }
 
+  void _onItemChanged(ItemCarrinho itemAtualizado) {
+    setState(() {
+      // 1. Procura se o item já está no carrinho
+      int index = _itensAdicionarCarrinho.indexWhere(
+        (i) => i.nomeItem == itemAtualizado.nomeItem,
+      );
+
+      if (index != -1) {
+        // 2. Se existe e a nova qtd é > 0, atualiza
+        if (itemAtualizado.qtdeItem > 0) {
+          _itensAdicionarCarrinho[index] = itemAtualizado;
+        } else {
+          // 3. Se a qtd chegou a 0, remove da lista
+          _itensAdicionarCarrinho.removeAt(index);
+        }
+      } else if (itemAtualizado.qtdeItem > 0) {
+        // 4. Se não existe e tem qtd, adiciona
+        _itensAdicionarCarrinho.add(itemAtualizado);
+      }
+    });
+  }
+
+  /// Lista de categorias disponíveis, começando por "Todos".
+  List<String> _categoriasDisponiveis() {
+    final categorias = <String>['Todos'];
+    for (var item in listaItens.where((i) => i.disponivel)) {
+      if (!categorias.contains(item.secaoItem)) categorias.add(item.secaoItem);
+    }
+    return categorias;
+  }
+
+  /// Filtro de categorias em formato de chips horizontais.
+  Widget _buildFiltroCategorias() {
+    final categorias = _categoriasDisponiveis();
+
+    return SizedBox(
+      height: 40,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        itemCount: categorias.length,
+        itemBuilder: (context, index) {
+          final categoria = categorias[index];
+          final selecionada = categoria == _categoriaSelecionada;
+
+          return GestureDetector(
+            onTap: () => setState(() => _categoriaSelecionada = categoria),
+            child: Container(
+              alignment: Alignment.center,
+              margin: const EdgeInsets.only(right: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              decoration: BoxDecoration(
+                color: selecionada
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.onTertiary,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.primary,
+                  width: 1.5,
+                ),
+              ),
+              child: Text(
+                categoria,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: selecionada
+                      ? Theme.of(context).colorScheme.onTertiary
+                      : Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  /// Agrupa os itens disponíveis por categoria (secaoItem) e monta uma seção
+  /// para cada uma: nome da categoria, um divider e, em seguida, os itens.
+  /// Respeita a categoria selecionada no filtro.
+  List<Widget> _buildSecoes() {
+    final disponiveis = listaItens
+        .where((item) =>
+            item.disponivel &&
+            (_categoriaSelecionada == 'Todos' ||
+                item.secaoItem == _categoriaSelecionada))
+        .toList();
+
+    final Map<String, List<ItemQuiosque>> porCategoria = {};
+    for (var item in disponiveis) {
+      porCategoria.putIfAbsent(item.secaoItem, () => []).add(item);
+    }
+
+    final bool desabilitado = !verificarQuiosqueAberto(
+              widget.quiosque.horarioAbre,
+              widget.quiosque.horarioFecha,
+            ) ||
+        !widget.quiosque.disponivelEntrega;
+
+    final quiosqueCarrinho = QuiosqueCarrinho(
+      idQuiosque: widget.quiosque.idQuiosque,
+      nomeQuiosque: widget.quiosque.nomeQuiosque,
+      imgBannerQuiosque: widget.quiosque.imgBannerQuiosque,
+    );
+
+    final List<Widget> secoes = [];
+    porCategoria.forEach((categoria, itens) {
+      secoes.add(
+        Container(
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Text(
+            categoria,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+              color: Theme.of(context).colorScheme.outline,
+            ),
+          ),
+        ),
+      );
+
+      secoes.add(
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: CustomDivider(),
+        ),
+      );
+
+      secoes.add(const SizedBox(height: 10));
+
+      secoes.addAll(
+        itens.map(
+          (item) => CardItens(
+            desabilitado: desabilitado,
+            item: item,
+            quiosque: quiosqueCarrinho,
+            onChanged: _onItemChanged,
+          ),
+        ),
+      );
+    });
+
+    return secoes;
+  }
+
   @override
   Widget build(BuildContext context) {
     double tamanhoImagem = 300;
     final quiosque = widget.quiosque;
+
+    final itensAsync = ref.watch(itensQuiosqueProvider(quiosque.idQuiosque));
+    listaItens = itensAsync.value ?? [];
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -470,40 +520,30 @@ class _QuiosquePageState extends ConsumerState<QuiosquePage> {
 
                           SizedBox(height: 20,),
 
-                          ...listaItens
-                              .where((item) => item.disponivel)
-                              .map((item) =>
-                                CardItens(
-                                  desabilitado: !verificarQuiosqueAberto(widget.quiosque.horarioAbre, widget.quiosque.horarioFecha) || !widget.quiosque.disponivelEntrega,
-                                  item: item,
-                                    quiosque: QuiosqueCarrinho(
-                                        idQuiosque: widget.quiosque.idQuiosque,
-                                        nomeQuiosque: widget.quiosque.nomeQuiosque,
-                                        imgBannerQuiosque: widget.quiosque.imgBannerQuiosque
-                                    ),
-                                    onChanged: (itemAtualizado) {
-                                      setState(() {
-                                        // 1. Procura se o item já está no carrinho
-                                        int index = _itensAdicionarCarrinho.indexWhere(
-                                                (i) => i.nomeItem == itemAtualizado.nomeItem
-                                        );
+                          if (itensAsync.isLoading)
+                            const Padding(
+                              padding: EdgeInsets.all(20),
+                              child: CircularProgressIndicator(),
+                            )
+                          else if (itensAsync.hasError)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              child: Text(
+                                "Não foi possível carregar os itens.",
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.outline,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            )
+                          else ...[
+                            _buildFiltroCategorias(),
 
-                                        if (index != -1) {
-                                          // 2. Se existe e a nova qtd é > 0, atualiza
-                                          if (itemAtualizado.qtdeItem > 0) {
-                                            _itensAdicionarCarrinho[index] = itemAtualizado;
-                                          } else {
-                                            // 3. Se a qtd chegou a 0, remove da lista
-                                            _itensAdicionarCarrinho.removeAt(index);
-                                          }
-                                        } else if (itemAtualizado.qtdeItem > 0) {
-                                          // 4. Se não existe e tem qtd, adiciona
-                                          _itensAdicionarCarrinho.add(itemAtualizado);
-                                        }
-                                      });
-                                    }
-                                )
-                          ),
+                            const SizedBox(height: 20),
+
+                            ..._buildSecoes(),
+                          ],
 
                           if (_itensAdicionarCarrinho.isNotEmpty) SizedBox(height: 90),
                         ],
