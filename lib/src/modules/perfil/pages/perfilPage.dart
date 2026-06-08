@@ -1,3 +1,4 @@
+import 'package:client_app/data/services/api_client.dart';
 import 'package:client_app/providers/cliente_provider/cliente_provider.dart';
 import 'package:client_app/src/shared/widget/button.dart';
 import 'package:flutter/material.dart';
@@ -15,18 +16,30 @@ class PerfilPage extends ConsumerWidget {
 
     Widget imagemPerfil() {
       const tamanhoImagem = 70.0;
+      final fotoUrl = ApiClient.imagemUrl(cliente?.fotoPath);
+
+      Widget placeholder() => Container(
+            height: tamanhoImagem,
+            width: tamanhoImagem,
+            color: Colors.grey[300],
+            child: Icon(
+              Icons.person,
+              color: Theme.of(context).colorScheme.outline,
+              size: 40,
+            ),
+          );
+
       return ClipRRect(
         borderRadius: BorderRadius.circular(100),
-        child: Container(
-          height: tamanhoImagem,
-          width: tamanhoImagem,
-          color: Colors.grey[300],
-          child: Icon(
-            Icons.person,
-            color: Theme.of(context).colorScheme.outline,
-            size: 40,
-          ),
-        ),
+        child: fotoUrl == null
+            ? placeholder()
+            : Image.network(
+                fotoUrl,
+                height: tamanhoImagem,
+                width: tamanhoImagem,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => placeholder(),
+              ),
       );
     }
 
@@ -170,9 +183,22 @@ class PerfilPage extends ConsumerWidget {
                             padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
                           label: const Text('SIM', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                          onPressed: () {
+                          onPressed: () async {
+
+                            final messenger = ScaffoldMessenger.of(context);
                             Navigator.pop(ctx);
-                            ref.read(clienteProvider.notifier).deletarConta();
+                            try {
+                              await ref
+                                  .read(clienteProvider.notifier)
+                                  .deletarConta();
+                            } catch (_) {
+                              messenger.showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      'Não foi possível excluir a conta. Tente novamente.'),
+                                ),
+                              );
+                            }
                           },
                         ),
                       ),

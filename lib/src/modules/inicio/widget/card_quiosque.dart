@@ -1,6 +1,5 @@
 import 'package:client_app/src/modules/inicio/widget/categorias.dart';
 import 'package:client_app/src/shared/models/quiosque_model.dart';
-import 'package:client_app/src/shared/utils/verificarHorario.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -176,7 +175,7 @@ class _CardQuiosqueState extends State<CardQuiosque> {
                     Row(
                       children: [
                         Icon(Icons.circle, size: 10, color:
-                          verificarQuiosqueAberto(widget.quiosque.horarioAbre, widget.quiosque.horarioFecha) ?
+                          widget.quiosque.estaAberto ?
                           Color(corVerde) :
                           Color(corVermelha)),
 

@@ -4,7 +4,19 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 class InputFotoPerfil extends StatefulWidget {
-  const InputFotoPerfil({super.key});
+  /// Chamado sempre que a seleção muda. Recebe o arquivo escolhido,
+  /// ou `null` quando o usuário remove a foto.
+  final void Function(File? arquivo)? onImagemSelecionada;
+
+  /// URL/caminho da foto atual (perfil já existente), exibida até o usuário
+  /// escolher uma nova.
+  final String? imagemInicialUrl;
+
+  const InputFotoPerfil({
+    super.key,
+    this.onImagemSelecionada,
+    this.imagemInicialUrl,
+  });
 
   @override
   State<InputFotoPerfil> createState() => _InputFotoPerfilState();
@@ -39,6 +51,7 @@ class _InputFotoPerfilState extends State<InputFotoPerfil> {
       setState(() {
         _imagemSelecionada = File(imagemCortada.path);
       });
+      widget.onImagemSelecionada?.call(_imagemSelecionada);
     }
   }
 
@@ -88,6 +101,7 @@ class _InputFotoPerfilState extends State<InputFotoPerfil> {
                     onTap: () {
                       Navigator.pop(context);
                       setState(() => _imagemSelecionada = null);
+                      widget.onImagemSelecionada?.call(null);
                     },
                   ),
               ],
@@ -128,9 +142,22 @@ class _InputFotoPerfilState extends State<InputFotoPerfil> {
                       // fit: BoxFit.cover
                       fit: BoxFit.contain,
                     )
-                    : Center(
-                  child: Icon(Icons.add_a_photo, size: 48, color: Theme.of(context).colorScheme.outline),
-                ),
+                    : (widget.imagemInicialUrl != null &&
+                            widget.imagemInicialUrl!.isNotEmpty)
+                        ? Image.network(
+                            widget.imagemInicialUrl!,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) => Center(
+                              child: Icon(Icons.add_a_photo,
+                                  size: 48,
+                                  color: Theme.of(context).colorScheme.outline),
+                            ),
+                          )
+                        : Center(
+                            child: Icon(Icons.add_a_photo,
+                                size: 48,
+                                color: Theme.of(context).colorScheme.outline),
+                          ),
               ),
             ),
           ),

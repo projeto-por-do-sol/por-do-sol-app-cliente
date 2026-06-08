@@ -4,7 +4,6 @@ import 'package:client_app/providers/quiosque_provider/quiosque_provider.dart';
 import 'package:client_app/src/modules/inicio/widget/Container_busca.dart';
 import 'package:client_app/src/modules/inicio/widget/card_quiosque.dart';
 import 'package:client_app/src/shared/models/quiosque_model.dart';
-import 'package:client_app/src/shared/utils/verificarHorario.dart';
 import 'package:client_app/src/shared/widget/CustomDivider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -77,6 +76,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     _ordenacao = ordenacao;
                   });
                 },
+                onRefresh: () => ref.invalidate(quiosquesProvider),
               ),
 
               const SizedBox(height: 30),
@@ -149,12 +149,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
           if (listaFiltrada.any((q) => !q.disponivelEntrega)) ...[
             if (listaFiltrada.any(
-              (q) =>
-                  q.disponivelEntrega &&
-                  verificarQuiosqueAberto(
-                    q.horarioAbre,
-                    q.horarioFecha,
-                  ),
+              (q) => q.disponivelEntrega && q.estaAberto,
             )) ...[
               CustomDivider(),
               const SizedBox(height: 20),

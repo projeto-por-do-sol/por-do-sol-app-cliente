@@ -1,3 +1,5 @@
+import 'package:client_app/src/shared/utils/verificarHorario.dart';
+
 class QuiosqueModel {
   final String idQuiosque;
   final String nomeQuiosque;
@@ -12,6 +14,10 @@ class QuiosqueModel {
   final String horarioFecha;
   final int qtdeAvaliacoes;
 
+  /// "Aberto agora" informado pelo back-end (`/quiosques/nearby`). Quando
+  /// ausente, calcula localmente a partir do horário.
+  final bool? aberto;
+
   QuiosqueModel({
     required this.idQuiosque,
     required this.nomeQuiosque,
@@ -25,23 +31,38 @@ class QuiosqueModel {
     this.horarioAbre = "08:00",
     this.horarioFecha = "23:00",
     this.qtdeAvaliacoes = 0,
+    this.aberto,
   });
 
+  /// Quiosque aberto agora: usa o flag do back-end quando presente; senão,
+  /// calcula pelo horário de funcionamento.
+  bool get estaAberto =>
+      aberto ?? verificarQuiosqueAberto(horarioAbre, horarioFecha);
+
   factory QuiosqueModel.fromJson(Map<String, dynamic> json) {
+    // Aceita tanto os nomes do app quanto os do back-end (`/quiosques/nearby`:
+    // id/nome/distancia/nota/imagem/tempoEstimado/distAtendimento).
+    final distAtendimento = json['distAtendimento'] as num?;
+    final imagem = json['imgBannerQuiosque'] ?? json['imagem'];
     return QuiosqueModel(
-      idQuiosque: json['idQuiosque']?.toString() ?? '',
-      nomeQuiosque: json['nomeQuiosque'] ?? '',
-      imgPerfilQuiosque: json['imgPerfilQuiosque'],
-      imgBannerQuiosque: json['imgBannerQuiosque'],
-      avaliacaoQuiosque: (json['avaliacaoQuiosque'] as num?)?.toDouble() ?? 0,
-      distanciaQuiosque: json['distanciaQuiosque']?.toString() ?? '0',
-      disponivelEntrega: json['disponivelEntrega'] ?? true,
-      tempoEspera: (json['tempoEspera'] as num?)?.toInt() ?? 0,
+      idQuiosque: (json['idQuiosque'] ?? json['id'])?.toString() ?? '',
+      nomeQuiosque: (json['nomeQuiosque'] ?? json['nome'] ?? '').toString(),
+      imgPerfilQuiosque: json['imgPerfilQuiosque'] ?? json['imagem'],
+      imgBannerQuiosque: imagem,
+      avaliacaoQuiosque:
+          ((json['avaliacaoQuiosque'] ?? json['nota']) as num?)?.toDouble() ?? 0,
+      distanciaQuiosque:
+          (json['distanciaQuiosque'] ?? json['distancia'])?.toString() ?? '0',
+      disponivelEntrega: json['disponivelEntrega'] ??
+          (distAtendimento != null && distAtendimento > 0),
+      tempoEspera:
+          ((json['tempoEspera'] ?? json['tempoEstimado']) as num?)?.toInt() ?? 0,
       categorias:
           (json['categorias'] as List?)?.map((e) => e.toString()).toList(),
-      horarioAbre: json['horarioAbre'] ?? '08:00',
-      horarioFecha: json['horarioFecha'] ?? '23:00',
+      horarioAbre: json['horarioAbre'] ?? json['openingTime'] ?? '08:00',
+      horarioFecha: json['horarioFecha'] ?? json['closingTime'] ?? '23:00',
       qtdeAvaliacoes: (json['qtdeAvaliacoes'] as num?)?.toInt() ?? 0,
+      aberto: json['aberto'] as bool?,
     );
   }
 

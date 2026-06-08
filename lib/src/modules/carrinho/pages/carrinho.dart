@@ -175,7 +175,7 @@ class _CarrinhoPageState extends ConsumerState<CarrinhoPage> {
                   )
                   ),
                   ...item.ingredientes.map((ingrediente) =>
-                      Text('• $ingrediente', style:
+                      Text('• ${ingrediente.nome}', style:
                       TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,

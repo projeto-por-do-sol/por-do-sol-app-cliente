@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:client_app/data/services/api_client.dart';
 import 'package:client_app/providers/cliente_provider/cliente_provider.dart';
 import 'package:client_app/src/shared/widget/button.dart';
 import 'package:client_app/src/shared/widget/input.dart';
@@ -21,6 +24,7 @@ class _CadastroState extends ConsumerState<Cadastro> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController passwordConfirmController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  File? _fotoSelecionada;
 
   @override
   void dispose() {
@@ -83,7 +87,6 @@ class _CadastroState extends ConsumerState<Cadastro> {
                   isCPF: true,
                 ),
 
-
                 const SizedBox(height: 15),
 
                 CustomInput(
@@ -104,36 +107,76 @@ class _CadastroState extends ConsumerState<Cadastro> {
 
                 const SizedBox(height: 15),
 
-                InputFotoPerfil(),
+                InputFotoPerfil(
+                  onImagemSelecionada: (arquivo) => _fotoSelecionada = arquivo,
+                ),
 
                 const SizedBox(height: 20),
 
                 CustomButton(
                   label: "criar conta",
                   onPressed: () async {
-                    print(cpfController.text);
-                    if (passwordController.text != passwordConfirmController.text) {
-                      ScaffoldMessenger.of(context).showSnackBar(
+                    final messenger = ScaffoldMessenger.of(context);
+                    final router = GoRouter.of(context);
+
+                    void aviso(String msg, {bool erro = false}) {
+                      messenger.showSnackBar(
                         SnackBar(
                           content: Text(
-                            "As senhas não coincidem!".toUpperCase(),
+                            msg.toUpperCase(),
                             textAlign: TextAlign.center,
-                            style: TextStyle(fontWeight: FontWeight.w600),
+                            style: const TextStyle(fontWeight: FontWeight.w600),
                           ),
-                          backgroundColor: Theme.of(context).colorScheme.primary,
-                          duration: Duration(seconds: 3),
+                          backgroundColor: erro
+                              ? Theme.of(context).colorScheme.error
+                              : Theme.of(context).colorScheme.primary,
+                          duration: const Duration(seconds: 3),
                         ),
                       );
+                    }
+
+                    if (passwordController.text != passwordConfirmController.text) {
+                      aviso("As senhas não coincidem!");
                       return;
                     }
 
-                    if (_formKey.currentState!.validate()) {
-                      await ref.read(clienteProvider.notifier).login(
-                        nomeCompleto: nameController.text.trim(),
-                        email: emailController.text.trim(),
-                        telefone: phoneController.text.trim(),
+                    if (!_formKey.currentState!.validate()) return;
+
+                    try {
+                      await ref.read(clienteProvider.notifier).cadastrar(
+                            nomeCompleto: nameController.text.trim(),
+                            email: emailController.text.trim(),
+                            telefone: phoneController.text.trim(),
+                            cpf: cpfController.text
+                                .replaceAll(RegExp(r'[^0-9]'), ''),
+                            senha: passwordController.text.trim(),
+                          );
+
+                      // Já logado: envia a foto de perfil, se houver.
+                      if (_fotoSelecionada != null) {
+                        try {
+                          await ref
+                              .read(clienteProvider.notifier)
+                              .enviarImagemPerfil(_fotoSelecionada!);
+                        } catch (_) {/* foto é opcional; ignora falha */}
+                      }
+
+                      router.go('/inicio');
+                    } on ApiException catch (e) {
+                      // O back-end sinaliza dados duplicados (e-mail/CPF/telefone)
+                      // como 403/409/500 sem corpo; 400 = validação.
+                      final duplicado = e.statusCode == 409 ||
+                          e.statusCode == 403 ||
+                          e.statusCode == 500;
+                      aviso(
+                        duplicado
+                            ? "E-mail, CPF ou telefone já cadastrado."
+                            : "Erro ao criar conta. Verifique os dados.",
+                        erro: true,
                       );
-                      if (context.mounted) context.go('/inicio');
+                    } catch (_) {
+                      aviso("Não foi possível conectar ao servidor.",
+                          erro: true);
                     }
                   },
                 ),

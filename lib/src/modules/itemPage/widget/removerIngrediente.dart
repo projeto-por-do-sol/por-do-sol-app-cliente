@@ -1,3 +1,4 @@
+import 'package:client_app/src/shared/models/ingrediente_item.dart';
 import 'package:flutter/material.dart';
 
 /*
@@ -6,9 +7,9 @@ import 'package:flutter/material.dart';
  */
 
 class RemoverIngrediente extends StatefulWidget {
-  final List<String> ingredientes; //Recebe a lista de ingredientes do item
+  final List<IngredienteItem> ingredientes; //Recebe a lista de ingredientes do item
 
-  final Function(List<String> selecionados) onChanged; //Callback (envia os adicionais selecionados para o pai)
+  final Function(List<IngredienteItem> selecionados) onChanged; //Callback (envia os ingredientes removidos para o pai)
 
   const RemoverIngrediente({
     super.key,
@@ -21,7 +22,7 @@ class RemoverIngrediente extends StatefulWidget {
 }
 
 class _RemoverIngredienteState extends State<RemoverIngrediente> {
-  final Set<String> _selecionados = {}; //Conjunto com os itens removidos
+  final Set<IngredienteItem> _selecionados = {}; //Conjunto com os itens removidos
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +87,7 @@ class _RemoverIngredienteState extends State<RemoverIngrediente> {
                 // Texto
                 Expanded(
                   child: Text(
-                    item[0].toUpperCase() + item.substring(1).toLowerCase(),
+                    item.nome[0].toUpperCase() + item.nome.substring(1).toLowerCase(),
                     style: TextStyle(
                       fontSize: 16,
                       color: marcado

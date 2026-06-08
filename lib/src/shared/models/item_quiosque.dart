@@ -1,4 +1,5 @@
 import 'package:client_app/src/shared/models/adicionaisItem.dart';
+import 'package:client_app/src/shared/models/ingrediente_item.dart';
 
 class ItemQuiosque {
   final String idItem;
@@ -9,7 +10,7 @@ class ItemQuiosque {
   final int precoItem;
   final String imgItem;
   final bool disponivel;
-  final List<String> ingredientes;
+  final List<IngredienteItem> ingredientes;
   final List<AdicionaisItem> adicionais;
   int qtdeItem;
 
@@ -28,24 +29,38 @@ class ItemQuiosque {
   });
 
   factory ItemQuiosque.fromJson(Map<String, dynamic> json) {
+    // Aceita tanto os nomes do app quanto os do back-end (ItemDTO:
+    // id/nome/descricao/valorBase(reais)/imagem/ingredientes[{id,nome}]/acompanhamentos).
     return ItemQuiosque(
-      idItem: json['idItem']?.toString() ?? '',
+      idItem: (json['idItem'] ?? json['id'])?.toString() ?? '',
       idQuiosque: json['idQuiosque']?.toString() ?? '',
-      secaoItem: json['secaoItem'] ?? '',
-      nomeItem: json['nomeItem'] ?? '',
-      descricaoItem: json['descricaoItem'] ?? '',
-      precoItem: (json['precoItem'] as num?)?.toInt() ?? 0,
-      imgItem: json['imgItem'] ?? '',
+      secaoItem: (json['secaoItem'] ?? json['tipo'] ?? '').toString(),
+      nomeItem: (json['nomeItem'] ?? json['nome'] ?? '').toString(),
+      descricaoItem: (json['descricaoItem'] ?? json['descricao'] ?? '').toString(),
+      precoItem: _precoEmCentavos(json),
+      imgItem: (json['imgItem'] ?? json['imagem'] ?? '').toString(),
       disponivel: json['disponivel'] ?? true,
       qtdeItem: (json['qtdeItem'] as num?)?.toInt() ?? 0,
-      ingredientes:
-          (json['ingredientes'] as List?)?.map((e) => e.toString()).toList() ??
-              [],
-      adicionais: (json['adicionais'] as List?)
+      ingredientes: ((json['ingredientes'] as List?) ?? const [])
+          .map((e) => e is Map
+              ? IngredienteItem.fromMap(e.cast<String, dynamic>())
+              : IngredienteItem(id: 0, nome: e.toString()))
+          .where((i) => i.nome.isNotEmpty)
+          .toList(),
+      adicionais: ((json['adicionais'] ?? json['acompanhamentos']) as List?)
               ?.map((e) => AdicionaisItem.fromMap(e as Map<String, dynamic>))
               .toList() ??
           [],
     );
+  }
+
+  /// O app trabalha com preço em centavos (int); o back-end manda `valorBase`/
+  /// `valorPromo` em reais (decimal). Converte quando necessário.
+  static int _precoEmCentavos(Map<String, dynamic> json) {
+    if (json['precoItem'] != null) return (json['precoItem'] as num).toInt();
+    final valor = (json['valorPromo'] ?? json['valorBase']) as num?;
+    if (valor == null) return 0;
+    return (valor.toDouble() * 100).round();
   }
 
   Map<String, dynamic> toJson() {
@@ -59,7 +74,7 @@ class ItemQuiosque {
       'imgItem': imgItem,
       'disponivel': disponivel,
       'qtdeItem': qtdeItem,
-      'ingredientes': ingredientes,
+      'ingredientes': ingredientes.map((e) => e.toJson()).toList(),
       'adicionais': adicionais.map((e) => e.toJson()).toList(),
     };
   }

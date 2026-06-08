@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:client_app/data/services/api_client.dart';
 import 'package:client_app/providers/cliente_provider/cliente_provider.dart';
 import 'package:client_app/src/shared/models/cliente_model.dart';
 import 'package:client_app/src/shared/widget/button.dart';
@@ -21,6 +24,7 @@ class _ModificarPerfilPageState extends ConsumerState<ModificarPerfilPage> {
   TextEditingController phoneController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _carregado = false;
+  File? _fotoSelecionada;
 
   @override
   void dispose() {
@@ -83,14 +87,42 @@ class _ModificarPerfilPageState extends ConsumerState<ModificarPerfilPage> {
 
                 const SizedBox(height: 15),
 
-                InputFotoPerfil(),
+                InputFotoPerfil(
+                  imagemInicialUrl:
+                      ApiClient.imagemUrl(clienteAsync.value?.fotoPath),
+                  onImagemSelecionada: (arquivo) => _fotoSelecionada = arquivo,
+                ),
 
                 const SizedBox(height: 20),
 
                 CustomButton(
                   label: "Salvar",
                   onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
+                    final messenger = ScaffoldMessenger.of(context);
+                    final router = GoRouter.of(context);
+
+                    void aviso(String msg, {bool erro = false}) {
+                      messenger.showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            msg.toUpperCase(),
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          backgroundColor: erro
+                              ? Theme.of(context).colorScheme.error
+                              : Theme.of(context).colorScheme.primary,
+                          duration: const Duration(seconds: 3),
+                        ),
+                      );
+                    }
+
+                    if (!_formKey.currentState!.validate()) {
+                      aviso("Erro ao salvar alterações", erro: true);
+                      return;
+                    }
+
+                    try {
                       final clienteAtual = clienteAsync.value;
                       final atualizado = ClienteModel(
                         id: clienteAtual?.id,
@@ -103,34 +135,16 @@ class _ModificarPerfilPageState extends ConsumerState<ModificarPerfilPage> {
                           .read(clienteProvider.notifier)
                           .atualizarPerfil(atualizado);
 
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              "Alterações salvas".toUpperCase(),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontWeight: FontWeight.w600),
-                            ),
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            duration: Duration(seconds: 3),
-                          ),
-                        );
-                        context.go('/perfil');
+                      if (_fotoSelecionada != null) {
+                        await ref
+                            .read(clienteProvider.notifier)
+                            .enviarImagemPerfil(_fotoSelecionada!);
                       }
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            "Erro ao salvar alterações".toUpperCase(),
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                          backgroundColor:
-                              Theme.of(context).colorScheme.error,
-                          duration: Duration(seconds: 3),
-                        ),
-                      );
+
+                      aviso("Alterações salvas");
+                      router.go('/perfil');
+                    } catch (_) {
+                      aviso("Erro ao salvar alterações", erro: true);
                     }
                   },
                 ),

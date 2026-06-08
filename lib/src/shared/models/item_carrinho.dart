@@ -1,4 +1,5 @@
 import 'package:client_app/src/shared/models/adicionaisItem.dart';
+import 'package:client_app/src/shared/models/ingrediente_item.dart';
 import 'package:equatable/equatable.dart';
 
 class ItemCarrinho extends Equatable{
@@ -6,7 +7,8 @@ class ItemCarrinho extends Equatable{
   final String idQuiosque;
   final String nomeItem;
   final int valorTotal;
-  final List<String> ingredientes;
+  /// Ingredientes a remover do item neste pedido (com id + nome).
+  final List<IngredienteItem> ingredientes;
   final List<AdicionaisItem> adicionais;
   final int qtdeItem;
 
@@ -25,7 +27,7 @@ class ItemCarrinho extends Equatable{
     String? idQuiosque,
     String? nomeItem,
     int? valorTotal,
-    List<String>? ingredientes,
+    List<IngredienteItem>? ingredientes,
     List<AdicionaisItem>? adicionais,
     int? qtdeItem,
   }) {

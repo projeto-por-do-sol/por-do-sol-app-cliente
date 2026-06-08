@@ -12,7 +12,7 @@ class HistoricoPedidos extends ConsumerWidget {
     return item.fold(0, (previousValue, element) => previousValue + element.valorTotal) / 100;
   }
 
-  Widget pedidosResumo(BuildContext context, List<ItemCarrinho> item, QuiosqueCarrinho quiosque, String dataPedido, String statusPedido) {
+  Widget pedidosResumo(BuildContext context, List<ItemCarrinho> item, QuiosqueCarrinho quiosque, String dataPedido, String statusPedido, bool finalizado) {
     return Container(
       margin: const EdgeInsets.only(top: 15),
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
@@ -120,7 +120,7 @@ class HistoricoPedidos extends ConsumerWidget {
                             )
                             ),
                             ...elemento.ingredientes.map((ingrediente) =>
-                                Text('• $ingrediente', style:
+                                Text('• ${ingrediente.nome}', style:
                                 TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
@@ -144,9 +144,7 @@ class HistoricoPedidos extends ConsumerWidget {
                               color: Theme.of(context).colorScheme.outline,
                             )
                             ),
-                            ...elemento.adicionais.map((adicional) => Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
+                            ...elemento.adicionais.map((adicional) =>
                                 Text('• ${adicional.nomeAdicional}', style:
                                 TextStyle(
                                   fontSize: 14,
@@ -154,16 +152,6 @@ class HistoricoPedidos extends ConsumerWidget {
                                   color: Theme.of(context).colorScheme.outline,
                                 )
                                 ),
-
-                                Text('R\$ ${(adicional.precoAdicional / 100).toStringAsFixed(2).replaceAll('.', ',')}', style:
-                                TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: Theme.of(context).colorScheme.outline,
-                                )
-                                )
-                              ],
-                            )
                             )],
                         ),
                       ),
@@ -175,7 +163,7 @@ class HistoricoPedidos extends ConsumerWidget {
 
           SizedBox(height: 10,),
 
-            Text(statusPedido == 'Finalizado' ?
+            Text(finalizado ?
               'Valor: R\$${calcularValorTotalPedido(item).toStringAsFixed(2).replaceAll('.', ',')}' :
               statusPedido,
                 style:
@@ -228,6 +216,7 @@ class HistoricoPedidos extends ConsumerWidget {
                               pedido.quiosque,
                               DateFormat('dd/MM/yyyy').format(DateTime.parse(pedido.horaPedido)),
                               pedido.status,
+                              pedido.finalizado,
                           ),
                         ),
                     ),

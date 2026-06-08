@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:client_app/MyApp.dart';
 import 'package:client_app/data/services/notification_service.dart';
 import 'package:client_app/providers/pedido_provider/pedido_provider.dart';
-import 'package:client_app/src/modules/historicoPedidos/pages/avaliar_pedidos.dart';
 import 'package:client_app/src/shared/models/pedidos_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -65,9 +64,7 @@ class _NotificacaoListenerState extends ConsumerState<NotificacaoListener> {
     pedido ??=
         await ref.read(pedidoProvider.notifier).buscarPedidoNoBackend(idPedido);
 
-    final cancelado = pedido != null &&
-        (pedido.status == StatusPedido.canceladoQuiosque ||
-            pedido.status == StatusPedido.canceladoCliente);
+    final cancelado = pedido != null && pedido.cancelado;
 
     if (cancelado) {
       appRouter.push('/avaliarPedidos', extra: pedido);

@@ -1,70 +1,73 @@
+import 'package:client_app/providers/pedido_provider/pedido_provider.dart';
 import 'package:client_app/src/shared/models/item_carrinho.dart';
 import 'package:client_app/src/shared/models/pedidos_model.dart';
 import 'package:client_app/src/shared/widget/button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-class StatusPedido {
-  static const canceladoQuiosque = 'Cancelado pelo quiosque';
-  static const canceladoCliente  = 'Cancelado pelo cliente';
-  static const finalizado        = 'Finalizado';
-}
-
-class AvaliarPedidos extends StatefulWidget {
+class AvaliarPedidos extends ConsumerStatefulWidget {
   final PedidosModel pedido;
 
   const AvaliarPedidos({super.key, required this.pedido});
 
   @override
-  State<AvaliarPedidos> createState() => _AvaliarPedidosState();
+  ConsumerState<AvaliarPedidos> createState() => _AvaliarPedidosState();
 }
 
-class _AvaliarPedidosState extends State<AvaliarPedidos> {
+class _AvaliarPedidosState extends ConsumerState<AvaliarPedidos> {
   int _nota = 0;
+  bool _enviando = false;
 
   PedidosModel get _pedido => widget.pedido;
 
-  bool get _cancelado =>
-      _pedido.status == StatusPedido.canceladoQuiosque ||
-      _pedido.status == StatusPedido.canceladoCliente;
+  bool get _cancelado => _pedido.cancelado;
 
   bool get _mostrarMotivo =>
-      _pedido.status == StatusPedido.canceladoQuiosque &&
-      (_pedido.motivoCancelamento?.trim().isNotEmpty ?? false);
+      _pedido.motivoCancelamento?.trim().isNotEmpty ?? false;
 
   // Só é possível avaliar pedidos que foram finalizados.
-  bool get _podeAvaliar => _pedido.status == StatusPedido.finalizado;
+  bool get _podeAvaliar => _pedido.podeAvaliar;
 
-  void _avaliar() {
+  Future<void> _avaliar() async {
+    if (_enviando) return;
     final colorScheme = Theme.of(context).colorScheme;
-    // if (_nota == 0) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(
-    //       content: const Text('Selecione ao menos uma estrela'),
-    //       backgroundColor: colorScheme.tertiary,
-    //       behavior: SnackBarBehavior.floating,
-    //       shape: RoundedRectangleBorder(
-    //           borderRadius: BorderRadius.circular(12)),
-    //     ),
-    //   );
-    //   return;
-    // }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-            'Avaliação de $_nota estrela${_nota > 1 ? "s" : ""} enviada!',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
+    final messenger = ScaffoldMessenger.of(context);
+
+    void mostrar(String msg, Color cor) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            msg,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
           ),
+          backgroundColor: cor,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
-        backgroundColor: colorScheme.primary,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12)),
-      ),
-    );
+      );
+    }
+
+    if (_nota == 0) {
+      mostrar('Selecione ao menos uma estrela', colorScheme.tertiary);
+      return;
+    }
+
+    setState(() => _enviando = true);
+    try {
+      await ref
+          .read(pedidoProvider.notifier)
+          .avaliarPedido(_pedido.idPedido, _nota);
+      mostrar(
+        'Avaliação de $_nota estrela${_nota > 1 ? "s" : ""} enviada!',
+        colorScheme.primary,
+      );
+    } catch (_) {
+      mostrar('Erro ao enviar avaliação. Tente novamente.', colorScheme.error);
+    } finally {
+      if (mounted) setState(() => _enviando = false);
+    }
   }
 
   @override
@@ -230,23 +233,76 @@ class _CardPedido extends StatelessWidget {
             (item) => Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Text(item.nomeItem,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(item.nomeItem,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Theme.of(context).colorScheme.outline)),
+                      ),
+                      Text(
+                        'R\$ ${(item.valorTotal / 100).toStringAsFixed(2).replaceAll('.', ',')}',
                         style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: Theme.of(context).colorScheme.outline)),
+                            fontSize: 14,
+                            color: Theme.of(context).colorScheme.outline),
+                      ),
+                    ],
                   ),
-                  Text(
-                    'R\$ ${(item.valorTotal / 100).toStringAsFixed(2).replaceAll('.', ',')}',
-                    style: TextStyle(
-                        fontSize: 14,
-                        color: Theme.of(context).colorScheme.outline),
-                  ),
+
+                  // Ingredientes removidos
+                  if (item.ingredientes.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 12, top: 6),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Remover:',
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                  color: Theme.of(context).colorScheme.outline)),
+                          ...item.ingredientes.map(
+                            (ing) => Text('• ${ing.nome}',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                    color:
+                                        Theme.of(context).colorScheme.outline)),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                  // Complementos (adicionais)
+                  if (item.adicionais.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 12, top: 6),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Adicionais:',
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                  color: Theme.of(context).colorScheme.outline)),
+                          ...item.adicionais.map(
+                            (ad) => Text('• ${ad.nomeAdicional}',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                    color:
+                                        Theme.of(context).colorScheme.outline)),
+                          ),
+                        ],
+                      ),
+                    ),
                 ],
               ),
             ),

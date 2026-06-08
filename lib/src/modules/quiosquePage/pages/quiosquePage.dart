@@ -2,7 +2,6 @@ import 'package:client_app/providers/quiosque_provider/quiosque_provider.dart';
 import 'package:client_app/src/shared/models/item_carrinho.dart';
 import 'package:client_app/src/shared/models/item_quiosque.dart';
 import 'package:client_app/src/shared/models/quiosque_model.dart';
-import 'package:client_app/src/shared/utils/verificarHorario.dart';
 import 'package:client_app/src/shared/widget/CardItens.dart';
 import 'package:client_app/src/shared/widget/CustomDivider.dart';
 import 'package:client_app/src/shared/widget/appBar.dart';
@@ -33,7 +32,7 @@ class _QuiosquePageState extends ConsumerState<QuiosquePage> {
   String _categoriaSelecionada = 'Todos';
 
   dynamic funcionamentoQuiosque(){
-    bool quiosqueAberto = verificarQuiosqueAberto(widget.quiosque.horarioAbre, widget.quiosque.horarioFecha);
+    bool quiosqueAberto = widget.quiosque.estaAberto;
 
     return Container(
       height: 30,
@@ -106,7 +105,7 @@ class _QuiosquePageState extends ConsumerState<QuiosquePage> {
   }
 
   Widget botaoAdicionar() {
-    bool disponivelPedir = !verificarQuiosqueAberto(widget.quiosque.horarioAbre, widget.quiosque.horarioFecha) || !widget.quiosque.disponivelEntrega;
+    bool disponivelPedir = !widget.quiosque.estaAberto || !widget.quiosque.disponivelEntrega;
 
     calcularQtdItens() {
       int qtdItens = 0;
@@ -359,11 +358,8 @@ class _QuiosquePageState extends ConsumerState<QuiosquePage> {
       porCategoria.putIfAbsent(item.secaoItem, () => []).add(item);
     }
 
-    final bool desabilitado = !verificarQuiosqueAberto(
-              widget.quiosque.horarioAbre,
-              widget.quiosque.horarioFecha,
-            ) ||
-        !widget.quiosque.disponivelEntrega;
+    final bool desabilitado =
+        !widget.quiosque.estaAberto || !widget.quiosque.disponivelEntrega;
 
     final quiosqueCarrinho = QuiosqueCarrinho(
       idQuiosque: widget.quiosque.idQuiosque,
@@ -509,11 +505,11 @@ class _QuiosquePageState extends ConsumerState<QuiosquePage> {
                               containerInfoQuiosque(Icons.hourglass_bottom_rounded, "~${widget.quiosque.tempoEspera} min", "Espera"),
                               containerInfoQuiosque(Icons.location_on_rounded, "${widget.quiosque.distanciaQuiosque}m", "Distância"),
                               containerInfoQuiosque(Icons.access_time_filled_rounded,
-                                  verificarQuiosqueAberto(widget.quiosque.horarioAbre, widget.quiosque.horarioFecha) ?
+                                  widget.quiosque.estaAberto ?
                                   widget.quiosque.horarioFecha :
                                   widget.quiosque.horarioAbre,
 
-                                  verificarQuiosqueAberto(widget.quiosque.horarioAbre, widget.quiosque.horarioFecha) ?
+                                  widget.quiosque.estaAberto ?
                                   "Fecha" : "Abre"),
                             ]
                           ),

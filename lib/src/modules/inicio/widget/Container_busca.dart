@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 class ContainerBusca extends StatefulWidget {
   final Function(String filtro, String ordenacao) trocaFiltro;
   final Function(String termo) onSearch;
+  final VoidCallback onRefresh;
   final String? nomeCliente;
 
   const ContainerBusca({
     super.key,
     required this.trocaFiltro,
     required this.onSearch,
+    required this.onRefresh,
     this.nomeCliente,
   });
 
@@ -54,26 +56,43 @@ class _ContainerBuscaState extends State<ContainerBusca> {
         children: [
           Row(
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Olá, $nomeExibido",
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Olá, $nomeExibido",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                      ),
                     ),
-                  ),
-                  Text(
-                    "Qual vai ser hoje?",
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 20,
+                    Text(
+                      "Qual vai ser hoje?",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20,
+                      ),
                     ),
+                  ],
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  FocusScope.of(context).unfocus();
+                  widget.onRefresh();
+                },
+                child: CircleAvatar(
+                  radius: 24,
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
+                  child: Icon(
+                    Icons.refresh,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 26,
                   ),
-                ],
+                ),
               ),
             ],
           ),

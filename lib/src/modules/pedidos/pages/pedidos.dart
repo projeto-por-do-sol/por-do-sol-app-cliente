@@ -1,10 +1,8 @@
 import 'package:client_app/providers/pedido_provider/pedido_provider.dart';
 import 'package:client_app/src/shared/models/item_carrinho.dart';
-import 'package:client_app/src/shared/utils/verificarHorario.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:uuid/uuid.dart';
 
 class PedidosPage extends ConsumerStatefulWidget {
   const PedidosPage({super.key});
@@ -190,7 +188,7 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
                   )
                   ),
                   ...item.ingredientes.map((ingrediente) =>
-                      Text('• $ingrediente', style:
+                      Text('• ${ingrediente.nome}', style:
                       TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -225,13 +223,13 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
                       )
                       ),
 
-                      Text('R\$ ${(adicional.precoAdicional / 100).toStringAsFixed(2).replaceAll('.', ',')}', style:
-                      TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).colorScheme.outline,
-                      )
-                      )
+                      // Text('R\$ ${(adicional.precoAdicional / 100).toStringAsFixed(2).replaceAll('.', ',')}', style:
+                      // TextStyle(
+                      //   fontSize: 14,
+                      //   fontWeight: FontWeight.w500,
+                      //   color: Theme.of(context).colorScheme.outline,
+                      // )
+                      // )
                     ],
                   )
                   )],
@@ -333,7 +331,7 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
                     label: const Text('SIM', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                     onPressed: () {
-                      ref.read(pedidoProvider.notifier).apagarPedidoPorIdPedido(idPedido);
+                      ref.read(pedidoProvider.notifier).cancelarPedido(idPedido);
                       Navigator.pop(context);
                     },
                   ),
@@ -345,140 +343,6 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
         ),
       );
     }
-
-    Widget cancelarPrazo30Min(int tempoFaltando){
-      return SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                Positioned(
-                  left: 15,
-                  child: Icon(Icons.cancel_outlined, size: 26, color: Theme.of(context).colorScheme.outline),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 50),
-                  child: Text(
-                    'Poderá cancelar em:'.toUpperCase(),
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 15),
-
-            Text('$tempoFaltando minutos', style:
-              TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 10),
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.onTertiary,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
-                label: const Text('OK', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ),
-
-          ],
-        ),
-      );
-    }
-
-    Widget cancelarPedidoTempoLimite(){
-      return SizedBox(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                Positioned(
-                  left: 15,
-                  child: Icon(Icons.cancel_outlined, size: 26, color: Theme.of(context).colorScheme.outline),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 50),
-                  child: Text(
-                    'Pedido chegou ao tempo limite.'.toUpperCase(),
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 10),
-
-            Text(
-              'Deseja cancelar?'.toUpperCase(),
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              textAlign: TextAlign.center,
-            ),
-
-            const SizedBox(height: 24),
-
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      foregroundColor: Theme.of(context).colorScheme.onTertiary,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                    label: const Text('NÃO', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                ),
-
-                const SizedBox(width: 12),
-
-                Expanded(
-                  child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
-                      foregroundColor: Theme.of(context).colorScheme.outline,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                    label: const Text('SIM', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                    ),
-                    onPressed: () {
-                      ref.read(pedidoProvider.notifier).apagarPedidoPorIdPedido(idPedido);
-                      Navigator.pop(context);
-                    },
-                  ),
-                ),
-
-              ],
-            ),
-          ],
-        ),
-      );
-    }
-
-    var horaVerificada = verificarCancelamentoPedidoHorario(horaPedido);
 
     showModalBottomSheet(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -490,9 +354,7 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
         return Padding(
           padding: const EdgeInsets.all(16.0),
           child: SafeArea(
-            child: statusPedido == "Esperando o quiosque aceitar" || statusPedido == "Pedido aceito" ?
-            cancelarPedidoEsperando() : horaVerificada[0] ? cancelarPedidoTempoLimite() : cancelarPrazo30Min(horaVerificada[1]),
-            // cancelarPedidoEsperando() : horaVerificada[0] ? cancelarPrazo30Min(horaVerificada[1]) : cancelarPedidoTempoLimite(), //TODO: dps tem que tirar, coloquei só para testar o modal
+            child: cancelarPedidoEsperando(),
           ),
         );
       },
@@ -507,34 +369,12 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
       appBar: AppBar(
         title: const Text('Pedidos'),
         centerTitle: true,
-        actions: [ //TODO: Dps tem que remover
-          if (pedidos.hasValue &&
-              pedidos.value!.any((p) => p.status != 'Finalizado'))
-            IconButton(
-              tooltip: 'Finalizar todos',
-              icon: const Icon(Icons.check_circle_outline),
-              onPressed: () async {
-                final confirmar = await showDialog<bool>(
-                  context: context,
-                  builder: (ctx) => AlertDialog(
-                    title: const Text('Finalizar pedidos'),
-                    content: const Text(
-                        'Deseja marcar todos os pedidos como finalizados?'),
-                    actions: [
-                      TextButton(
-                          onPressed: () => Navigator.pop(ctx, false),
-                          child: const Text('Cancelar')),
-                      TextButton(
-                          onPressed: () => Navigator.pop(ctx, true),
-                          child: const Text('Finalizar')),
-                    ],
-                  ),
-                );
-                if (confirmar == true) {
-                  ref.read(pedidoProvider.notifier).finalizarTodosPedidos();
-                }
-              },
-            ),
+        actions: [
+          IconButton(
+            tooltip: 'Atualizar',
+            icon: const Icon(Icons.refresh),
+            onPressed: () => ref.read(pedidoProvider.notifier).recarregar(),
+          ),
         ],
       ),
 
@@ -546,7 +386,7 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
         ),
 
         data: (listaDePedidos) {
-          final pedidosAtivos = listaDePedidos.where((p) => p.status != 'Finalizado').toList();
+          final pedidosAtivos = listaDePedidos.where((p) => p.ativo).toList();
 
           if (pedidosAtivos.isEmpty) {
             return Center(child: Text("Nenhum pedido encontrado.",

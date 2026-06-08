@@ -1,6 +1,7 @@
 import 'package:client_app/src/modules/itemPage/widget/adicionais.dart';
 import 'package:client_app/src/modules/itemPage/widget/removerIngrediente.dart';
 import 'package:client_app/src/shared/models/adicionaisItem.dart';
+import 'package:client_app/src/shared/models/ingrediente_item.dart';
 import 'package:client_app/src/shared/models/item_carrinho.dart';
 import 'package:client_app/src/shared/models/item_quiosque.dart';
 import 'package:client_app/src/shared/widget/CustomDivider.dart';
@@ -33,7 +34,7 @@ class _ItemPageState extends ConsumerState<ItemPage> {
   double tamanhoImagem = 300; //Tamanho da imagem do item
   int qtdeItem = 1;
 
-  List<String> _removidos = [];
+  List<IngredienteItem> _removidos = [];
 
   List<AdicionaisItem> _adicionais = [];
   int _precoTotalAdicionais = 0;
