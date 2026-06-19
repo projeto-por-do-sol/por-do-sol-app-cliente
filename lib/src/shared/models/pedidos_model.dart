@@ -14,6 +14,13 @@ class PedidosModel {
   String horaPedido;
   String? motivoCancelamento;
 
+  /// Nota da avaliação do cliente (1..5); nula enquanto não avaliado.
+  final int? nota;
+
+  /// Momento em que o pedido entrou em PREPARANDO. Base da janela de 30 min
+  /// para o cliente poder cancelar. Nulo enquanto CRIADO.
+  final DateTime? dataHoraPreparando;
+
   PedidosModel({
     required this.idPedido,
     required this.codigoPedido,
@@ -22,6 +29,8 @@ class PedidosModel {
     required this.statusRaw,
     required this.horaPedido,
     this.motivoCancelamento,
+    this.nota,
+    this.dataHoraPreparando,
   });
 
   PedidosModel copyWith({String? codigoPedido}) {
@@ -33,7 +42,38 @@ class PedidosModel {
       statusRaw: statusRaw,
       horaPedido: horaPedido,
       motivoCancelamento: motivoCancelamento,
+      nota: nota,
+      dataHoraPreparando: dataHoraPreparando,
     );
+  }
+
+  /// Janela de cancelamento para pedidos em PREPARANDO/EM_ENTREGA: 30 min após
+  /// entrar em preparo. Nula enquanto não há `dataHoraPreparando`.
+  static const Duration janelaCancelamento = Duration(minutes: 30);
+
+  /// Quando o cliente poderá cancelar (30 min após PREPARANDO). Nulo se ainda
+  /// não entrou em preparo.
+  DateTime? get liberaCancelamentoEm =>
+      dataHoraPreparando?.add(janelaCancelamento);
+
+  /// Tempo restante até poder cancelar; `Duration.zero` se já liberou. Nulo se
+  /// não se aplica (pedido não está em preparo/entrega ou sem marco).
+  Duration? get tempoParaCancelar {
+    if (statusRaw != 'PREPARANDO' && statusRaw != 'EM_ENTREGA') return null;
+    final libera = liberaCancelamentoEm;
+    if (libera == null) return null;
+    final restante = libera.difference(DateTime.now());
+    return restante.isNegative ? Duration.zero : restante;
+  }
+
+  /// Se o cliente já pode cancelar agora: CRIADO sempre; PREPARANDO/EM_ENTREGA
+  /// apenas depois da janela de 30 min.
+  bool get podeCancelarAgora {
+    if (statusRaw == 'CRIADO') return true;
+    if (statusRaw == 'PREPARANDO' || statusRaw == 'EM_ENTREGA') {
+      return (tempoParaCancelar ?? Duration.zero) == Duration.zero;
+    }
+    return false;
   }
 
   /// Rótulo em português para exibição.
@@ -42,6 +82,7 @@ class PedidosModel {
   bool get cancelado => statusRaw == 'CANCELADO' || statusRaw == 'REJEITADO';
   bool get finalizado => statusRaw == 'FINALIZADO' || statusRaw == 'AVALIADO';
   bool get podeAvaliar => statusRaw == 'FINALIZADO';
+  bool get jaAvaliado => statusRaw == 'AVALIADO';
   bool get ativo => !cancelado && !finalizado;
 
   static String labelStatus(String raw) {
@@ -51,7 +92,7 @@ class PedidosModel {
       case 'PREPARANDO':
         return 'Preparando';
       case 'EM_ENTREGA':
-        return 'Saiu para entrega';
+        return 'Entregando';
       case 'FINALIZADO':
         return 'Finalizado';
       case 'AVALIADO':
@@ -99,6 +140,10 @@ class PedidosModel {
           (json['horaPedido'] ?? json['dataHoraPedido'] ?? '').toString(),
       motivoCancelamento:
           (json['motivoCancelamento'] ?? json['motivo']) as String?,
+      nota: (json['nota'] as num?)?.toInt(),
+      dataHoraPreparando: json['dataHoraPreparando'] != null
+          ? DateTime.tryParse(json['dataHoraPreparando'].toString())
+          : null,
       quiosque: quiosque,
       itens: itensJson.map((itemJson) {
         final item = itemJson as Map<String, dynamic>;

@@ -142,8 +142,17 @@ class ClienteService {
 
     if (permission == LocationPermission.deniedForever) return null;
 
-    return await Geolocator.getCurrentPosition(
-      locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
-    );
+    try {
+      return await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          timeLimit: Duration(seconds: 10),
+        ),
+      );
+    } catch (_) {
+      // Se não houver um fix dentro do tempo limite, cai para a última
+      // posição conhecida para não travar o carregamento dos quiosques.
+      return await Geolocator.getLastKnownPosition();
+    }
   }
 }

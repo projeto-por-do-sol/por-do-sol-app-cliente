@@ -1,3 +1,4 @@
+import 'package:client_app/data/services/api_client.dart';
 import 'package:client_app/providers/quiosque_provider/quiosque_provider.dart';
 import 'package:client_app/src/shared/models/item_carrinho.dart';
 import 'package:client_app/src/shared/models/item_quiosque.dart';
@@ -410,7 +411,9 @@ class _QuiosquePageState extends ConsumerState<QuiosquePage> {
 
   @override
   Widget build(BuildContext context) {
-    double tamanhoImagem = 300;
+    // Banner em 16:9 (mesma proporção usada no app do quiosque ao recortar a
+    // capa), para o recorte exibido bater com o que o dono enquadrou.
+    double tamanhoImagem = MediaQuery.of(context).size.width * 9 / 16;
     final quiosque = widget.quiosque;
 
     final itensAsync = ref.watch(itensQuiosqueProvider(quiosque.idQuiosque));
@@ -439,9 +442,9 @@ class _QuiosquePageState extends ConsumerState<QuiosquePage> {
                           ),
                         ),
 
-                        if (quiosque.imgBannerQuiosque != null)
+                        if (ApiClient.imagemUrl(quiosque.imgBannerQuiosque) != null)
                           Image.network(
-                            widget.quiosque.imgBannerQuiosque.toString(),
+                            ApiClient.imagemUrl(quiosque.imgBannerQuiosque)!,
                             height: tamanhoImagem,
                             width: double.infinity,
                             fit: BoxFit.cover,
@@ -541,42 +544,37 @@ class _QuiosquePageState extends ConsumerState<QuiosquePage> {
                             ..._buildSecoes(),
                           ],
 
-                          if (_itensAdicionarCarrinho.isNotEmpty) SizedBox(height: 90),
                         ],
                       ),
                   ),
                 ],
               ),
           ),
-          Positioned( //Dps da pra mudar por bottomNavigationBar, igual na página do carrinho.
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: AnimatedSwitcher(
-              duration: Duration(milliseconds: 300),
-              transitionBuilder: (child, animation) => SlideTransition(
-                position: Tween<Offset>(
-                  begin: Offset(0, 1),
-                  end: Offset(0, 0),
-                ).animate(animation),
-                child: child,
-              ),
-              child: _itensAdicionarCarrinho.isNotEmpty
-                ? Padding(
-                  key: ValueKey('botao'),
-                  padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).padding.bottom + 10,
-                  left: 16,
-                  right: 16,
-                  ),
-                  child: botaoAdicionar(),
-                )
-                : SizedBox.shrink(key: ValueKey('vazio')),
-              ),
-          ),
         ],
       ),
 
+      bottomNavigationBar: AnimatedSwitcher(
+        duration: Duration(milliseconds: 300),
+        transitionBuilder: (child, animation) => SlideTransition(
+          position: Tween<Offset>(
+            begin: Offset(0, 1),
+            end: Offset(0, 0),
+          ).animate(animation),
+          child: child,
+        ),
+        child: _itensAdicionarCarrinho.isNotEmpty
+          ? Padding(
+            key: ValueKey('botao'),
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).padding.bottom + 10,
+              left: 16,
+              right: 16,
+              top: 10,
+            ),
+            child: botaoAdicionar(),
+          )
+          : SizedBox.shrink(key: ValueKey('vazio')),
+      ),
     );
   }
 }

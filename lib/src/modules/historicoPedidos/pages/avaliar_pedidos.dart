@@ -19,6 +19,13 @@ class _AvaliarPedidosState extends ConsumerState<AvaliarPedidos> {
   int _nota = 0;
   bool _enviando = false;
 
+  @override
+  void initState() {
+    super.initState();
+    // Pré-carrega a nota já dada (quando o pedido voltou como AVALIADO).
+    _nota = widget.pedido.nota ?? 0;
+  }
+
   PedidosModel get _pedido => widget.pedido;
 
   bool get _cancelado => _pedido.cancelado;
@@ -26,8 +33,11 @@ class _AvaliarPedidosState extends ConsumerState<AvaliarPedidos> {
   bool get _mostrarMotivo =>
       _pedido.motivoCancelamento?.trim().isNotEmpty ?? false;
 
-  // Só é possível avaliar pedidos que foram finalizados.
+  // Só é possível avaliar pedidos que foram finalizados (e ainda não avaliados).
   bool get _podeAvaliar => _pedido.podeAvaliar;
+
+  // Pedido já avaliado: mostra a nota dada, em modo somente leitura.
+  bool get _jaAvaliado => _pedido.jaAvaliado;
 
   Future<void> _avaliar() async {
     if (_enviando) return;
@@ -59,10 +69,10 @@ class _AvaliarPedidosState extends ConsumerState<AvaliarPedidos> {
       await ref
           .read(pedidoProvider.notifier)
           .avaliarPedido(_pedido.idPedido, _nota);
-      mostrar(
-        'Avaliação de $_nota estrela${_nota > 1 ? "s" : ""} enviada!',
-        colorScheme.primary,
-      );
+      // Sucesso: volta para a página de histórico (que já é recarregada com o
+      // pedido agora AVALIADO pelo avaliarPedido -> invalidate do histórico).
+      if (mounted) Navigator.pop(context);
+      return;
     } catch (_) {
       mostrar('Erro ao enviar avaliação. Tente novamente.', colorScheme.error);
     } finally {
@@ -100,8 +110,9 @@ class _AvaliarPedidosState extends ConsumerState<AvaliarPedidos> {
 
                     const SizedBox(height: 14),
 
-                    //Avaliação (somente pedidos finalizados)
-                    if (_podeAvaliar) ...[
+                    //Avaliação: pedidos finalizados (avaliar) ou já avaliados
+                    //(somente leitura, mostrando a nota dada).
+                    if (_podeAvaliar || _jaAvaliado) ...[
                       //Banner avaliação
                       Container(
                         width: double.infinity,
@@ -126,7 +137,9 @@ class _AvaliarPedidosState extends ConsumerState<AvaliarPedidos> {
                             ),
                             const SizedBox(width: 14),
                             Text(
-                              'AVALIE SEU PEDIDO',
+                              _jaAvaliado
+                                  ? 'SUA AVALIAÇÃO'
+                                  : 'AVALIE SEU PEDIDO',
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w800,
@@ -140,10 +153,11 @@ class _AvaliarPedidosState extends ConsumerState<AvaliarPedidos> {
 
                       const SizedBox(height: 30),
 
-                      //Estrelas
+                      //Estrelas (interativas só quando ainda pode avaliar)
                       _estrelasAvaliacao(
                         context,
                         nota: _nota,
+                        readOnly: _jaAvaliado,
                         onNota: (r) => setState(() => _nota = r),
                       ),
 
@@ -356,6 +370,7 @@ Widget _estrelasAvaliacao(
   BuildContext context, {
   required int nota,
   required void Function(int) onNota,
+  bool readOnly = false,
 }) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.center,
@@ -363,7 +378,7 @@ Widget _estrelasAvaliacao(
 
       final filled = i < nota;
       return GestureDetector(
-        onTap: () => onNota(i + 1),
+        onTap: readOnly ? null : () => onNota(i + 1),
         child: AnimatedScale(
           scale: filled ? 1.12 : 1.0,
           duration: const Duration(milliseconds: 120),

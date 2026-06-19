@@ -1,5 +1,9 @@
+import 'dart:async';
+
+import 'package:client_app/data/services/api_client.dart';
 import 'package:client_app/providers/pedido_provider/pedido_provider.dart';
 import 'package:client_app/src/shared/models/item_carrinho.dart';
+import 'package:client_app/src/shared/models/pedidos_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -12,16 +16,16 @@ class PedidosPage extends ConsumerStatefulWidget {
 }
 
 class _PedidosPageState extends ConsumerState<PedidosPage> {
-  Widget identificadorQuiosque(QuiosqueCarrinho quiosque, String status, String horaPedido, String idPedido, String horaPedidoIso){
+  Widget identificadorQuiosque(QuiosqueCarrinho quiosque, String status, String horaPedido, String idPedido, String horaPedidoIso, PedidosModel pedido){
     double heightImagem = 80;
     double widthImagem = 90;
 
     dynamic imagemBanner(){
       return ClipRRect(
         borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
-        child: quiosque.imgBannerQuiosque != null
+        child: ApiClient.imagemUrl(quiosque.imgBannerQuiosque) != null
             ? Image.network(
-          quiosque.imgBannerQuiosque.toString(),
+          ApiClient.imagemUrl(quiosque.imgBannerQuiosque)!,
           height: heightImagem,
           width: widthImagem,
           fit: BoxFit.cover,
@@ -79,7 +83,11 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
                 ),
                 IconButton(
                     onPressed: (){
-                      showBottomModal(context, status, horaPedidoIso, idPedido);
+                      if (pedido.podeCancelarAgora) {
+                        showBottomModal(context, status, horaPedidoIso, idPedido);
+                      } else {
+                        showContagemCancelamento(context, pedido);
+                      }
                     },
                     icon: Icon(
                       Icons.cancel_outlined,
@@ -330,9 +338,22 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
                     ),
                     label: const Text('SIM', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
-                    onPressed: () {
-                      ref.read(pedidoProvider.notifier).cancelarPedido(idPedido);
+                    onPressed: () async {
+                      // Captura antes do await para não usar context após o gap.
+                      final messenger = ScaffoldMessenger.of(context);
+                      final notifier = ref.read(pedidoProvider.notifier);
                       Navigator.pop(context);
+                      try {
+                        await notifier.cancelarPedido(idPedido);
+                        messenger.showSnackBar(
+                          const SnackBar(content: Text('Pedido cancelado.')),
+                        );
+                      } catch (e) {
+                        final msg = e is ApiException
+                            ? e.message
+                            : 'Não foi possível cancelar o pedido.';
+                        messenger.showSnackBar(SnackBar(content: Text(msg)));
+                      }
                     },
                   ),
                 ),
@@ -355,6 +376,26 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
           padding: const EdgeInsets.all(16.0),
           child: SafeArea(
             child: cancelarPedidoEsperando(),
+          ),
+        );
+      },
+    );
+  }
+
+  // Pedido em PREPARANDO/EM_ENTREGA ainda dentro da janela de 30 min: mostra
+  // quanto tempo falta para o cliente poder cancelar (contagem ao vivo).
+  void showContagemCancelamento(BuildContext context, PedidosModel pedido) {
+    showModalBottomSheet(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext bc) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SafeArea(
+            child: _ContagemCancelamentoSheet(pedido: pedido),
           ),
         );
       },
@@ -411,6 +452,7 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
                               DateFormat('HH:mm').format(DateTime.parse(pedido.horaPedido)),
                               pedido.idPedido,
                               pedido.horaPedido,
+                              pedido,
                           ),
                           for (var item in pedido.itens)
                             itensCarrinho(item, pedido.quiosque),
@@ -426,6 +468,134 @@ class _PedidosPageState extends ConsumerState<PedidosPage> {
         },
       ),
 
+    );
+  }
+}
+
+/// Conteúdo do modal de contagem regressiva: mostra ao vivo quanto falta para o
+/// cliente poder cancelar um pedido em PREPARANDO/EM_ENTREGA. O botão de
+/// cancelar só habilita quando a janela de 30 min é atingida.
+class _ContagemCancelamentoSheet extends ConsumerStatefulWidget {
+  final PedidosModel pedido;
+  const _ContagemCancelamentoSheet({required this.pedido});
+
+  @override
+  ConsumerState<_ContagemCancelamentoSheet> createState() =>
+      _ContagemCancelamentoSheetState();
+}
+
+class _ContagemCancelamentoSheetState
+    extends ConsumerState<_ContagemCancelamentoSheet> {
+  late Duration _restante;
+  Timer? _timer;
+  bool _enviando = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _restante = widget.pedido.tempoParaCancelar ?? Duration.zero;
+    if (_restante > Duration.zero) {
+      _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+        if (!mounted) return;
+        final novo = widget.pedido.tempoParaCancelar ?? Duration.zero;
+        setState(() => _restante = novo);
+        if (novo <= Duration.zero) _timer?.cancel();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  String _formatar(Duration d) {
+    final min = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final seg = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return '$min:$seg';
+  }
+
+  Future<void> _cancelar() async {
+    if (_enviando) return;
+    final messenger = ScaffoldMessenger.of(context);
+    final notifier = ref.read(pedidoProvider.notifier);
+    setState(() => _enviando = true);
+    try {
+      await notifier.cancelarPedido(widget.pedido.idPedido);
+      if (mounted) Navigator.pop(context);
+      messenger.showSnackBar(
+        const SnackBar(content: Text('Pedido cancelado.')),
+      );
+    } catch (e) {
+      final msg = e is ApiException
+          ? e.message
+          : 'Não foi possível cancelar o pedido.';
+      messenger.showSnackBar(SnackBar(content: Text(msg)));
+      if (mounted) setState(() => _enviando = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final liberou = _restante <= Duration.zero;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Icons.timer_outlined, size: 40, color: colorScheme.outline),
+        const SizedBox(height: 12),
+        Text(
+          liberou
+              ? 'Você já pode cancelar este pedido.'
+              : 'Você poderá cancelar este pedido em:',
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        if (!liberou) ...[
+          const SizedBox(height: 16),
+          Text(
+            _formatar(_restante),
+            style: TextStyle(
+              fontSize: 40,
+              fontWeight: FontWeight.w800,
+              color: colorScheme.primary,
+              letterSpacing: 2,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'O cancelamento fica disponível 30 minutos após o quiosque '
+            'começar a preparar o pedido.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 13, color: colorScheme.outline),
+          ),
+        ],
+        const SizedBox(height: 24),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: colorScheme.secondary,
+              foregroundColor: colorScheme.outline,
+              padding: const EdgeInsets.symmetric(vertical: 12),
+            ),
+            icon: _enviando
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.cancel_outlined),
+            label: const Text(
+              'Cancelar pedido',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+            onPressed: (liberou && !_enviando) ? _cancelar : null,
+          ),
+        ),
+      ],
     );
   }
 }

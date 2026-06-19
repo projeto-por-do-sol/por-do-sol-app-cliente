@@ -82,6 +82,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               const SizedBox(height: 30),
 
               quiosquesAsync.when(
+                skipLoadingOnRefresh: false,
                 loading: () => const Padding(
                   padding: EdgeInsets.only(top: 40),
                   child: CircularProgressIndicator(),
@@ -123,11 +124,21 @@ class _HomePageState extends ConsumerState<HomePage> {
       );
     }
 
+    // Entrega disponível "aqui e agora": só conta se o quiosque faz entrega
+    // para esta posição E está aberto — quiosque fechado não aceita pedido.
+    bool entregaDisponivel(QuiosqueModel q) =>
+        q.disponivelEntrega && q.estaAberto;
+
+    final comEntrega =
+        listaFiltrada.where(entregaDisponivel).toList();
+    final semEntrega =
+        listaFiltrada.where((q) => !entregaDisponivel(q)).toList();
+
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
-          if (listaFiltrada.any((q) => q.disponivelEntrega)) ...[
+          if (comEntrega.isNotEmpty) ...[
             Container(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -142,15 +153,11 @@ class _HomePageState extends ConsumerState<HomePage> {
 
             const SizedBox(height: 10),
 
-            ...listaFiltrada
-                .where((quiosque) => quiosque.disponivelEntrega)
-                .map((quiosque) => CardQuiosque(quiosque: quiosque)),
+            ...comEntrega.map((quiosque) => CardQuiosque(quiosque: quiosque)),
           ],
 
-          if (listaFiltrada.any((q) => !q.disponivelEntrega)) ...[
-            if (listaFiltrada.any(
-              (q) => q.disponivelEntrega && q.estaAberto,
-            )) ...[
+          if (semEntrega.isNotEmpty) ...[
+            if (comEntrega.isNotEmpty) ...[
               CustomDivider(),
               const SizedBox(height: 20),
             ],
@@ -169,9 +176,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
             const SizedBox(height: 10),
 
-            ...listaFiltrada
-                .where((quiosque) => !quiosque.disponivelEntrega)
-                .map((quiosque) => CardQuiosque(quiosque: quiosque)),
+            ...semEntrega.map((quiosque) => CardQuiosque(quiosque: quiosque)),
           ],
         ],
       ),

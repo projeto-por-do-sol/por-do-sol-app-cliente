@@ -8,7 +8,7 @@ import 'package:client_app/src/shared/models/cliente_model.dart';
 /// Alinhado ao contrato real do back-end Spring (DTOs):
 ///   - login:    `{ email, password }` -> `{ token }`
 ///   - register: `{ nome, email, password, cpf, role, telefone }`
-///   - /me:      `{ id, nome, email, telefone, dataNasc, imagem, role }`
+///   - /me:      `{ id, nome, email, telefone, dataCadastro, imagem, role }`
 class AuthRepository {
   static final AuthRepository instance = AuthRepository._init();
 

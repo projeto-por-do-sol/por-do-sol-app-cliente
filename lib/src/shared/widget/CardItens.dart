@@ -1,3 +1,4 @@
+import 'package:client_app/data/services/api_client.dart';
 import 'package:client_app/src/shared/models/item_carrinho.dart';
 import 'package:client_app/src/shared/models/item_quiosque.dart';
 import 'package:flutter/material.dart';
@@ -26,25 +27,29 @@ class _CardItensState extends State<CardItens> {
 
   dynamic imagemBanner(){
     double tamanhoImagem = 90.0;
+    final urlImagem = ApiClient.imagemUrl(widget.item.imgItem);
+
+    Widget semImagem() => Container(
+          height: double.infinity,
+          width: tamanhoImagem,
+          color: Colors.grey[300],
+          child: const Icon(Icons.image_not_supported, color: Colors.grey, size: 40,),
+        );
+
     return ClipRRect(
       //Tamanho Imagem: 150x90
       // borderRadius: BorderRadius.circular(20),
       borderRadius: BorderRadius.only(topLeft: Radius.circular(20), bottomLeft: Radius.circular(20)),
-      child: Image.network(
-        widget.item.imgItem.toString(),
-        height: double.infinity,
-        width: tamanhoImagem,
-        fit: BoxFit.cover,
-        // fit: BoxFit.fitWidth,
-        errorBuilder: (context, error, stackTrace) {
-          return Container(
-            height: double.infinity,
-            width: tamanhoImagem,
-            color: Colors.grey[300],
-            child: const Icon(Icons.image_not_supported, color: Colors.grey, size: 40,),
-          );
-        },
-      )
+      child: urlImagem == null
+          ? semImagem()
+          : Image.network(
+              urlImagem,
+              height: double.infinity,
+              width: tamanhoImagem,
+              fit: BoxFit.cover,
+              // fit: BoxFit.fitWidth,
+              errorBuilder: (context, error, stackTrace) => semImagem(),
+            ),
     );
   }
 

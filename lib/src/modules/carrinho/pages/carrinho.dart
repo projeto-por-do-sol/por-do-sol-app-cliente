@@ -1,3 +1,4 @@
+import 'package:client_app/data/services/api_client.dart';
 import 'package:client_app/providers/carrinho_provider/carrinho_provider.dart';
 import 'package:client_app/providers/cliente_provider/cliente_provider.dart';
 import 'package:client_app/providers/pedido_provider/pedido_provider.dart';
@@ -24,9 +25,9 @@ class _CarrinhoPageState extends ConsumerState<CarrinhoPage> {
     dynamic imagemBanner(){
       return ClipRRect(
         borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
-        child: quiosque.imgBannerQuiosque != null
+        child: ApiClient.imagemUrl(quiosque.imgBannerQuiosque) != null
             ? Image.network(
-          quiosque.imgBannerQuiosque.toString(),
+          ApiClient.imagemUrl(quiosque.imgBannerQuiosque)!,
           height: heightImagem,
           width: widthImagem,
           fit: BoxFit.cover,

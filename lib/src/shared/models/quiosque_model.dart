@@ -61,7 +61,8 @@ class QuiosqueModel {
           (json['categorias'] as List?)?.map((e) => e.toString()).toList(),
       horarioAbre: json['horarioAbre'] ?? json['openingTime'] ?? '08:00',
       horarioFecha: json['horarioFecha'] ?? json['closingTime'] ?? '23:00',
-      qtdeAvaliacoes: (json['qtdeAvaliacoes'] as num?)?.toInt() ?? 0,
+      qtdeAvaliacoes:
+          ((json['qtdeAvaliacoes'] ?? json['qtdAvaliacoes']) as num?)?.toInt() ?? 0,
       aberto: json['aberto'] as bool?,
     );
   }

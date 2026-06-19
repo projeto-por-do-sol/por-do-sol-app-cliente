@@ -14,8 +14,8 @@ class Login extends ConsumerStatefulWidget {
 }
 
 class _LoginState extends ConsumerState<Login> {
-  TextEditingController loginController = TextEditingController(text: "teste@gmail.com");
-  TextEditingController passwordController = TextEditingController(text: "123");
+  TextEditingController loginController = TextEditingController(text: "");
+  TextEditingController passwordController = TextEditingController(text: "");
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -46,7 +46,7 @@ class _LoginState extends ConsumerState<Login> {
                 const SizedBox(height: 30),
 
                 CustomInput(
-                  label: "E-mail / Telefone:",
+                  label: "E-mail:",
                   controller: loginController,
                   isRequired: true,
                   isPhoneOrEmail: true,
@@ -110,7 +110,7 @@ class _LoginState extends ConsumerState<Login> {
                         router.go('/inicio');
                       } on ApiException catch (e) {
                         erro(e.statusCode == 401 || e.statusCode == 403
-                            ? "E-mail/telefone ou senha incorreto(a)!"
+                            ? "E-mail ou senha incorreto(a)!"
                             : "Erro ao entrar. Tente novamente.");
                       } catch (e) {
                         debugPrint('[Login] falha de conexão: $e');

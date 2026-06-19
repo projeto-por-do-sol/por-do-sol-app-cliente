@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:client_app/data/repositories/notification_repository.dart';
 import 'package:client_app/data/services/cliente_service.dart';
+import 'package:client_app/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -19,7 +20,7 @@ enum StatusPermissao {
 @pragma('vm:entry-point')
 Future<void> firebaseMensagemBackgroundHandler(RemoteMessage message) async {
   // Roda em um isolate separado, então precisa inicializar o Firebase de novo.
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   print('[FCM] mensagem em background: ${message.messageId}');
 }
 
@@ -49,6 +50,15 @@ class NotificationService {
       StreamController<Map<String, dynamic>>.broadcast();
   Stream<Map<String, dynamic>> get aoTocarNotificacao => _toqueController.stream;
 
+  /// Emite o `data` sempre que chega uma notificação de mudança de status de
+  /// pedido (`tipo: STATUS_PEDIDO`) com o app em FOREGROUND, mesmo sem o
+  /// usuário tocar nela. Um widget Riverpod escuta isso para recarregar a
+  /// lista de pedidos automaticamente.
+  final StreamController<Map<String, dynamic>> _statusPedidoController =
+      StreamController<Map<String, dynamic>>.broadcast();
+  Stream<Map<String, dynamic>> get aoAtualizarStatusPedido =>
+      _statusPedidoController.stream;
+
   /// Toque que abriu o app a partir do estado ENCERRADO. Como pode chegar antes
   /// de existir um listener, fica guardado aqui até alguém consumir.
   Map<String, dynamic>? _toqueInicial;
@@ -60,15 +70,16 @@ class NotificationService {
   /// Chamado uma vez no startup do app (antes do runApp).
   Future<void> inicializar() async {
     try {
-      // Depois de rodar `flutterfire configure`, troque pela versão com options:
-      // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-      await Firebase.initializeApp();
+      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
       await _configurarNotificacoesLocais();
 
       FirebaseMessaging.onBackgroundMessage(firebaseMensagemBackgroundHandler);
 
-      FirebaseMessaging.onMessage.listen(mostrarNotificacaoLocal);
+      FirebaseMessaging.onMessage.listen((message) {
+        mostrarNotificacaoLocal(message);
+        _tratarMensagemDeDados(message);
+      });
 
       // Toque na notificação com o app em BACKGROUND.
       FirebaseMessaging.onMessageOpenedApp.listen(
@@ -208,6 +219,16 @@ class NotificationService {
       ),
       payload: message.data.isNotEmpty ? jsonEncode(message.data) : null,
     );
+  }
+
+  /// Repassa o `data` de uma mensagem recebida em FOREGROUND para quem estiver
+  /// escutando [aoAtualizarStatusPedido], caso seja uma notificação de
+  /// mudança de status de pedido (`tipo: STATUS_PEDIDO`).
+  void _tratarMensagemDeDados(RemoteMessage message) {
+    final dados = message.data;
+    if (dados.isEmpty) return;
+    if (dados['tipo'] != 'STATUS_PEDIDO') return;
+    _statusPedidoController.add(dados);
   }
 
   /// Chamado quando o usuário toca em uma notificação LOCAL (exibida em

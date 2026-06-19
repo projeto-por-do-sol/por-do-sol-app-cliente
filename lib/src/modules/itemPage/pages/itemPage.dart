@@ -1,3 +1,4 @@
+import 'package:client_app/data/services/api_client.dart';
 import 'package:client_app/src/modules/itemPage/widget/adicionais.dart';
 import 'package:client_app/src/modules/itemPage/widget/removerIngrediente.dart';
 import 'package:client_app/src/shared/models/adicionaisItem.dart';
@@ -159,7 +160,10 @@ class _ItemPageState extends ConsumerState<ItemPage> {
   Widget botaoAdicionar() {
     double precoCarrinhoFormatado = precoCarrinho / 100;
 
-    return ElevatedButton(
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
+      width: double.infinity,
+      child: ElevatedButton(
       onPressed: widget.desabilitado ? null : () {
         ItemCarrinho item = ItemCarrinho(
           idProduto: widget.item.idItem,
@@ -247,6 +251,7 @@ class _ItemPageState extends ConsumerState<ItemPage> {
           ),
         ],
       ),
+      ),
     );
   }
 
@@ -270,17 +275,22 @@ class _ItemPageState extends ConsumerState<ItemPage> {
             SizedBox(
               height: tamanhoImagem,
               width: double.infinity,
-              child: Image.network(
-                widget.item.imgItem.toString(),
-                height: tamanhoImagem,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container( //Imagem de erro
+              child: Builder(
+                builder: (context) {
+                  final urlImagem = ApiClient.imagemUrl(widget.item.imgItem);
+                  Widget semImagem() => Container( //Imagem de erro
+                        height: tamanhoImagem,
+                        width: double.infinity,
+                        color: Colors.grey[300],
+                        child: const Icon(Icons.image_not_supported, color: Colors.grey, size: 40,),
+                      );
+                  if (urlImagem == null) return semImagem();
+                  return Image.network(
+                    urlImagem,
                     height: tamanhoImagem,
                     width: double.infinity,
-                    color: Colors.grey[300],
-                    child: const Icon(Icons.image_not_supported, color: Colors.grey, size: 40,),
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => semImagem(),
                   );
                 },
               ),
@@ -457,10 +467,6 @@ class _ItemPageState extends ConsumerState<ItemPage> {
                     ),
 
                     SizedBox(height: 15),
-
-                    botaoAdicionar(),
-
-                    SizedBox(height: 15),
                   ],
                 ),
               )
@@ -468,6 +474,12 @@ class _ItemPageState extends ConsumerState<ItemPage> {
 
           ],
         ),
+      ),
+
+      bottomNavigationBar: MediaQuery.removePadding(
+        context: context,
+        removeBottom: true,
+        child: botaoAdicionar(),
       ),
     );
   }

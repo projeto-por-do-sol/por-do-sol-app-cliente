@@ -1,3 +1,4 @@
+import 'package:client_app/data/services/api_client.dart';
 import 'package:client_app/src/modules/inicio/widget/categorias.dart';
 import 'package:client_app/src/shared/models/quiosque_model.dart';
 import 'package:flutter/material.dart';
@@ -25,9 +26,9 @@ class _CardQuiosqueState extends State<CardQuiosque> {
       //Tamanho Imagem: 150x90
       // borderRadius: BorderRadius.circular(20),
       borderRadius: BorderRadius.only(topLeft: Radius.circular(20), bottomLeft: Radius.circular(20)),
-      child: widget.quiosque.imgPerfilQuiosque != null
-          ? Image.network( //TODO: dps tem que trocar por Image.network
-        widget.quiosque.imgPerfilQuiosque.toString(),
+      child: ApiClient.imagemUrl(widget.quiosque.imgPerfilQuiosque) != null
+          ? Image.network(
+        ApiClient.imagemUrl(widget.quiosque.imgPerfilQuiosque)!,
         height: double.infinity,
         width: tamanhoImagem,
         fit: BoxFit.cover,
